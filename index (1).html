@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Book a Lesson — Kaisar's Driving School</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1a9e72;--green-dark:#0f6e4f;--green-light:#e2f5ee;--green-mid:#c5eadc;--text:#1a1a1a;--muted:#6b7280;--faint:#f5f5f3;--border:#e5e5e0;--white:#ffffff;--radius:14px;--radius-sm:8px;--red:#dc2626;--zelle:#6d1ed4}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--faint);color:var(--text);min-height:100vh}
+header{background:var(--white);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;fill:white}
+.logo-text{font-family:'DM Serif Display',serif;font-size:17px;color:var(--text);line-height:1.1}
+.logo-text span{display:block;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;color:var(--muted)}
+.header-contact{font-size:13px;color:var(--muted)}
+.header-contact a{color:var(--green);text-decoration:none;font-weight:500}
+.container{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.progress-wrap{display:flex;align-items:center;margin-bottom:2rem}
+.progress-step{display:flex;align-items:center;gap:6px;flex:1}
+.progress-step:last-child{flex:0}
+.p-circle{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--muted);flex-shrink:0;transition:all 0.2s}
+.p-circle.active{background:var(--green);border-color:var(--green);color:white}
+.p-circle.done{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.p-line{flex:1;height:1.5px;background:var(--border);margin:0 4px;transition:background 0.2s}
+.p-line.done{background:var(--green)}
+.p-label{font-size:11px;color:var(--muted);white-space:nowrap;display:none}
+@media(min-width:480px){.p-label{display:block}}
+.step{display:none;animation:fadeUp 0.25s ease}
+.step.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);margin-bottom:4px}
+.section-sub{font-size:14px;color:var(--muted);margin-bottom:1.5rem}
+.pkg-grid{display:grid;gap:10px}
+.pkg-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;position:relative}
+.pkg-card:hover{border-color:var(--green);box-shadow:0 0 0 3px var(--green-light)}
+.pkg-card.selected{border-color:var(--green);box-shadow:0 0 0 3px var(--green-light)}
+.pkg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.pkg-name{font-size:15px;font-weight:500;color:var(--text)}
+.pkg-price{font-size:22px;font-weight:600;color:var(--green);flex-shrink:0}
+.pkg-detail{font-size:13px;color:var(--muted);margin-top:3px}
+.pkg-badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-top:7px}
+.badge-popular{background:var(--green-light);color:var(--green-dark)}
+.badge-value{background:#fef3c7;color:#92400e}
+.badge-highway{background:#ede9fe;color:#5b21b6}
+.badge-recommended{background:#dbeafe;color:#1d4ed8}
+.check-icon{position:absolute;top:12px;right:14px;width:20px;height:20px;background:var(--green);border-radius:50%;display:none;align-items:center;justify-content:center}
+.check-icon svg{width:11px;height:11px}
+.pkg-card.selected .check-icon{display:flex}
+.section-divider{display:flex;align-items:center;gap:10px;margin:1.5rem 0 1rem}
+.section-divider div{flex:1;height:1px;background:var(--border)}
+.section-divider span{font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
+.section-note{font-size:13px;color:var(--muted);margin-bottom:1rem}
+.session-block{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:12px}
+.session-block-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.session-num{width:24px;height:24px;background:var(--green);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.field-group{margin-bottom:1rem}
+.field-label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.field-required{color:var(--red);margin-left:2px}
+.field-hint{font-size:11px;color:var(--muted);margin-top:4px}
+input[type=text],input[type=tel],input[type=email],input[type=date],select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-light)}
+input.invalid,select.invalid{border-color:var(--red)!important;box-shadow:0 0 0 3px #fee2e2}
+input::placeholder{color:#b0b0a8}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.instructor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.instructor-btn{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;cursor:pointer;text-align:center;transition:all .15s}
+.instructor-btn:hover{border-color:var(--green)}
+.instructor-btn.selected{border-color:var(--green);background:var(--green-light)}
+.i-avatar{width:34px;height:34px;border-radius:50%;background:var(--green-mid);color:var(--green-dark);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;margin:0 auto 5px}
+.i-avatar.any{background:#f1f5f9;color:#475569;font-size:16px}
+.i-name{font-size:11px;font-weight:500;color:var(--text);line-height:1.3}
+.slot-list{display:flex;flex-direction:column;gap:6px}
+.slot-btn{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .15s;width:100%;text-align:left}
+.slot-btn:hover:not(:disabled){border-color:var(--green);background:var(--green-light)}
+.slot-btn.selected{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:500}
+.slot-btn:disabled{opacity:.4;cursor:not-allowed;background:var(--faint)}
+.slot-tag{font-size:11px;color:var(--muted)}
+.slot-btn.selected .slot-tag{color:var(--green-dark)}
+.slot-btn:disabled .slot-tag{color:var(--red)}
+.auto-confirm-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px;display:none}
+.auto-confirm-box.show{display:block}
+.auto-confirm-title{font-size:13px;font-weight:600;color:#166534;margin-bottom:4px}
+.auto-confirm-detail{font-size:13px;color:#15803d;margin-bottom:10px}
+.auto-confirm-btns{display:flex;gap:8px}
+.btn-confirm-yes{background:var(--green);color:white;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer}
+.btn-confirm-yes:hover{background:var(--green-dark)}
+.btn-confirm-no{background:var(--white);color:var(--muted);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer}
+.btn-confirm-no:hover{border-color:var(--text);color:var(--text)}
+.btn-primary{width:100%;padding:13px 20px;background:var(--green);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s,transform .1s;margin-top:6px}
+.btn-primary:hover{background:var(--green-dark)}
+.btn-primary:active{transform:scale(.99)}
+.btn-back{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:0;margin-bottom:1.25rem;display:flex;align-items:center;gap:4px}
+.btn-back:hover{color:var(--text)}
+.btn-print{width:100%;padding:13px 20px;background:var(--white);color:var(--green);border:1.5px solid var(--green);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-top:10px;transition:all .15s}
+.btn-print:hover{background:var(--green-light)}
+.err-msg{font-size:12px;color:var(--red);margin-top:5px;display:none}
+.info-banner{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:1.25rem;line-height:1.5}
+.banner-yellow{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.banner-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.distance-notice{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:var(--radius-sm);padding:12px 14px;margin-top:8px;font-size:13px;color:#9a3412;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.notice-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.zelle-box{background:#f5f0ff;border:2px solid #c4b5fd;border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem}
+.zelle-title{font-size:16px;font-weight:600;color:var(--zelle);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.zelle-sub{font-size:13px;color:#5b21b6;margin-bottom:1rem;line-height:1.5}
+.zelle-amount{font-size:32px;font-weight:700;color:var(--zelle);text-align:center;padding:10px 0 2px}
+.zelle-amount-label{font-size:12px;color:#7c3aed;text-align:center;margin-bottom:12px}
+.zelle-detail{background:white;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid #ede9fe}
+.zelle-detail-label{font-size:12px;color:var(--muted)}
+.zelle-detail-val{font-size:14px;font-weight:600;color:var(--text)}
+.zelle-note{font-size:12px;color:#6d28d9;line-height:1.6;background:#ede9fe;border-radius:var(--radius-sm);padding:10px 12px;margin-top:4px}
+.receipt{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.receipt-header{background:var(--green);padding:1.5rem 1.5rem 1.25rem;text-align:center;color:white}
+.receipt-school{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:2px}
+.receipt-addr-text{font-size:12px;opacity:.85}
+.receipt-ref{font-size:11px;opacity:.7;margin-top:8px;background:rgba(0,0,0,.15);display:inline-block;padding:3px 10px;border-radius:20px}
+.receipt-body{padding:1.25rem 1.5rem}
+.r-section{margin-bottom:1rem}
+.r-section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.r-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);gap:12px}
+.r-row:last-child{border-bottom:none}
+.r-key{color:var(--muted);flex-shrink:0}
+.r-val{font-weight:500;text-align:right}
+.receipt-total-bar{background:var(--faint);border-top:1.5px solid var(--border);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.total-label{font-size:14px;color:var(--muted)}
+.total-amount{font-size:24px;font-weight:600;color:var(--green)}
+.payment-note{font-size:12px;color:var(--muted);margin-top:2px}
+.receipt-distance-note{background:#fff7ed;border-top:1px solid #fed7aa;padding:10px 1.5rem;font-size:12px;color:#9a3412;line-height:1.5}
+.contact-box{background:var(--green-light);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-top:1rem;text-align:center}
+.contact-box p{font-size:13px;color:var(--green-dark);margin-bottom:5px}
+.contact-box a{color:var(--green-dark);font-weight:500;font-size:14px;text-decoration:none}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:32px;height:32px;border:3px solid var(--green-mid);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--muted)}
+@media(max-width:520px){.row3{grid-template-columns:1fr 1fr}.row3 .full-col{grid-column:1/-1}.instructor-grid{grid-template-columns:repeat(2,1fr)}}
+@media print{header,.progress-wrap,.btn-print,.contact-box,.btn-back,.btn-primary,.loading-overlay,.zelle-box{display:none!important}body{background:white}.container{padding:0}.step{display:block!important}#step1,#step2cert,#step2sessions,#step3{display:none!important}#step4{display:block!important}}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loadingText">Checking availability...</div></div>
+<header>
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zm-2-2c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1zm-8 0c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1z"/></svg></div>
+    <div class="logo-text">Kaisar's Driving School<span>Frisco, TX · DFW Area</span></div>
+  </div>
+  <div class="header-contact"><a href="tel:+14697405327">469-740-5327</a></div>
+</header>
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-step"><div class="p-circle active" id="pc1">1</div><div class="p-label">Service</div></div>
+    <div class="p-line" id="pl1"></div>
+    <div class="progress-step"><div class="p-circle" id="pc2">2</div><div class="p-label">Sessions</div></div>
+    <div class="p-line" id="pl2"></div>
+    <div class="progress-step"><div class="p-circle" id="pc3">3</div><div class="p-label">Your info</div></div>
+    <div class="p-line" id="pl3"></div>
+    <div class="progress-step"><div class="p-circle" id="pc4">4</div><div class="p-label">Confirm</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step1">
+    <h2 class="section-title">Choose a service</h2>
+    <p class="section-sub">All behind-the-wheel sessions include free pickup &amp; dropoff in the DFW area</p>
+    <div class="section-divider"><div></div><span>Driving lessons</span><div></div></div>
+    <div class="pkg-grid">
+      <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert',85)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only &middot; Includes DPS appointment &middot; Full $85 payment to confirm</div></div><div class="pkg-price">$85</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">Single class</div><div class="pkg-detail">1 session &middot; 2 hrs &middot; Behind-the-wheel &middot; $25 deposit to confirm</div></div><div class="pkg-price">$90</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">Highway class</div><div class="pkg-detail">1 session &middot; 2 hrs &middot; Highway driving focus &middot; $25 deposit to confirm</div><span class="pkg-badge badge-highway">Highway focus</span></div><div class="pkg-price">$110</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class',50)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions &middot; 6 hrs &middot; $83/session &middot; $50 deposit to confirm</div></div><div class="pkg-price">$350</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class',50)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions &middot; 8 hrs &middot; $80/session &middot; $50 deposit to confirm</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class',50)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions &middot; 10 hrs &middot; $78/session &middot; $50 deposit to confirm</div></div><div class="pkg-price">$490</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class',50)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions &middot; 12 hrs &middot; $76/session &middot; $50 deposit to confirm</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div></div>
+    </div>
+    <div class="section-divider"><div></div><span>Road test services</span><div></div></div>
+    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time. $25 deposit required.</p>
+    <div class="pkg-grid">
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test - Own Vehicle',85,0,'signup',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">Road test &mdash; own vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; You bring your own vehicle</div></div><div class="pkg-price">$85</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test - School Vehicle',100,0,'signup',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">Road test &mdash; school vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; We provide the vehicle</div></div><div class="pkg-price">$100</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">1 hr practice + road test</div><div class="pkg-detail">1 hr warmup at our location &middot; followed by road test</div><span class="pkg-badge badge-recommended">Recommended</span></div><div class="pkg-price">$150</div></div></div>
+      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class',25)"><div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div><div class="pkg-top"><div><div class="pkg-name">Class + road test</div><div class="pkg-detail">1 session &middot; 2 hrs behind-the-wheel &middot; followed by road test</div></div><div class="pkg-price">$190</div></div></div>
+    </div>
+    <p class="err-msg" id="pkg-err">Please select a service to continue.</p>
+    <button class="btn-primary" style="margin-top:1.25rem" onclick="goToStep2()">Continue &rarr;</button>
+  </div>
+
+  <!-- STEP 2a -->
+  <div class="step" id="step2cert">
+    <button class="btn-back" onclick="goStep(1)">&larr; Back</button>
+    <h2 class="section-title" id="cert-title">Sign up</h2>
+    <p class="section-sub" id="cert-sub">Fill in your details and we'll be in touch.</p>
+    <div class="info-banner banner-yellow" id="cert-banner"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="cert-fname" placeholder="First name" autocomplete="given-name"/><p class="err-msg" id="cert-fname-err">Letters only please.</p></div>
+      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="cert-lname" placeholder="Last name" autocomplete="family-name"/><p class="err-msg" id="cert-lname-err">Letters only please.</p></div>
+    </div>
+    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="cert-phone" placeholder="(000) 000-0000" maxlength="14" autocomplete="tel" oninput="formatPhone(this)"/><p class="err-msg" id="cert-phone-err">Please enter a valid 10-digit phone number.</p></div>
+    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="cert-email" placeholder="you@email.com" autocomplete="email"/><p class="err-msg" id="cert-email-err">Please enter a valid email (must include @).</p></div>
+    <div class="field-group" id="cert-date-group" style="display:none">
+      <label class="field-label">Preferred date <span class="field-required">*</span></label>
+      <input type="date" id="cert-date"/>
+      <p class="field-hint">We'll contact you to confirm the exact time.</p>
+      <p class="err-msg" id="cert-date-err">Please select a preferred date.</p>
+    </div>
+    <div class="field-group"><label class="field-label">Street address <span class="field-required">*</span></label><input type="text" id="cert-street" placeholder="123 Main St" autocomplete="street-address"/><p class="err-msg" id="cert-street-err">Please enter your street address.</p></div>
+    <div class="row3">
+      <div class="field-group full-col"><label class="field-label">City <span class="field-required">*</span></label><input type="text" id="cert-city" placeholder="Frisco" autocomplete="address-level2"/><p class="err-msg" id="cert-city-err">Required.</p></div>
+      <div class="field-group"><label class="field-label">State <span class="field-required">*</span></label><select id="cert-state"><option value="TX">TX</option><option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option></select></div>
+      <div class="field-group"><label class="field-label">ZIP <span class="field-required">*</span></label><input type="text" id="cert-zip" placeholder="75033" maxlength="5" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')"/><p class="err-msg" id="cert-zip-err">5-digit ZIP required.</p></div>
+    </div>
+    <p class="err-msg" id="cert-err">Please fill in all required fields.</p>
+    <button class="btn-primary" onclick="submitCert()">Continue to payment &rarr;</button>
+  </div>
+
+  <!-- STEP 2b -->
+  <div class="step" id="step2sessions">
+    <button class="btn-back" onclick="goStep(1)">&larr; Back</button>
+    <h2 class="section-title">Book your sessions</h2>
+    <p class="section-sub" id="sessions-sub">Each session is 2 hrs on a different day. Fridays are unavailable.</p>
+    <div id="sessions-container"></div>
+    <p class="err-msg" id="sessions-err">Please complete all sessions before continuing.</p>
+    <button class="btn-primary" onclick="goToInfo()">Continue &rarr;</button>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step3">
+    <button class="btn-back" onclick="backToSessions()">&larr; Back</button>
+    <h2 class="section-title">Your details</h2>
+    <p class="section-sub">We'll use this to confirm your booking</p>
+    <div id="deposit-banner-wrap"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="fname" placeholder="First name" autocomplete="given-name"/><p class="err-msg" id="fname-err">Letters only please.</p></div>
+      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="lname" placeholder="Last name" autocomplete="family-name"/><p class="err-msg" id="lname-err">Letters only please.</p></div>
+    </div>
+    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="phone" placeholder="(000) 000-0000" maxlength="14" autocomplete="tel" oninput="formatPhone(this)"/><p class="err-msg" id="phone-err">Please enter a valid 10-digit phone number.</p></div>
+    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="email" placeholder="you@email.com" autocomplete="email"/><p class="err-msg" id="email-err">Please enter a valid email (must include @).</p></div>
+    <div class="field-group">
+      <label class="field-label">Street address <span class="field-required">*</span></label>
+      <input type="text" id="street" placeholder="123 Main St" autocomplete="street-address"/>
+      <div class="distance-notice"><span class="notice-icon">&#9888;&#65039;</span><span>Pickup &amp; dropoff is included. If your address is outside our usual service area, the instructor may add <strong>$10&ndash;$15</strong>. You'll always be notified first.</span></div>
+      <p class="err-msg" id="street-err">Please enter your street address.</p>
+    </div>
+    <div class="row3">
+      <div class="field-group full-col"><label class="field-label">City <span class="field-required">*</span></label><input type="text" id="city" placeholder="Frisco" autocomplete="address-level2"/><p class="err-msg" id="city-err">Required.</p></div>
+      <div class="field-group"><label class="field-label">State <span class="field-required">*</span></label><select id="state"><option value="TX">TX</option><option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option></select></div>
+      <div class="field-group"><label class="field-label">ZIP <span class="field-required">*</span></label><input type="text" id="zip" placeholder="75033" maxlength="5" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')"/><p class="err-msg" id="zip-err">5-digit ZIP required.</p></div>
+    </div>
+    <p class="err-msg" id="info-err">Please fix the errors above before continuing.</p>
+    <button class="btn-primary" onclick="submitBooking()">Continue to payment &rarr;</button>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="step4">
+    <div class="zelle-box">
+      <div class="zelle-title"><span>&#128156;</span> Send your deposit via Zelle</div>
+      <div class="zelle-sub">Send the amount below to reserve your spot. Once we receive it, your booking is confirmed.</div>
+      <div class="zelle-amount" id="zelle-amount">$50</div>
+      <div class="zelle-amount-label" id="zelle-amount-label">Deposit due now</div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Zelle phone number</div><div class="zelle-detail-val">469-740-5327</div></div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Name on Zelle</div><div class="zelle-detail-val">Kaisar's Driving School LLC</div></div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Memo / note</div><div class="zelle-detail-val" id="zelle-memo">&mdash;</div></div>
+      <div class="zelle-note">&#128248; After sending, <strong>screenshot your Zelle payment</strong> and text it to <strong>469-740-5327</strong>. We'll confirm your booking within a few hours.</div>
+    </div>
+    <div class="receipt">
+      <div class="receipt-header">
+        <div class="receipt-school">Kaisar's Driving School</div>
+        <div class="receipt-addr-text">4645 Avon Ln Ste 355, Frisco, TX 75033</div>
+        <div class="receipt-ref" id="rec-ref">Booking ref: &mdash;</div>
+      </div>
+      <div class="receipt-body">
+        <div class="r-section"><div class="r-section-title">Student</div>
+          <div class="r-row"><span class="r-key">Name</span><span class="r-val" id="rec-name">&mdash;</span></div>
+          <div class="r-row"><span class="r-key">Phone</span><span class="r-val" id="rec-phone">&mdash;</span></div>
+          <div class="r-row"><span class="r-key">Email</span><span class="r-val" id="rec-email">&mdash;</span></div>
+          <div class="r-row"><span class="r-key">Address</span><span class="r-val" id="rec-addr">&mdash;</span></div>
+        </div>
+        <div class="r-section"><div class="r-section-title">Service</div>
+          <div class="r-row"><span class="r-key">Package</span><span class="r-val" id="rec-pkg">&mdash;</span></div>
+          <div class="r-row" id="rec-pickup-row"><span class="r-key">Pickup &amp; dropoff</span><span class="r-val" style="color:var(--green)">Included &#10003;</span></div>
+          <div class="r-row" id="rec-prefdate-row" style="display:none"><span class="r-key">Preferred date</span><span class="r-val" id="rec-prefdate">&mdash;</span></div>
+        </div>
+        <div class="r-section" id="rec-sessions-section"><div class="r-section-title">Scheduled sessions</div><div id="rec-sessions-list"></div></div>
+        <div class="r-section"><div class="r-section-title">Payment</div>
+          <div class="r-row"><span class="r-key">Method</span><span class="r-val">Zelle &middot; 469-740-5327</span></div>
+          <div id="rec-deposit-rows"></div>
+        </div>
+      </div>
+      <div class="receipt-distance-note" id="rec-distance-note">&#9888;&#65039; <strong>Distance note:</strong> If your address is outside our usual service area, the instructor may adjust the price by $10&ndash;$15. You'll be contacted before your session.</div>
+      <div class="receipt-total-bar">
+        <div><div class="total-label">Total</div><div class="payment-note" id="rec-payment-note">&mdash;</div></div>
+        <div class="total-amount" id="rec-total">&mdash;</div>
+      </div>
+    </div>
+    <div class="contact-box"><p>Questions? We're happy to help.</p><a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#5e353f372d3f2c2d3a2c37283730392d3d363131321e39333f3732703d3133"><span class="__cf_email__" data-cfemail="117a70786270636275637867787f766272797e7e7d51767c70787d3f727e7c">[email&#160;protected]</span></a></div>
+    <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
+  </div>
+</div>
+
+<!-- Firebase compat - no module needed, works everywhere -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig={apiKey:"AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",authDomain:"kaisars-driving-school.firebaseapp.com",projectId:"kaisars-driving-school",storageBucket:"kaisars-driving-school.firebasestorage.app",messagingSenderId:"920051696926",appId:"1:920051696926:web:7eefcadaf11db47894b50f"};
+firebase.initializeApp(firebaseConfig);
+var db=firebase.firestore();
+
+var INSTRUCTORS=[{id:'any',name:'Any / Earliest',initials:'★',any:true},{id:'kaisar',name:'Kaisar',initials:'KA'},{id:'adib',name:'Adib',initials:'AD'},{id:'kaifi',name:'Kaifi',initials:'KF'}];
+var REAL_INSTRUCTORS=['kaisar','adib','kaifi'];
+var SLOTS=[{id:'am',label:'9:00 AM - 11:00 AM'},{id:'pm',label:'12:00 PM - 2:00 PM'},{id:'eve',label:'5:00 PM - 7:00 PM'}];
+var ORDINALS=['First','Second','Third','Fourth','Fifth','Sixth'];
+var booking={pkg:'',price:0,sessions:0,type:'',sessionData:[],deposit:0};
+var bookedSlots={};
+var autoAssigned={};
+
+function formatPhone(input){var v=input.value.replace(/\D/g,'').slice(0,10);if(v.length>=7)v='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);else if(v.length>=4)v='('+v.slice(0,3)+') '+v.slice(3);else if(v.length>0)v='('+v;input.value=v;}
+function isValidPhone(v){return v.replace(/\D/g,'').length===10;}
+function isValidEmail(v){return v.includes('@')&&v.includes('.')&&v.indexOf('@')<v.lastIndexOf('.');}
+function isValidZip(v){return /^\d{5}$/.test(v);}
+function isValidName(v){return v.trim().length>=1&&/^[a-zA-Z\s'\-]+$/.test(v.trim());}
+function showLoading(t){document.getElementById('loadingText').textContent=t;document.getElementById('loadingOverlay').classList.add('show');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show');}
+function slotKey(inst,date,slot){return inst+'_'+date+'_'+slot;}
+function isFriday(d){if(!d)return false;return new Date(d+'T12:00:00').getDay()===5;}
+function fullAddress(street,city,state,zip){return [street,city,state+' '+zip].filter(Boolean).join(', ');}
+function isBooked(inst,date,slot){return !!bookedSlots[slotKey(inst,date,slot)];}
+function anyAvail(date,slot){return REAL_INSTRUCTORS.some(function(i){return !isBooked(i,date,slot);});}
+function pickInst(date,slot){return REAL_INSTRUCTORS.find(function(i){return !isBooked(i,date,slot);})||null;}
+
+function loadBookedSlots(){
+  return db.collection('slots').doc('booked').get().then(function(snap){
+    bookedSlots={};
+    if(snap.exists)bookedSlots=snap.data();
+  }).catch(function(){bookedSlots={};});
+}
+function saveSlotDB(inst,date,slot){
+  var key=slotKey(inst,date,slot);
+  return db.collection('slots').doc('booked').get().then(function(snap){
+    var data=snap.exists?snap.data():{};
+    data[key]=true;
+    bookedSlots[key]=true;
+    return db.collection('slots').doc('booked').set(data);
+  }).catch(function(){});
+}
+function saveBookingRecord(record){
+  return db.collection('bookings').add(record).catch(function(){});
+}
+
+function findEarliest(excludeDates){
+  excludeDates=excludeDates||[];
+  var today=new Date();
+  for(var d=0;d<60;d++){
+    var date=new Date(today);date.setDate(today.getDate()+d);
+    if(date.getDay()===5)continue;
+    var dateStr=date.toISOString().split('T')[0];
+    if(excludeDates.indexOf(dateStr)>=0)continue;
+    for(var si=0;si<SLOTS.length;si++){
+      var inst=pickInst(dateStr,SLOTS[si].id);
+      if(inst){
+        var dateFormatted=date.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+        return{inst:inst,dateStr:dateStr,dateFormatted:dateFormatted,slot:SLOTS[si].id,slotLabel:SLOTS[si].label};
+      }
+    }
+  }
+  return null;
+}
+
+function setProgress(n){
+  for(var i=1;i<=4;i++){
+    var c=document.getElementById('pc'+i);
+    if(i<n){c.className='p-circle done';c.textContent='✓';}
+    else if(i===n){c.className='p-circle active';c.textContent=i;}
+    else{c.className='p-circle';c.textContent=i;}
+    if(i<=3)document.getElementById('pl'+i).className='p-line'+(i<n?' done':'');
+  }
+}
+function showStep(id,n){document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');setProgress(n);window.scrollTo({top:0,behavior:'smooth'});}
+function goStep(n){var map={1:'step1',2:'step2sessions',3:'step3',4:'step4'};showStep(map[n],n);}
+
+function selectPkg(el,name,price,sessions,type,deposit){
+  document.querySelectorAll('.pkg-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  booking.pkg=name;booking.price=price;booking.sessions=sessions;booking.type=type;booking.deposit=deposit;
+}
+
+function goToStep2(){
+  if(!booking.pkg){document.getElementById('pkg-err').style.display='block';return;}
+  document.getElementById('pkg-err').style.display='none';
+  if(booking.type==='cert'||booking.type==='signup'){
+    var isCert=booking.type==='cert';
+    document.getElementById('cert-title').textContent=booking.pkg;
+    document.getElementById('cert-sub').textContent=isCert?'Fill in your details and we\'ll reach out to schedule everything.':'Select a preferred date and we\'ll contact you to confirm a time.';
+    document.getElementById('cert-banner').textContent=isCert?'Full payment of $85 is due via Zelle to confirm your spot.':'A $25 deposit via Zelle is required to confirm your booking.';
+    var dg=document.getElementById('cert-date-group');
+    if(!isCert){dg.style.display='block';document.getElementById('cert-date').min=new Date().toISOString().split('T')[0];document.getElementById('cert-date').value='';}
+    else{dg.style.display='none';}
+    ['cert-fname','cert-lname','cert-phone','cert-email','cert-street','cert-city','cert-zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+    showStep('step2cert',2);return;
+  }
+  showLoading('Checking availability...');
+  loadBookedSlots().then(function(){
+    hideLoading();
+    booking.sessionData=[];
+    for(var i=0;i<booking.sessions;i++)booking.sessionData.push({instructor:'',date:'',slot:''});
+    autoAssigned={};
+    var bal=booking.price-booking.deposit;
+    document.getElementById('deposit-banner-wrap').innerHTML='<div class="info-banner banner-green">A <strong>$'+booking.deposit+' deposit</strong> via Zelle is required to confirm. The remaining <strong>$'+bal+'</strong> is due at or before your'+(booking.sessions>1?' 2nd':'')+' session.</div>';
+    renderSessions();
+    showStep('step2sessions',2);
+  });
+}
+
+function renderSessions(){
+  var c=document.getElementById('sessions-container');c.innerHTML='';
+  document.getElementById('sessions-sub').textContent=booking.sessions===1?'Pick your instructor, date, and time slot. Fridays are unavailable.':'Book '+booking.sessions+' sessions — each on a different day. Fridays are unavailable.';
+  booking.sessionData.forEach(function(sd,idx){
+    var div=document.createElement('div');div.className='session-block';
+    div.innerHTML='<div class="session-block-title"><div class="session-num">'+(idx+1)+'</div>'+(ORDINALS[idx]||'Session '+(idx+1))+' session</div>'
+      +'<div class="field-group"><label class="field-label">Instructor <span class="field-required">*</span></label>'
+      +'<div class="instructor-grid" id="ig-'+idx+'">'
+      +INSTRUCTORS.map(function(inst){return '<div class="instructor-btn'+(sd.instructor===inst.id?' selected':'')+'" id="ib-'+idx+'-'+inst.id+'" onclick="selectInstructor('+idx+',\''+inst.id+'\')">'+'<div class="i-avatar'+(inst.any?' any':'')+'">'+( inst.any?'★':inst.initials)+'</div>'+'<div class="i-name">'+(inst.any?'Any /<br>Earliest':inst.name)+'</div></div>';}).join('')
+      +'</div><p class="err-msg" id="ie-'+idx+'">Please select an instructor.</p></div>'
+      +'<div id="auto-box-'+idx+'" class="auto-confirm-box"></div>'
+      +'<div id="manual-fields-'+idx+'">'
+      +'<div class="row2"><div class="field-group"><label class="field-label">Date <span class="field-required">*</span></label><input type="date" id="di-'+idx+'" value="'+sd.date+'" min="'+new Date().toISOString().split('T')[0]+'" onchange="onDateChange('+idx+')"/><p class="err-msg" id="de-'+idx+'">Please select a date.</p></div>'
+      +'<div class="field-group"><label class="field-label">Time slot <span class="field-required">*</span></label><div id="sw-'+idx+'">'+renderSlots(idx)+'</div><p class="err-msg" id="se-'+idx+'">Please select a time slot.</p></div></div>'
+      +'</div>';
+    c.appendChild(div);
+  });
+}
+
+function renderSlots(idx){
+  var sd=booking.sessionData[idx];
+  if(!sd.instructor||sd.instructor==='any'||!sd.date)return'<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.6">Select an instructor<br>and date first</div>';
+  return'<div class="slot-list">'+SLOTS.map(function(s){
+    var booked=isBooked(sd.instructor,sd.date,s.id);var sel=sd.slot===s.id;
+    return'<button class="slot-btn'+(sel?' selected':'')+'" '+(booked?'disabled':'')+' onclick="selectSlot('+idx+',\''+s.id+'\')">'+'<span style="font-size:13px;font-weight:500">'+s.label+'</span><span class="slot-tag">'+(booked?'Taken':sel?'✓':'')+'</span></button>';
+  }).join('')+'</div>';
+}
+
+function selectInstructor(idx,instId){
+  booking.sessionData[idx].instructor=instId;
+  booking.sessionData[idx].slot='';booking.sessionData[idx].date='';
+  document.querySelectorAll('#ig-'+idx+' .instructor-btn').forEach(function(b){b.classList.remove('selected');});
+  document.getElementById('ib-'+idx+'-'+instId).classList.add('selected');
+  document.getElementById('ie-'+idx).style.display='none';
+  delete autoAssigned[idx];
+  var autoBox=document.getElementById('auto-box-'+idx);
+  var manualFields=document.getElementById('manual-fields-'+idx);
+  if(instId==='any'){
+    manualFields.style.display='none';
+    autoBox.className='auto-confirm-box show';
+    autoBox.innerHTML='<div class="auto-confirm-title">Finding earliest available slot...</div>';
+    showLoading('Searching for earliest slot...');
+    loadBookedSlots().then(function(){
+      hideLoading();
+      var usedDates=[];
+      for(var i=0;i<booking.sessionData.length;i++){
+        if(i===idx)continue;
+        if(booking.sessionData[i].date)usedDates.push(booking.sessionData[i].date);
+        else if(autoAssigned[i])usedDates.push(autoAssigned[i].dateStr);
+      }
+      var result=findEarliest(usedDates);
+      if(!result){autoBox.innerHTML='<div class="auto-confirm-title" style="color:var(--red)">No slots found in the next 60 days.</div><div class="auto-confirm-detail">Please call us: <a href="tel:+14697405327" style="color:var(--green)">469-740-5327</a></div>';return;}
+      var instName=INSTRUCTORS.find(function(x){return x.id===result.inst;})||{name:result.inst};
+      autoBox.innerHTML='<div class="auto-confirm-title">✓ Earliest available slot found</div>'
+        +'<div class="auto-confirm-detail"><strong>'+result.dateFormatted+'</strong><br>'+result.slotLabel+' · Instructor: '+instName.name+'</div>'
+        +'<div class="auto-confirm-btns"><button class="btn-confirm-yes" onclick="confirmAuto('+idx+')">Yes, book this slot</button><button class="btn-confirm-no" onclick="declineAuto('+idx+')">Choose manually instead</button></div>';
+      autoAssigned[idx]=result;
+    });
+  } else {
+    manualFields.style.display='block';
+    autoBox.className='auto-confirm-box';autoBox.innerHTML='';
+    var di=document.getElementById('di-'+idx);if(di)di.value='';
+    document.getElementById('sw-'+idx).innerHTML=renderSlots(idx);
+  }
+}
+
+function confirmAuto(idx){
+  var result=autoAssigned[idx];if(!result)return;
+  booking.sessionData[idx].instructor=result.inst;
+  booking.sessionData[idx].date=result.dateStr;
+  booking.sessionData[idx].slot=result.slot;
+  var instName=INSTRUCTORS.find(function(x){return x.id===result.inst;})||{name:result.inst};
+  var autoBox=document.getElementById('auto-box-'+idx);
+  autoBox.innerHTML='<div class="auto-confirm-title">✓ Slot confirmed</div><div class="auto-confirm-detail"><strong>'+result.dateFormatted+'</strong><br>'+result.slotLabel+' · '+instName.name+'</div>';
+  document.getElementById('manual-fields-'+idx).style.display='none';
+  document.getElementById('ie-'+idx).style.display='none';
+  document.getElementById('se-'+idx).style.display='none';
+  document.getElementById('de-'+idx).style.display='none';
+}
+
+function declineAuto(idx){
+  delete autoAssigned[idx];
+  booking.sessionData[idx].instructor='';booking.sessionData[idx].date='';booking.sessionData[idx].slot='';
+  document.querySelectorAll('#ig-'+idx+' .instructor-btn').forEach(function(b){b.classList.remove('selected');});
+  var autoBox=document.getElementById('auto-box-'+idx);autoBox.className='auto-confirm-box';autoBox.innerHTML='';
+  document.getElementById('manual-fields-'+idx).style.display='block';
+}
+
+function onDateChange(idx){
+  var val=document.getElementById('di-'+idx).value;
+  if(isFriday(val)){document.getElementById('di-'+idx).value='';booking.sessionData[idx].date='';var el=document.getElementById('de-'+idx);el.textContent='Fridays are unavailable — please choose another day.';el.style.display='block';document.getElementById('sw-'+idx).innerHTML=renderSlots(idx);return;}
+  booking.sessionData[idx].date=val;booking.sessionData[idx].slot='';
+  document.getElementById('de-'+idx).style.display='none';document.getElementById('sw-'+idx).innerHTML=renderSlots(idx);
+  checkDupeDates();
+}
+function selectSlot(idx,slotId){
+  booking.sessionData[idx].slot=slotId;
+  document.getElementById('se-'+idx).style.display='none';
+  document.getElementById('sw-'+idx).innerHTML=renderSlots(idx);
+}
+function checkDupeDates(){
+  var dates=booking.sessionData.map(function(sd){return sd.date;});
+  booking.sessionData.forEach(function(sd,i){
+    var el=document.getElementById('de-'+i);
+    if(el&&sd.date&&dates.filter(function(d){return d&&d===sd.date;}).length>1){el.textContent='Each session must be on a different day.';el.style.display='block';}
+    else if(el&&el.textContent.indexOf('different')>=0){el.style.display='none';}
+  });
+}
+function backToSessions(){if(booking.type==='cert'||booking.type==='signup')showStep('step2cert',2);else showStep('step2sessions',2);}
+
+function goToInfo(){
+  var sd=booking.sessionData;var valid=true;
+  sd.forEach(function(s,i){
+    var isAuto=autoAssigned[i]&&s.date&&s.slot&&s.instructor&&s.instructor!=='any';
+    if(!s.instructor){document.getElementById('ie-'+i).style.display='block';valid=false;}
+    if(!isAuto){
+      if(!s.date){var el=document.getElementById('de-'+i);if(el){el.textContent='Please select a date.';el.style.display='block';}valid=false;}
+      if(s.date&&isFriday(s.date)){var el2=document.getElementById('de-'+i);if(el2){el2.textContent='Fridays are unavailable.';el2.style.display='block';}valid=false;}
+      if(!s.slot){var el3=document.getElementById('se-'+i);if(el3)el3.style.display='block';valid=false;}
+    }
+  });
+  var dates=sd.map(function(s){return s.date;}).filter(function(d){return d;});
+  if(dates.length!==new Set(dates).size){document.getElementById('sessions-err').textContent='Each session must be on a different day.';document.getElementById('sessions-err').style.display='block';valid=false;}
+  else{document.getElementById('sessions-err').style.display='none';}
+  if(!valid)return;
+  showLoading('Confirming availability...');
+  loadBookedSlots().then(function(){
+    hideLoading();var conflict=false;
+    sd.forEach(function(s,i){
+      if(isBooked(s.instructor,s.date,s.slot)){var el=document.getElementById('se-'+i);if(el){el.textContent='This slot is no longer available — please choose another.';el.style.display='block';}booking.sessionData[i].slot='';var sw=document.getElementById('sw-'+i);if(sw)sw.innerHTML=renderSlots(i);conflict=true;}
+    });
+    if(!conflict)showStep('step3',3);
+  });
+}
+
+function validateField(id,fn,errId,msg){var el=document.getElementById(id);var errEl=document.getElementById(errId);if(!el||!errEl)return true;var ok=fn(el.value);el.classList.toggle('invalid',!ok);errEl.style.display=ok?'none':'block';if(!ok)errEl.textContent=msg;return ok;}
+function validateAddr(prefix){
+  var ok=true;
+  if(!validateField(prefix+'street',function(v){return v.trim().length>3;},prefix+'street-err','Please enter your street address.'))ok=false;
+  if(!validateField(prefix+'city',function(v){return /^[a-zA-Z\s\-]+$/.test(v.trim())&&v.trim().length>1;},prefix+'city-err','Please enter a valid city.'))ok=false;
+  if(!validateField(prefix+'zip',function(v){return isValidZip(v);},prefix+'zip-err','Please enter a valid 5-digit ZIP.'))ok=false;
+  return ok;
+}
+function getAddr(prefix){
+  return fullAddress(document.getElementById(prefix+'street').value.trim(),document.getElementById(prefix+'city').value.trim(),document.getElementById(prefix+'state').value,document.getElementById(prefix+'zip').value.trim());
+}
+
+function submitCert(){
+  var ok=true;
+  if(!validateField('cert-fname',isValidName,'cert-fname-err','Letters only please.'))ok=false;
+  if(!validateField('cert-lname',isValidName,'cert-lname-err','Letters only please.'))ok=false;
+  if(!validateField('cert-phone',isValidPhone,'cert-phone-err','Please enter a valid 10-digit phone number.'))ok=false;
+  if(!validateField('cert-email',isValidEmail,'cert-email-err','Please enter a valid email (must include @).'))ok=false;
+  if(!validateAddr('cert-'))ok=false;
+  var isSignup=booking.type==='signup';
+  var prefDate=document.getElementById('cert-date').value;
+  if(isSignup&&!prefDate){document.getElementById('cert-date-err').style.display='block';ok=false;}
+  else{document.getElementById('cert-date-err').style.display='none';}
+  if(!ok){document.getElementById('cert-err').style.display='block';return;}
+  document.getElementById('cert-err').style.display='none';
+  showLoading('Saving...');
+  var fn=document.getElementById('cert-fname').value.trim();
+  var ln=document.getElementById('cert-lname').value.trim();
+  var ph=document.getElementById('cert-phone').value.trim();
+  var em=document.getElementById('cert-email').value.trim();
+  var addrStr=getAddr('cert-');
+  var formattedDate='';
+  if(prefDate){var dd=new Date(prefDate+'T12:00:00');formattedDate=dd.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+  var ref='KDS-'+Date.now().toString().slice(-7);
+  saveBookingRecord({ref:ref,name:fn+' '+ln,phone:ph,email:em,address:addrStr,package:booking.pkg,price:booking.price,type:booking.type,preferredDate:formattedDate,sessions:[],bookedAt:new Date().toISOString(),deposit:booking.deposit}).then(function(){
+    hideLoading();buildReceipt(fn+' '+ln,ph,em,addrStr,false,formattedDate,ref);
+  });
+}
+
+function submitBooking(){
+  var ok=true;
+  if(!validateField('fname',isValidName,'fname-err','Letters only please.'))ok=false;
+  if(!validateField('lname',isValidName,'lname-err','Letters only please.'))ok=false;
+  if(!validateField('phone',isValidPhone,'phone-err','Please enter a valid 10-digit phone number.'))ok=false;
+  if(!validateField('email',isValidEmail,'email-err','Please enter a valid email (must include @).'))ok=false;
+  if(!validateAddr(''))ok=false;
+  if(!ok){document.getElementById('info-err').style.display='block';return;}
+  document.getElementById('info-err').style.display='none';
+  showLoading('Saving your booking...');
+  loadBookedSlots().then(function(){
+    var sd=booking.sessionData;var conflict=false;
+    sd.forEach(function(s){if(isBooked(s.instructor,s.date,s.slot))conflict=true;});
+    if(conflict){hideLoading();alert('A slot was just taken. Please go back and choose a different time.');backToSessions();return;}
+    var saves=sd.map(function(s){return saveSlotDB(s.instructor,s.date,s.slot);});
+    Promise.all(saves).then(function(){
+      var sessionsSummary=sd.map(function(s,i){
+        var d=new Date(s.date+'T12:00:00');
+        return{session:i+1,instructor:(INSTRUCTORS.find(function(x){return x.id===s.instructor;})||{name:s.instructor}).name,instructorId:s.instructor,date:s.date,dateFormatted:d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}),slot:s.slot,slotLabel:(SLOTS.find(function(x){return x.id===s.slot;})||{label:s.slot}).label};
+      });
+      var fn=document.getElementById('fname').value.trim();
+      var ln=document.getElementById('lname').value.trim();
+      var ph=document.getElementById('phone').value.trim();
+      var em=document.getElementById('email').value.trim();
+      var addrStr=getAddr('');
+      var ref='KDS-'+Date.now().toString().slice(-7);
+      saveBookingRecord({ref:ref,name:fn+' '+ln,phone:ph,email:em,address:addrStr,package:booking.pkg,price:booking.price,type:booking.type,preferredDate:'',sessions:sessionsSummary,bookedAt:new Date().toISOString(),deposit:booking.deposit}).then(function(){
+        hideLoading();buildReceipt(fn+' '+ln,ph,em,addrStr,true,'',ref);
+      });
+    });
+  });
+}
+
+function buildReceipt(name,phone,email,addr,hasSessions,prefDate,ref){
+  document.getElementById('rec-ref').textContent='Booking ref: '+ref+' · '+new Date().toLocaleDateString('en-US');
+  document.getElementById('rec-name').textContent=name;document.getElementById('rec-phone').textContent=phone;
+  document.getElementById('rec-email').textContent=email;document.getElementById('rec-addr').textContent=addr;
+  document.getElementById('rec-pkg').textContent=booking.pkg;document.getElementById('rec-total').textContent='$'+booking.price;
+  document.getElementById('zelle-amount').textContent='$'+booking.deposit;
+  document.getElementById('zelle-amount-label').textContent=booking.type==='cert'?'Full payment due now':'Deposit due now';
+  document.getElementById('zelle-memo').textContent=ref+' · '+booking.pkg;
+  if(prefDate){document.getElementById('rec-prefdate').textContent=prefDate;document.getElementById('rec-prefdate-row').style.display='flex';}
+  else{document.getElementById('rec-prefdate-row').style.display='none';}
+  document.getElementById('rec-pickup-row').style.display=hasSessions?'flex':'none';
+  if(hasSessions){
+    document.getElementById('rec-sessions-section').style.display='block';
+    var list=document.getElementById('rec-sessions-list');list.innerHTML='';
+    booking.sessionData.forEach(function(s,i){
+      var d=new Date(s.date+'T12:00:00');
+      var dateStr=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+      var row=document.createElement('div');row.className='r-row';
+      row.innerHTML='<span class="r-key">Session '+(i+1)+'</span><span class="r-val">'+dateStr+' · '+(SLOTS.find(function(x){return x.id===s.slot;})||{label:s.slot}).label+' · '+(INSTRUCTORS.find(function(x){return x.id===s.instructor;})||{name:s.instructor}).name+'</span>';
+      list.appendChild(row);
+    });
+  } else{document.getElementById('rec-sessions-section').style.display='none';}
+  var depRows=document.getElementById('rec-deposit-rows');var payNote=document.getElementById('rec-payment-note');
+  if(booking.type==='cert'){
+    depRows.innerHTML='<div class="r-row"><span class="r-key">Amount due</span><span class="r-val" style="color:#6d1ed4">$'+booking.deposit+' via Zelle</span></div>';
+    payNote.textContent='Full payment due via Zelle';
+  } else{
+    var bal=booking.price-booking.deposit;
+    depRows.innerHTML='<div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#6d1ed4">$'+booking.deposit+' via Zelle</span></div><div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$'+bal+'</span></div><div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before '+(hasSessions&&booking.sessions>1?'2nd session':'ser
