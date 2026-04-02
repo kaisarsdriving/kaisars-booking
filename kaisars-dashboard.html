@@ -128,7 +128,20 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 .badge-unpaid { background: var(--red-light); color: var(--red); }
 .stat-val.red { color: var(--red); }
 .booking-card.unpaid-deposit { border-left: 4px solid var(--red); }
-@media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } .filter-search { width: 100%; } }
+.date-view-bar { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.date-view-label { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.date-view-input { padding: 7px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--white); -webkit-appearance: none; }
+.date-view-input:focus { border-color: var(--green); }
+.btn-today { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.btn-today:hover { background: var(--green-dark); }
+.btn-clear-date { background: var(--white); color: var(--muted); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; }
+.btn-clear-date:hover { border-color: var(--text); color: var(--text); }
+.today-sessions-banner { background: var(--green-light); border: 1.5px solid var(--green-mid); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--green-dark); font-weight: 500; }
+.pay-btn.fullpaid { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+.pay-btn.fullpaid.active { background: #7c3aed; color: white; border-color: #7c3aed; }
+.badge-fullpaid { background: #ede9fe; color: #5b21b6; }
+.payment-status-bar { display: flex; align-items: center; justify-content: space-between; background: var(--faint); border-top: 1px solid var(--border); padding: 10px 1.25rem; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } .filter-search { width: 100%; } .date-view-bar { flex-direction: column; align-items: flex-start; } }
 </style>
 </head>
 <body>
@@ -165,7 +178,8 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
       <div class="stat-card"><div class="stat-label">Total bookings</div><div class="stat-val" id="stat-total">-</div></div>
       <div class="stat-card"><div class="stat-label">Upcoming sessions</div><div class="stat-val green" id="stat-upcoming">-</div></div>
       <div class="stat-card"><div class="stat-label">Pending signups</div><div class="stat-val amber" id="stat-signups">-</div></div>
-      <div class="stat-card"><div class="stat-label">Deposits received</div><div class="stat-val green" id="stat-paid">-</div></div>
+      <div class="stat-card"><div class="stat-label">Deposit received</div><div class="stat-val green" id="stat-paid">-</div></div>
+      <div class="stat-card"><div class="stat-label">Fully paid</div><div class="stat-val" style="color:#7c3aed" id="stat-fullpaid">-</div></div>
       <div class="stat-card"><div class="stat-label">Awaiting deposit</div><div class="stat-val red" id="stat-unpaid">-</div></div>
       <div class="stat-card"><div class="stat-label">Revenue booked</div><div class="stat-val" id="stat-revenue">-</div></div>
     </div>
@@ -186,6 +200,13 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
         <div class="filter-btn" id="inst-kaifi" onclick="setInstructor('kaifi')">Kaifi</div>
       </div>
     </div>
+    <div class="date-view-bar">
+      <span class="date-view-label">&#128197; View sessions for date:</span>
+      <input type="date" class="date-view-input" id="date-filter-input" onchange="renderBookings()" />
+      <button class="btn-today" onclick="setDateToday()">Today</button>
+      <button class="btn-clear-date" onclick="clearDateFilter()">Show all dates</button>
+    </div>
+    <div id="today-banner" style="display:none"></div>
     <div class="bookings-list" id="bookings-list"><div class="loading-msg">Loading bookings...</div></div>
   </div>
 </div>
@@ -285,18 +306,21 @@ function resSlot(i,d,s) {
 }
 
 function updateStats() {
-  let up=0,sg=0,rev=0,paid=0,unpaid=0;
+  let up=0,sg=0,rev=0,paid=0,unpaid=0,fullpaid=0;
   allBookings.forEach(b => {
     if(b.cancelled) return;
     rev += b.price||0;
     if(b.type==='cert'||b.type==='signup'){sg++;return;}
     (b.sessions||[]).forEach(s => { if(!s.cancelled&&!s.completed&&s.date>=today) up++; });
-    if(b.depositPaid) paid++; else unpaid++;
+    if(b.fullPaid) fullpaid++;
+    else if(b.depositPaid) paid++;
+    else unpaid++;
   });
   document.getElementById('stat-total').textContent = allBookings.filter(b=>!b.cancelled).length;
   document.getElementById('stat-upcoming').textContent = up;
   document.getElementById('stat-signups').textContent = sg;
   document.getElementById('stat-paid').textContent = paid;
+  document.getElementById('stat-fullpaid').textContent = fullpaid;
   document.getElementById('stat-unpaid').textContent = unpaid;
   document.getElementById('stat-revenue').textContent = '$'+rev.toLocaleString();
 }
@@ -311,6 +335,14 @@ window.setInstructor = function(inst) {
   currentInstructor = inst;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('inst-'+inst).classList.add('active');
+  renderBookings();
+};
+window.setDateToday = function() {
+  document.getElementById('date-filter-input').value = today;
+  renderBookings();
+};
+window.clearDateFilter = function() {
+  document.getElementById('date-filter-input').value = '';
   renderBookings();
 };
 
@@ -333,6 +365,11 @@ function matchInst(b) {
   if(currentInstructor==='all') return true;
   return (b.sessions||[]).some(s=>s.instructorId===currentInstructor&&!s.cancelled);
 }
+function matchDate(b) {
+  const df = document.getElementById('date-filter-input').value;
+  if(!df) return true;
+  return (b.sessions||[]).some(s=>s.date===df&&!s.cancelled);
+}
 function matchSearch(b,q) {
   if(!q) return true;
   const ql=q.toLowerCase();
@@ -341,9 +378,25 @@ function matchSearch(b,q) {
 
 function renderBookings() {
   const q = document.getElementById('search-input').value.trim();
-  const f = allBookings.filter(b=>matchTab(b)&&matchInst(b)&&matchSearch(b,q));
+  const df = document.getElementById('date-filter-input').value;
+  const f = allBookings.filter(b=>matchTab(b)&&matchInst(b)&&matchDate(b)&&matchSearch(b,q));
   const list = document.getElementById('bookings-list');
-  if(!f.length){ list.innerHTML='<div class="empty-state"><p>No bookings found</p><span>Try a different tab or search</span></div>'; return; }
+
+  // Date banner
+  const banner = document.getElementById('today-banner');
+  if(df) {
+    const d = new Date(df+'T12:00:00');
+    const label = df===today ? "Today's sessions" : 'Sessions on '+d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    const count = allBookings.reduce((n,b)=>{
+      return n + (b.sessions||[]).filter(s=>s.date===df&&!s.cancelled&&(currentInstructor==='all'||s.instructorId===currentInstructor)).length;
+    },0);
+    banner.style.display='block';
+    banner.innerHTML='<div class="today-sessions-banner">&#128336; '+label+' &mdash; <strong>'+count+' session'+(count!==1?'s':'')+' scheduled</strong>'+(currentInstructor!=='all'?' for '+INSTS[currentInstructor]:'')+'</div>';
+  } else {
+    banner.style.display='none';
+  }
+
+  if(!f.length){ list.innerHTML='<div class="empty-state"><p>No bookings found</p><span>Try a different tab, date, or search</span></div>'; return; }
   list.innerHTML='';
   f.forEach(b=>list.appendChild(buildCard(b)));
 }
@@ -362,9 +415,11 @@ function buildCard(b) {
   else cc+='past';
 
   const payBadge = !b.cancelled
-    ? (b.depositPaid
-        ? '<span class="badge badge-paid">✓ Deposit received</span>'
-        : '<span class="badge badge-unpaid">⚠ Deposit pending</span>')
+    ? (b.fullPaid
+        ? '<span class="badge badge-fullpaid">&#10003; Fully paid</span>'
+        : b.depositPaid
+          ? '<span class="badge badge-paid">✓ Deposit received</span>'
+          : '<span class="badge badge-unpaid">⚠ Deposit pending</span>')
     : '';
 
   let badge='';
@@ -407,13 +462,20 @@ function buildCard(b) {
     payHtml=`<div class="bc-row"><span class="bc-key">Due</span><span class="bc-val">Pay at time of service</span></div>`;
   }
 
-  // Payment status bar
+  // Payment status bar — deposit row + full payment row
   const payStatusBar = !b.cancelled ? `
     <div class="payment-status-bar">
-      <span class="payment-status-label">Deposit status:</span>
+      <span class="payment-status-label">Deposit:</span>
       <div class="payment-toggle">
         <button class="pay-btn paid${b.depositPaid?' active':''}" onclick="setPaymentStatus('${b._id}',true)">✓ Received</button>
         <button class="pay-btn unpaid${!b.depositPaid?' active':''}" onclick="setPaymentStatus('${b._id}',false)">✗ Pending</button>
+      </div>
+    </div>
+    <div class="payment-status-bar" style="border-top:none;padding-top:0;">
+      <span class="payment-status-label">Full payment:</span>
+      <div class="payment-toggle">
+        <button class="pay-btn fullpaid${b.fullPaid?' active':''}" onclick="setFullPayment('${b._id}',true)">&#10003; Cleared</button>
+        <button class="pay-btn unpaid${!b.fullPaid?' active':''}" onclick="setFullPayment('${b._id}',false)">&#x2715; Outstanding</button>
       </div>
     </div>` : '';
 
@@ -454,6 +516,17 @@ window.setPaymentStatus = async function(id, paid) {
   b.depositPaid = paid;
   await saveB(b);
   toast(paid ? '✓ Deposit marked as received' : 'Deposit marked as pending');
+  updateStats();
+  renderBookings();
+};
+
+window.setFullPayment = async function(id, paid) {
+  const b = getB(id);
+  if(!b) return;
+  b.fullPaid = paid;
+  if(paid) b.depositPaid = true; // full payment implies deposit too
+  await saveB(b);
+  toast(paid ? '&#10003; Full payment marked as cleared' : 'Full payment marked as outstanding');
   updateStats();
   renderBookings();
 };
@@ -548,11 +621,6 @@ window.confirmNote=function(){
   saveB(b).then(function(){closeModal('modal-note');toast(note?'Note saved':'Note removed');renderBookings();});
 };
 
-window.setPaymentStatus=function(id,paid){
-  var b=getB(id);if(!b)return;
-  b.depositPaid=paid;
-  saveB(b).then(function(){toast(paid?'Deposit marked as received':'Deposit marked as pending');updateStats();renderBookings();});
-};
 
 document.querySelectorAll('.modal-overlay').forEach(function(el){
   el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('show');});

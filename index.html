@@ -258,13 +258,22 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div class="step" id="step4">
     <div class="zelle-box">
       <div class="zelle-title"><span>&#128156;</span> Send your deposit via Zelle</div>
-      <div class="zelle-sub">Send the amount below to reserve your spot. Once we receive it, your booking is confirmed.</div>
+      <div class="zelle-sub">Send the amount below to reserve your spot. Your instructor will confirm your booking once the deposit is received.</div>
       <div class="zelle-amount" id="zelle-amount">$50</div>
       <div class="zelle-amount-label" id="zelle-amount-label">Deposit due now</div>
       <div class="zelle-detail"><div class="zelle-detail-label">Zelle phone number</div><div class="zelle-detail-val">469-740-5327</div></div>
       <div class="zelle-detail"><div class="zelle-detail-label">Name on Zelle</div><div class="zelle-detail-val">Kaisar's Driving School LLC</div></div>
       <div class="zelle-detail"><div class="zelle-detail-label">Memo / note</div><div class="zelle-detail-val" id="zelle-memo">&mdash;</div></div>
-      <div class="zelle-note">&#128248; After sending, <strong>screenshot your Zelle payment</strong> and text it to <strong>469-740-5327</strong>. We'll confirm your booking within a few hours.</div>
+      <div class="zelle-note">&#128248; After sending, <strong>screenshot your Zelle payment</strong> and text it to <strong>469-740-5327</strong>. Your instructor will confirm your booking within a few hours.</div>
+      <div style="background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;padding:11px 14px;margin-top:10px;display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:16px;flex-shrink:0;">&#9200;</span>
+        <div style="font-size:13px;color:#7d4e00;line-height:1.55;">
+          <strong>Important:</strong> If your deposit is not received within <strong>24&ndash;36 hours</strong> of booking, your sessions will <strong>not be confirmed</strong> and may be released to other students. Please send promptly to secure your spot.
+        </div>
+      </div>
+      <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:12px;color:#5b21b6;line-height:1.55;">
+        &#128274; <strong>Bookings are confirmed by your instructor only</strong> — not automatically. You will receive confirmation once payment is verified.
+      </div>
     </div>
     <div class="receipt">
       <div class="receipt-header">
@@ -296,13 +305,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div class="total-amount" id="rec-total">&mdash;</div>
       </div>
     </div>
-    <div class="contact-box"><p>Questions? We're happy to help.</p><a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="mailto:kaisarsdrivingschool@gmail.com">kaisarsdrivingschool@gmail.com</a></div>
+    <div class="contact-box"><p>Questions? We're happy to help.</p><a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#610a00081200131205130817080f061202090e0e0d21060c00080d4f020e0c"><span class="__cf_email__" data-cfemail="771c161e0416050413051e011e191004141f18181b37101a161e1b5914181a">[email&#160;protected]</span></a></div>
     <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
   </div>
 </div>
 
 <!-- Firebase compat - no module needed, works everywhere -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 var firebaseConfig={apiKey:"AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",authDomain:"kaisars-driving-school.firebaseapp.com",projectId:"kaisars-driving-school",storageBucket:"kaisars-driving-school.firebasestorage.app",messagingSenderId:"920051696926",appId:"1:920051696926:web:7eefcadaf11db47894b50f"};
@@ -649,12 +658,4 @@ function buildReceipt(name,phone,email,addr,hasSessions,prefDate,ref){
     payNote.textContent='Full payment due via Zelle';
   } else{
     var bal=booking.price-booking.deposit;
-    depRows.innerHTML='<div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#6d1ed4">$'+booking.deposit+' via Zelle</span></div><div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$'+bal+'</span></div><div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before '+(hasSessions&&booking.sessions>1?'2nd session':'service')+'</span></div>';
-    payNote.textContent='$'+booking.deposit+' deposit via Zelle · $'+bal+' balance at service';
-  }
-  document.getElementById('rec-distance-note').style.display=hasSessions?'block':'none';
-  showStep('step4',4);
-}
-</script>
-</body>
-</html>
+    depRows.innerHTML='<div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#6d1ed4">$'+booking.deposit+' via Zelle</span></div><div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$'+bal+'</span></div><div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before '+(hasSessions&&booking.sessions>1?'2nd session':'ser
