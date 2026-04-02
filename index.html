@@ -10,7 +10,7 @@
 :root {
   --green: #1a9e72; --green-dark: #0f6e4f; --green-light: #e2f5ee; --green-mid: #c5eadc;
   --text: #1a1a1a; --muted: #6b7280; --faint: #f5f5f3; --border: #e5e5e0; --white: #ffffff;
-  --radius: 14px; --radius-sm: 8px; --red: #dc2626;
+  --radius: 14px; --radius-sm: 8px; --red: #dc2626; --zelle: #6d1ed4;
 }
 html { scroll-behavior: smooth; }
 body { font-family: 'DM Sans', sans-serif; background: var(--faint); color: var(--text); min-height: 100vh; }
@@ -74,22 +74,27 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 .field-label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
 .field-required { color: var(--red); margin-left: 2px; }
 
-input[type=text], input[type=tel], input[type=email], input[type=date] {
+input[type=text], input[type=tel], input[type=email], input[type=date], select {
   width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
   font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--white);
   outline: none; transition: border-color 0.15s; -webkit-appearance: none; appearance: none;
 }
-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
-input.invalid { border-color: var(--red); }
+input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+input.invalid, select.invalid { border-color: var(--red); }
 input::placeholder { color: #b0b0a8; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
-.instructor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.instructor-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 8px; cursor: pointer; text-align: center; transition: all 0.15s; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+
+/* Instructor cards */
+.instructor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.instructor-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 6px; cursor: pointer; text-align: center; transition: all 0.15s; }
 .instructor-btn:hover { border-color: var(--green); }
 .instructor-btn.selected { border-color: var(--green); background: var(--green-light); }
-.i-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-mid); color: var(--green-dark); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; }
-.i-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.i-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green-mid); color: var(--green-dark); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; }
+.i-avatar.any { background: #f1f5f9; color: #475569; font-size: 18px; }
+.i-name { font-size: 12px; font-weight: 500; color: var(--text); }
 
 .slot-list { display: flex; flex-direction: column; gap: 6px; }
 .slot-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; width: 100%; text-align: left; }
@@ -116,6 +121,19 @@ input::placeholder { color: #b0b0a8; }
 .distance-notice { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 8px; font-size: 13px; color: #9a3412; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
 .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
 
+/* Zelle payment box */
+.zelle-box { background: #f5f0ff; border: 2px solid #c4b5fd; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.25rem; }
+.zelle-title { font-size: 16px; font-weight: 600; color: var(--zelle); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.zelle-title span { font-size: 20px; }
+.zelle-sub { font-size: 13px; color: #5b21b6; margin-bottom: 1rem; line-height: 1.5; }
+.zelle-detail { background: white; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.zelle-detail-label { font-size: 12px; color: var(--muted); }
+.zelle-detail-val { font-size: 14px; font-weight: 600; color: var(--text); }
+.zelle-amount { font-size: 28px; font-weight: 700; color: var(--zelle); text-align: center; padding: 12px 0 4px; }
+.zelle-amount-label { font-size: 12px; color: #7c3aed; text-align: center; margin-bottom: 10px; }
+.zelle-note { font-size: 12px; color: #6d28d9; line-height: 1.5; background: #ede9fe; border-radius: var(--radius-sm); padding: 8px 12px; }
+
+/* Receipt */
 .receipt { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .receipt-header { background: var(--green); padding: 1.5rem 1.5rem 1.25rem; text-align: center; color: white; }
 .receipt-school { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 2px; }
@@ -144,8 +162,14 @@ input::placeholder { color: #b0b0a8; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: 14px; color: var(--muted); }
 
+@media (max-width: 480px) {
+  .row3 { grid-template-columns: 1fr 1fr; }
+  .row3 .street { grid-column: 1 / -1; }
+  .instructor-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media print {
-  header, .progress-wrap, .btn-print, .contact-box, .btn-back, .btn-primary, .loading-overlay { display: none !important; }
+  header, .progress-wrap, .btn-print, .contact-box, .btn-back, .btn-primary, .loading-overlay, .zelle-box { display: none !important; }
   body { background: white; }
   .container { padding: 0; }
   .step { display: block !important; }
@@ -175,7 +199,7 @@ input::placeholder { color: #b0b0a8; }
   <div class="progress-wrap">
     <div class="progress-step"><div class="p-circle active" id="pc1">1</div><div class="p-label">Service</div></div>
     <div class="p-line" id="pl1"></div>
-    <div class="progress-step"><div class="p-circle" id="pc2">2</div><div class="p-label">Details</div></div>
+    <div class="progress-step"><div class="p-circle" id="pc2">2</div><div class="p-label">Sessions</div></div>
     <div class="p-line" id="pl2"></div>
     <div class="progress-step"><div class="p-circle" id="pc3">3</div><div class="p-label">Your info</div></div>
     <div class="p-line" id="pl3"></div>
@@ -189,52 +213,52 @@ input::placeholder { color: #b0b0a8; }
 
     <div class="section-divider"><div></div><span>Driving lessons</span><div></div></div>
     <div class="pkg-grid">
-      <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert')">
+      <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert',85)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only · Includes DPS appointment · We'll reach out to schedule</div></div><div class="pkg-price">$85</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only · Includes DPS appointment · Full payment of $85 due to confirm</div></div><div class="pkg-price">$85</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Single class</div><div class="pkg-detail">1 session · 2 hrs · Behind-the-wheel</div></div><div class="pkg-price">$90</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">Single class</div><div class="pkg-detail">1 session · 2 hrs · Behind-the-wheel · $25 deposit to confirm</div></div><div class="pkg-price">$90</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Highway class</div><div class="pkg-detail">1 session · 2 hrs · Highway driving focus</div><span class="pkg-badge badge-highway">Highway focus</span></div><div class="pkg-price">$110</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">Highway class</div><div class="pkg-detail">1 session · 2 hrs · Highway driving focus · $25 deposit to confirm</div><span class="pkg-badge badge-highway">Highway focus</span></div><div class="pkg-price">$110</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions · 6 hrs total · $83/session · $100 deposit required</div></div><div class="pkg-price">$350</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions · 6 hrs total · $83/session · $50 deposit to confirm</div></div><div class="pkg-price">$350</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions · 8 hrs total · $80/session · $100 deposit required</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions · 8 hrs total · $80/session · $50 deposit to confirm</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions · 10 hrs total · $78/session · $100 deposit required</div></div><div class="pkg-price">$490</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions · 10 hrs total · $78/session · $50 deposit to confirm</div></div><div class="pkg-price">$490</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions · 12 hrs total · $76/session · $100 deposit required</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions · 12 hrs total · $76/session · $50 deposit to confirm</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div>
       </div>
     </div>
 
     <div class="section-divider"><div></div><span>Road test services</span><div></div></div>
-    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time.</p>
+    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time. $25 deposit required.</p>
     <div class="pkg-grid">
-      <div class="pkg-card" onclick="selectPkg(this,'Road Test — Own Vehicle',85,0,'signup')">
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test — Own Vehicle',85,0,'signup',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
         <div class="pkg-top"><div><div class="pkg-name">Road test — own vehicle</div><div class="pkg-detail">15–30 min · You bring your own vehicle</div></div><div class="pkg-price">$85</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Road Test — School Vehicle',100,0,'signup')">
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test — School Vehicle',100,0,'signup',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
         <div class="pkg-top"><div><div class="pkg-name">Road test — school vehicle</div><div class="pkg-detail">15–30 min · We provide the vehicle</div></div><div class="pkg-price">$100</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup')">
+      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
         <div class="pkg-top"><div><div class="pkg-name">1 hr practice + road test</div><div class="pkg-detail">1 hr warmup at our location · followed by road test</div><span class="pkg-badge badge-recommended">Recommended</span></div><div class="pkg-price">$150</div></div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class')">
+      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
         <div class="pkg-top"><div><div class="pkg-name">Class + road test</div><div class="pkg-detail">1 session · 2 hrs behind-the-wheel · followed by road test</div></div><div class="pkg-price">$190</div></div>
       </div>
@@ -262,13 +286,34 @@ input::placeholder { color: #b0b0a8; }
       <p style="font-size:12px;color:var(--muted);margin-top:5px;">We'll contact you to confirm the exact time.</p>
       <p class="err-msg" id="cert-date-err">Please select a preferred date.</p>
     </div>
+    <!-- Address fields -->
     <div class="field-group">
-      <label class="field-label">Home / pickup address <span class="field-required">*</span></label>
-      <input type="text" id="cert-address" placeholder="Street address, city, TX" />
-      <p class="err-msg" id="cert-addr-err">Please enter your address.</p>
+      <label class="field-label">Street address <span class="field-required">*</span></label>
+      <input type="text" id="cert-street" placeholder="123 Main St" />
+      <p class="err-msg" id="cert-street-err">Please enter your street address.</p>
+    </div>
+    <div class="row3">
+      <div class="field-group street">
+        <label class="field-label">City <span class="field-required">*</span></label>
+        <input type="text" id="cert-city" placeholder="Frisco" />
+        <p class="err-msg" id="cert-city-err">Required.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">State <span class="field-required">*</span></label>
+        <select id="cert-state">
+          <option value="">State</option>
+          <option value="TX" selected>TX</option>
+          <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">ZIP <span class="field-required">*</span></label>
+        <input type="text" id="cert-zip" placeholder="75033" maxlength="5" />
+        <p class="err-msg" id="cert-zip-err">Required.</p>
+      </div>
     </div>
     <p class="err-msg" id="cert-err">Please fill in all required fields.</p>
-    <button class="btn-primary" onclick="submitCert()">Submit →</button>
+    <button class="btn-primary" onclick="submitCert()">Continue to payment →</button>
   </div>
 
   <!-- STEP 2b: Sessions -->
@@ -293,21 +338,55 @@ input::placeholder { color: #b0b0a8; }
     </div>
     <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="phone" placeholder="(469) 000-0000" /></div>
     <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="email" placeholder="you@email.com" /></div>
+    <!-- Address fields -->
     <div class="field-group">
-      <label class="field-label">Pickup address <span class="field-required">*</span></label>
-      <input type="text" id="address" placeholder="Street address, city, TX" />
-      <div class="distance-notice">
+      <label class="field-label">Street address <span class="field-required">*</span></label>
+      <input type="text" id="street" placeholder="123 Main St" />
+      <div class="distance-notice" style="margin-top:8px;">
         <span class="notice-icon">⚠️</span>
-        <span>Pickup & dropoff is included. If your address is outside our usual service area, the instructor may add <strong>$10–$15</strong> to the session price. You'll always be notified before your session if this applies.</span>
+        <span>Pickup & dropoff is included. If your address is outside our usual service area, the instructor may add <strong>$10–$15</strong>. You'll always be notified first.</span>
       </div>
-      <p class="err-msg" id="addr-err">Please enter your pickup address.</p>
+      <p class="err-msg" id="street-err">Please enter your street address.</p>
+    </div>
+    <div class="row3">
+      <div class="field-group street">
+        <label class="field-label">City <span class="field-required">*</span></label>
+        <input type="text" id="city" placeholder="Frisco" />
+        <p class="err-msg" id="city-err">Required.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">State <span class="field-required">*</span></label>
+        <select id="state">
+          <option value="">State</option>
+          <option value="TX" selected>TX</option>
+          <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">ZIP <span class="field-required">*</span></label>
+        <input type="text" id="zip" placeholder="75033" maxlength="5" />
+        <p class="err-msg" id="zip-err">Required.</p>
+      </div>
     </div>
     <p class="err-msg" id="info-err">Please fill in all required fields.</p>
-    <button class="btn-primary" onclick="submitBooking()">Confirm booking →</button>
+    <button class="btn-primary" onclick="submitBooking()">Continue to payment →</button>
   </div>
 
-  <!-- STEP 4: Receipt -->
+  <!-- STEP 4: Payment + Receipt -->
   <div class="step" id="step4">
+
+    <!-- Zelle payment box -->
+    <div class="zelle-box" id="zelle-box">
+      <div class="zelle-title"><span>💜</span> Pay your deposit via Zelle</div>
+      <div class="zelle-sub">Send your deposit now to reserve your spot. Your booking is confirmed once we receive payment.</div>
+      <div class="zelle-amount" id="zelle-amount">$50</div>
+      <div class="zelle-amount-label" id="zelle-amount-label">Deposit due now</div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Send to (phone)</div><div class="zelle-detail-val">469-740-5327</div></div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Name on Zelle</div><div class="zelle-detail-val">Kaisar's Driving School LLC</div></div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Memo / note</div><div class="zelle-detail-val" id="zelle-memo">—</div></div>
+      <div class="zelle-note">After sending, screenshot your payment and text it to <strong>469-740-5327</strong>. We'll confirm your booking within a few hours.</div>
+    </div>
+
     <div class="receipt">
       <div class="receipt-header">
         <div class="receipt-school">Kaisar's Driving School</div>
@@ -334,7 +413,7 @@ input::placeholder { color: #b0b0a8; }
         </div>
         <div class="r-section">
           <div class="r-section-title">Payment</div>
-          <div class="r-row"><span class="r-key">Method</span><span class="r-val">Cash / Zelle / Card in-person</span></div>
+          <div class="r-row"><span class="r-key">Method</span><span class="r-val">Zelle · 469-740-5327</span></div>
           <div id="rec-deposit-rows"></div>
         </div>
       </div>
@@ -347,7 +426,7 @@ input::placeholder { color: #b0b0a8; }
       </div>
     </div>
     <div class="contact-box">
-      <p>We'll reach out to confirm your booking. Questions?</p>
+      <p>Questions? We're happy to help.</p>
       <a href="tel:+14697405327">469-740-5327</a> &nbsp;·&nbsp;
       <a href="mailto:kaisarsdrivingschool@gmail.com">kaisarsdrivingschool@gmail.com</a>
     </div>
@@ -358,7 +437,7 @@ input::placeholder { color: #b0b0a8; }
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",
@@ -373,9 +452,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const INSTRUCTORS = [
-  { id: 'kaisar', name: 'Kaisar', initials: 'KA' },
-  { id: 'adib',   name: 'Adib',   initials: 'AD' },
-  { id: 'kaifi',  name: 'Kaifi',  initials: 'KF' }
+  { id: 'any',    name: 'Any / Earliest', initials: '★', any: true },
+  { id: 'kaisar', name: 'Kaisar',          initials: 'KA' },
+  { id: 'adib',   name: 'Adib',            initials: 'AD' },
+  { id: 'kaifi',  name: 'Kaifi',           initials: 'KF' }
 ];
 const SLOTS = [
   { id: 'am',  label: '9:00 AM – 11:00 AM' },
@@ -383,45 +463,54 @@ const SLOTS = [
   { id: 'eve', label: '5:00 PM – 7:00 PM' }
 ];
 const ORDINALS = ['First','Second','Third','Fourth','Fifth','Sixth'];
-const DEPOSIT_PKGS = ['3 Classes + Road Test','4 Classes + Road Test','5 Classes + Road Test','6 Classes + Road Test'];
 
-let booking = { pkg: '', price: 0, sessions: 0, type: '', sessionData: [] };
+let booking = { pkg: '', price: 0, sessions: 0, type: '', sessionData: [], deposit: 0 };
 let bookedSlots = {};
 
 function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
-function slotKey(inst, date, slot) { return `${inst}_${date}_${slot}`; }
-function needsDeposit() { return DEPOSIT_PKGS.includes(booking.pkg); }
-function isFriday(dateStr) { if (!dateStr) return false; return new Date(dateStr + 'T12:00:00').getDay() === 5; }
+function slotKey(inst, date, slot) { return inst + '_' + date + '_' + slot; }
+function isFriday(d) { if (!d) return false; return new Date(d + 'T12:00:00').getDay() === 5; }
+
+function fullAddress(street, city, state, zip) {
+  return [street, city, state, zip].filter(Boolean).join(', ');
+}
 
 async function loadBookedSlots() {
   bookedSlots = {};
   try {
-    const sd = booking.sessionData;
-    for (const s of sd) {
-      if (!s.instructor || !s.date) continue;
-      for (const slot of SLOTS) {
-        const key = slotKey(s.instructor, s.date, slot.id);
-        const ref = doc(db, 'slots', key);
-        const snap = await getDoc(ref);
-        if (snap.exists()) bookedSlots[key] = true;
-      }
-    }
+    const snap = await getDoc(doc(db, 'slots', 'booked'));
+    if (snap.exists()) bookedSlots = snap.data();
   } catch(e) {}
 }
 
-async function checkSlot(inst, date, slot) {
+async function saveSlot(inst, date, slot) {
   try {
-    const snap = await getDoc(doc(db, 'slots', slotKey(inst, date, slot)));
-    return snap.exists();
-  } catch(e) { return false; }
+    const key = slotKey(inst, date, slot);
+    const ref = doc(db, 'slots', 'booked');
+    const snap = await getDoc(ref);
+    const data = snap.exists() ? snap.data() : {};
+    data[key] = true;
+    await setDoc(ref, data);
+    bookedSlots[key] = true;
+  } catch(e) {}
 }
 
-async function reserveSlot(inst, date, slot) {
-  try { await setDoc(doc(db, 'slots', slotKey(inst, date, slot)), { reserved: true }); } catch(e) {}
+async function saveBookingRecord(record) {
+  try { await addDoc(collection(db, 'bookings'), record); } catch(e) {}
 }
 
 function isBooked(inst, date, slot) { return !!bookedSlots[slotKey(inst, date, slot)]; }
+
+// Check if ANY instructor is available for a date+slot
+function anyAvailable(date, slot) {
+  return ['kaisar','adib','kaifi'].some(i => !isBooked(i, date, slot));
+}
+
+// Pick first available instructor for a date+slot
+function pickInstructor(date, slot) {
+  return ['kaisar','adib','kaifi'].find(i => !isBooked(i, date, slot)) || null;
+}
 
 function setProgress(n) {
   for (let i = 1; i <= 4; i++) {
@@ -432,21 +521,23 @@ function setProgress(n) {
     if (i <= 3) document.getElementById('pl' + i).className = 'p-line' + (i < n ? ' done' : '');
   }
 }
+
 function showStep(id, n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   setProgress(n);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 function goStep(n) {
-  const map = {1:'step1', 2:'step2sessions', 3:'step3', 4:'step4'};
+  const map = { 1:'step1', 2:'step2sessions', 3:'step3', 4:'step4' };
   showStep(map[n], n);
 }
 
-window.selectPkg = function(el, name, price, sessions, type) {
+window.selectPkg = function(el, name, price, sessions, type, deposit) {
   document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
-  booking = { ...booking, pkg: name, price, sessions, type };
+  booking = { ...booking, pkg: name, price, sessions, type, deposit };
 };
 
 window.goToStep2 = async function() {
@@ -457,33 +548,32 @@ window.goToStep2 = async function() {
     const isCert = booking.type === 'cert';
     document.getElementById('cert-title').textContent = booking.pkg;
     document.getElementById('cert-sub').textContent = isCert
-      ? "Fill in your details and we'll reach out to schedule everything with you."
-      : "Select a preferred date and we'll contact you to confirm a time.";
+      ? 'Fill in your details and we\'ll reach out to schedule everything with you.'
+      : 'Select a preferred date and we\'ll contact you to confirm a time.';
     document.getElementById('cert-banner').textContent = isCert
-      ? "No session booking needed — we'll contact you directly to arrange your schedule."
-      : "No scheduling needed upfront — sign up here and we'll confirm your time.";
+      ? 'Full payment of $85 is due via Zelle to confirm your spot.'
+      : 'A $25 deposit via Zelle is required to confirm your booking.';
     const dateGroup = document.getElementById('cert-date-group');
     if (!isCert) {
       dateGroup.style.display = 'block';
       document.getElementById('cert-date').min = new Date().toISOString().split('T')[0];
       document.getElementById('cert-date').value = '';
-    } else {
-      dateGroup.style.display = 'none';
-    }
-    ['cert-fname','cert-lname','cert-phone','cert-email','cert-address'].forEach(id => {
+    } else { dateGroup.style.display = 'none'; }
+    ['cert-fname','cert-lname','cert-phone','cert-email','cert-street','cert-city','cert-zip'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
     });
     showStep('step2cert', 2);
     return;
   }
 
+  showLoading('Checking availability...');
+  await loadBookedSlots();
+  hideLoading();
   booking.sessionData = Array.from({ length: booking.sessions }, () => ({ instructor: '', date: '', slot: '' }));
 
   const wrap = document.getElementById('deposit-banner-wrap');
-  if (needsDeposit()) {
-    const bal = booking.price - 100;
-    wrap.innerHTML = `<div class="info-banner banner-green">A <strong>$100 deposit</strong> is required to reserve your spot. The remaining <strong>$${bal}</strong> balance is due at or before your 2nd session.</div>`;
-  } else { wrap.innerHTML = ''; }
+  const bal = booking.price - booking.deposit;
+  wrap.innerHTML = `<div class="info-banner banner-green">A <strong>$${booking.deposit} deposit</strong> via Zelle is required to confirm your booking. The remaining <strong>$${bal}</strong> is due at or before your ${booking.sessions > 1 ? '2nd' : ''} session.</div>`;
 
   renderSessions();
   showStep('step2sessions', 2);
@@ -501,14 +591,17 @@ function renderSessions() {
     const div = document.createElement('div');
     div.className = 'session-block';
     div.innerHTML = `
-      <div class="session-block-title"><div class="session-num">${idx+1}</div>${ORDINALS[idx] || (idx+1)+'th'} session</div>
+      <div class="session-block-title">
+        <div class="session-num">${idx + 1}</div>
+        ${ORDINALS[idx] || (idx+1)+'th'} session
+      </div>
       <div class="field-group">
         <label class="field-label">Instructor <span class="field-required">*</span></label>
         <div class="instructor-grid" id="ig-${idx}">
           ${INSTRUCTORS.map(inst => `
             <div class="instructor-btn${sd.instructor===inst.id?' selected':''}" id="ib-${idx}-${inst.id}" onclick="selectInstructor(${idx},'${inst.id}')">
-              <div class="i-avatar">${inst.initials}</div>
-              <div class="i-name">${inst.name}</div>
+              <div class="i-avatar${inst.any?' any':''}">${inst.any ? '★' : inst.initials}</div>
+              <div class="i-name">${inst.any ? 'Any / Earliest' : inst.name}</div>
             </div>`).join('')}
         </div>
         <p class="err-msg" id="ie-${idx}">Please select an instructor.</p>
@@ -531,10 +624,16 @@ function renderSessions() {
 
 function renderSlots(idx) {
   const sd = booking.sessionData[idx];
-  if (!sd.instructor || !sd.date) return `<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.6">Select an instructor<br>and date first</div>`;
+  if (!sd.instructor || !sd.date) {
+    return `<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.6">Select an instructor<br>and date first</div>`;
+  }
   return `<div class="slot-list">` + SLOTS.map(s => {
-    const booked = isBooked(sd.instructor, sd.date, s.id);
-    const sel = sd.slot === s.id;
+    let booked, sel = sd.slot === s.id;
+    if (sd.instructor === 'any') {
+      booked = !anyAvailable(sd.date, s.id);
+    } else {
+      booked = isBooked(sd.instructor, sd.date, s.id);
+    }
     return `<button class="slot-btn${sel?' selected':''}" ${booked?'disabled':''} onclick="selectSlot(${idx},'${s.id}')">
       <span style="font-size:13px;font-weight:500">${s.label}</span>
       <span class="slot-tag">${booked ? 'Taken' : sel ? '✓' : ''}</span>
@@ -548,10 +647,10 @@ window.selectInstructor = function(idx, instId) {
   document.querySelectorAll(`#ig-${idx} .instructor-btn`).forEach(b => b.classList.remove('selected'));
   document.getElementById(`ib-${idx}-${instId}`).classList.add('selected');
   document.getElementById(`ie-${idx}`).style.display = 'none';
-  refreshSlots(idx);
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
 };
 
-window.onDateChange = async function(idx) {
+window.onDateChange = function(idx) {
   const val = document.getElementById(`di-${idx}`).value;
   if (isFriday(val)) {
     document.getElementById(`di-${idx}`).value = '';
@@ -559,36 +658,20 @@ window.onDateChange = async function(idx) {
     const el = document.getElementById(`de-${idx}`);
     el.textContent = 'Fridays are unavailable — please choose another day.';
     el.style.display = 'block';
-    refreshSlots(idx);
+    document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
     return;
   }
   booking.sessionData[idx].date = val;
   booking.sessionData[idx].slot = '';
   document.getElementById(`de-${idx}`).style.display = 'none';
-
-  // Load booked slots for this instructor/date combo
-  if (booking.sessionData[idx].instructor && val) {
-    showLoading('Checking availability...');
-    for (const slot of SLOTS) {
-      const key = slotKey(booking.sessionData[idx].instructor, val, slot.id);
-      const taken = await checkSlot(booking.sessionData[idx].instructor, val, slot.id);
-      if (taken) bookedSlots[key] = true;
-      else delete bookedSlots[key];
-    }
-    hideLoading();
-  }
-  refreshSlots(idx);
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
   checkDupeDates();
 };
-
-function refreshSlots(idx) {
-  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
-}
 
 window.selectSlot = function(idx, slotId) {
   booking.sessionData[idx].slot = slotId;
   document.getElementById(`se-${idx}`).style.display = 'none';
-  refreshSlots(idx);
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
 };
 
 function checkDupeDates() {
@@ -604,11 +687,10 @@ function checkDupeDates() {
   });
 }
 
-function backToSessions() {
+window.backToSessions = function() {
   if (booking.type === 'cert' || booking.type === 'signup') showStep('step2cert', 2);
   else showStep('step2sessions', 2);
-}
-window.backToSessions = backToSessions;
+};
 
 window.goToInfo = async function() {
   const sd = booking.sessionData;
@@ -626,63 +708,74 @@ window.goToInfo = async function() {
   const dates = sd.map(s => s.date);
   if (new Set(dates).size !== dates.length) {
     document.getElementById('sessions-err').textContent = 'Each session must be on a different day.';
-    document.getElementById('sessions-err').style.display = 'block';
-    valid = false;
+    document.getElementById('sessions-err').style.display = 'block'; valid = false;
   } else { document.getElementById('sessions-err').style.display = 'none'; }
   if (!valid) return;
 
   showLoading('Confirming availability...');
+  await loadBookedSlots();
+  hideLoading();
   let conflict = false;
-  for (let i = 0; i < sd.length; i++) {
-    const taken = await checkSlot(sd[i].instructor, sd[i].date, sd[i].slot);
+  sd.forEach((s, i) => {
+    const taken = s.instructor === 'any'
+      ? !anyAvailable(s.date, s.slot)
+      : isBooked(s.instructor, s.date, s.slot);
     if (taken) {
-      const name = INSTRUCTORS.find(x => x.id === sd[i].instructor)?.name;
-      document.getElementById(`se-${i}`).textContent = `${name} is no longer available at this time — please choose another slot.`;
+      document.getElementById(`se-${i}`).textContent = 'This slot is no longer available — please choose another.';
       document.getElementById(`se-${i}`).style.display = 'block';
       booking.sessionData[i].slot = '';
-      refreshSlots(i);
+      document.getElementById(`sw-${i}`).innerHTML = renderSlots(i);
       conflict = true;
     }
-  }
-  hideLoading();
+  });
   if (conflict) return;
   showStep('step3', 3);
 };
+
+function validateAddress(prefix) {
+  const street = document.getElementById(prefix + 'street')?.value.trim() || document.getElementById(prefix.replace('-','') + 'street')?.value.trim();
+  const city = document.getElementById(prefix + 'city')?.value.trim();
+  const state = document.getElementById(prefix + 'state')?.value;
+  const zip = document.getElementById(prefix + 'zip')?.value.trim();
+  let valid = true;
+  const setErr = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? 'block' : 'none'; };
+  if (!street) { setErr(prefix + 'street-err', true); valid = false; } else { setErr(prefix + 'street-err', false); }
+  if (!city) { setErr(prefix + 'city-err', true); valid = false; } else { setErr(prefix + 'city-err', false); }
+  if (!zip) { setErr(prefix + 'zip-err', true); valid = false; } else { setErr(prefix + 'zip-err', false); }
+  return { valid, street, city, state: state || 'TX', zip };
+}
 
 window.submitCert = async function() {
   const fn = document.getElementById('cert-fname').value.trim();
   const ln = document.getElementById('cert-lname').value.trim();
   const ph = document.getElementById('cert-phone').value.trim();
   const em = document.getElementById('cert-email').value.trim();
-  const addr = document.getElementById('cert-address').value.trim();
   const prefDate = document.getElementById('cert-date').value;
   const isSignup = booking.type === 'signup';
   let valid = true;
   if (!fn || !ln || !ph || !em) { document.getElementById('cert-err').style.display = 'block'; valid = false; }
   else { document.getElementById('cert-err').style.display = 'none'; }
-  if (!addr) { document.getElementById('cert-addr-err').style.display = 'block'; document.getElementById('cert-address').classList.add('invalid'); valid = false; }
-  else { document.getElementById('cert-addr-err').style.display = 'none'; document.getElementById('cert-address').classList.remove('invalid'); }
   if (isSignup && !prefDate) { document.getElementById('cert-date-err').style.display = 'block'; valid = false; }
   else { const el = document.getElementById('cert-date-err'); if (el) el.style.display = 'none'; }
+  const addr = validateAddress('cert-');
+  if (!addr.valid) valid = false;
   if (!valid) return;
 
-  showLoading('Saving your booking...');
+  showLoading('Saving your request...');
   let formattedDate = '';
   if (prefDate) {
     const d = new Date(prefDate + 'T12:00:00');
     formattedDate = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
   const ref = 'KDS-' + Date.now().toString().slice(-7);
-  try {
-    await addDoc(collection(db, 'bookings'), {
-      ref, name: fn + ' ' + ln, phone: ph, email: em, address: addr,
-      package: booking.pkg, price: booking.price, type: booking.type,
-      preferredDate: formattedDate, sessions: [], deposit: 0,
-      bookedAt: serverTimestamp()
-    });
-  } catch(e) { console.error(e); }
+  const addrStr = fullAddress(addr.street, addr.city, addr.state, addr.zip);
+  await saveBookingRecord({
+    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addrStr,
+    package: booking.pkg, price: booking.price, type: booking.type,
+    preferredDate: formattedDate, sessions: [], bookedAt: new Date().toISOString(), deposit: booking.deposit
+  });
   hideLoading();
-  buildReceipt(fn + ' ' + ln, ph, em, addr, false, formattedDate, ref);
+  buildReceipt(fn + ' ' + ln, ph, em, addrStr, false, formattedDate, ref);
 };
 
 window.submitBooking = async function() {
@@ -690,58 +783,59 @@ window.submitBooking = async function() {
   const ln = document.getElementById('lname').value.trim();
   const ph = document.getElementById('phone').value.trim();
   const em = document.getElementById('email').value.trim();
-  const addr = document.getElementById('address').value.trim();
   let valid = true;
   if (!fn || !ln || !ph || !em) { document.getElementById('info-err').style.display = 'block'; valid = false; }
   else { document.getElementById('info-err').style.display = 'none'; }
-  if (!addr) { document.getElementById('addr-err').style.display = 'block'; document.getElementById('address').classList.add('invalid'); valid = false; }
-  else { document.getElementById('addr-err').style.display = 'none'; document.getElementById('address').classList.remove('invalid'); }
+  const addr = validateAddress('');
+  if (!addr.valid) valid = false;
   if (!valid) return;
 
   showLoading('Saving your booking...');
+  await loadBookedSlots();
   const sd = booking.sessionData;
-
-  // Final conflict check
-  for (const s of sd) {
-    const taken = await checkSlot(s.instructor, s.date, s.slot);
-    if (taken) {
-      hideLoading();
-      alert('A slot was just taken by another customer. Please go back and choose a different time.');
-      backToSessions();
-      return;
-    }
+  let conflict = false;
+  sd.forEach(s => {
+    const taken = s.instructor === 'any' ? !anyAvailable(s.date, s.slot) : isBooked(s.instructor, s.date, s.slot);
+    if (taken) conflict = true;
+  });
+  if (conflict) {
+    hideLoading();
+    alert('A slot was just taken. Please go back and choose a different time.');
+    window.backToSessions();
+    return;
   }
 
-  // Reserve all slots
-  for (const s of sd) { await reserveSlot(s.instructor, s.date, s.slot); }
-
-  const sessionsSummary = sd.map((s, i) => {
+  // For "any" instructor — assign actual instructor now
+  const sessionsSummary = [];
+  for (let i = 0; i < sd.length; i++) {
+    const s = sd[i];
+    let assignedInst = s.instructor;
+    if (s.instructor === 'any') {
+      assignedInst = pickInstructor(s.date, s.slot);
+      if (!assignedInst) { alert('No instructor available for one of your sessions. Please go back and choose a different time.'); hideLoading(); window.backToSessions(); return; }
+    }
+    await saveSlot(assignedInst, s.date, s.slot);
     const d = new Date(s.date + 'T12:00:00');
-    return {
+    sessionsSummary.push({
       session: i + 1,
-      instructor: INSTRUCTORS.find(x => x.id === s.instructor)?.name || s.instructor,
-      instructorId: s.instructor,
+      instructor: INSTRUCTORS.find(x => x.id === assignedInst)?.name || assignedInst,
+      instructorId: assignedInst,
       date: s.date,
       dateFormatted: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
       slot: s.slot,
-      slotLabel: SLOTS.find(x => x.id === s.slot)?.label || s.slot,
-      cancelled: false, completed: false
-    };
-  });
+      slotLabel: SLOTS.find(x => x.id === s.slot)?.label || s.slot
+    });
+  }
 
   const ref = 'KDS-' + Date.now().toString().slice(-7);
-  try {
-    await addDoc(collection(db, 'bookings'), {
-      ref, name: fn + ' ' + ln, phone: ph, email: em, address: addr,
-      package: booking.pkg, price: booking.price, type: booking.type,
-      preferredDate: '', sessions: sessionsSummary,
-      deposit: needsDeposit() ? 100 : 0,
-      bookedAt: serverTimestamp()
-    });
-  } catch(e) { console.error(e); }
-
+  const addrStr = fullAddress(addr.street, addr.city, addr.state, addr.zip);
+  await saveBookingRecord({
+    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addrStr,
+    package: booking.pkg, price: booking.price, type: booking.type,
+    preferredDate: '', sessions: sessionsSummary, bookedAt: new Date().toISOString(), deposit: booking.deposit
+  });
   hideLoading();
-  buildReceipt(fn + ' ' + ln, ph, em, addr, true, '', ref);
+  buildReceipt(fn + ' ' + ln, ph, em, addrStr, true, '', ref);
 };
 
 function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
@@ -752,6 +846,12 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
   document.getElementById('rec-addr').textContent = addr;
   document.getElementById('rec-pkg').textContent = booking.pkg;
   document.getElementById('rec-total').textContent = '$' + booking.price;
+
+  // Zelle box
+  const isCertFull = booking.type === 'cert';
+  document.getElementById('zelle-amount').textContent = '$' + booking.deposit;
+  document.getElementById('zelle-amount-label').textContent = isCertFull ? 'Full payment due now' : 'Deposit due now';
+  document.getElementById('zelle-memo').textContent = ref + ' · ' + booking.pkg;
 
   if (prefDate) {
     document.getElementById('rec-prefdate').textContent = prefDate;
@@ -778,23 +878,21 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
 
   const depRows = document.getElementById('rec-deposit-rows');
   const payNote = document.getElementById('rec-payment-note');
-  if (hasSessions && needsDeposit()) {
-    const bal = booking.price - 100;
-    depRows.innerHTML = `
-      <div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#d97706">$100</span></div>
-      <div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$${bal}</span></div>
-      <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before 2nd session</span></div>`;
-    payNote.textContent = '$100 deposit due to confirm · $' + bal + ' balance at 2nd session';
+  if (isCertFull) {
+    depRows.innerHTML = `<div class="r-row"><span class="r-key">Amount due</span><span class="r-val" style="color:#6d1ed4">$${booking.deposit} via Zelle</span></div>`;
+    payNote.textContent = 'Full payment due via Zelle';
   } else {
-    depRows.innerHTML = `<div class="r-row"><span class="r-key">Due</span><span class="r-val" style="color:#d97706">Pay at time of service</span></div>`;
-    payNote.textContent = 'Pay at time of service';
+    const bal = booking.price - booking.deposit;
+    depRows.innerHTML = `
+      <div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#6d1ed4">$${booking.deposit} via Zelle</span></div>
+      <div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$${bal}</span></div>
+      <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before ${hasSessions && booking.sessions > 1 ? '2nd session' : 'service'}</span></div>`;
+    payNote.textContent = `$${booking.deposit} deposit via Zelle · $${bal} balance at service`;
   }
 
   document.getElementById('rec-distance-note').style.display = hasSessions ? 'block' : 'none';
   showStep('step4', 4);
 }
-
-window.goStep = goStep;
 </script>
 </body>
 </html>
