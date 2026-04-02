@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Book a Lesson — Kaisar's Driving School</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #1a9e72; --green-dark: #0f6e4f; --green-light: #e2f5ee; --green-mid: #c5eadc;
+  --text: #1a1a1a; --muted: #6b7280; --faint: #f5f5f3; --border: #e5e5e0; --white: #ffffff;
+  --radius: 14px; --radius-sm: 8px; --red: #dc2626;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--faint); color: var(--text); min-height: 100vh; }
+
+header { background: var(--white); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 36px; height: 36px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.logo-icon svg { width: 20px; height: 20px; fill: white; }
+.logo-text { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--text); line-height: 1.1; }
+.logo-text span { display: block; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400; color: var(--muted); }
+.header-contact { font-size: 13px; color: var(--muted); }
+.header-contact a { color: var(--green); text-decoration: none; font-weight: 500; }
+
+.container { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.progress-wrap { display: flex; align-items: center; margin-bottom: 2rem; }
+.progress-step { display: flex; align-items: center; gap: 6px; flex: 1; }
+.progress-step:last-child { flex: 0; }
+.p-circle { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); flex-shrink: 0; transition: all 0.2s; }
+.p-circle.active { background: var(--green); border-color: var(--green); color: white; }
+.p-circle.done { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.p-line { flex: 1; height: 1.5px; background: var(--border); margin: 0 4px; transition: background 0.2s; }
+.p-line.done { background: var(--green); }
+.p-label { font-size: 11px; color: var(--muted); white-space: nowrap; display: none; }
+@media (min-width: 480px) { .p-label { display: block; } }
+
+.step { display: none; animation: fadeUp 0.25s ease; }
+.step.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 4px; }
+.section-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+
+.pkg-grid { display: grid; gap: 10px; }
+.pkg-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; position: relative; }
+.pkg-card:hover { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+.pkg-card.selected { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+.pkg-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.pkg-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.pkg-price { font-size: 22px; font-weight: 600; color: var(--green); flex-shrink: 0; }
+.pkg-detail { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.pkg-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; margin-top: 7px; }
+.badge-popular { background: var(--green-light); color: var(--green-dark); }
+.badge-value { background: #fef3c7; color: #92400e; }
+.badge-highway { background: #ede9fe; color: #5b21b6; }
+.badge-recommended { background: #dbeafe; color: #1d4ed8; }
+.check-icon { position: absolute; top: 12px; right: 14px; width: 20px; height: 20px; background: var(--green); border-radius: 50%; display: none; align-items: center; justify-content: center; }
+.check-icon svg { width: 11px; height: 11px; }
+.pkg-card.selected .check-icon { display: flex; }
+
+.section-divider { display: flex; align-items: center; gap: 10px; margin: 1.5rem 0 1rem; }
+.section-divider div { flex: 1; height: 1px; background: var(--border); }
+.section-divider span { font-size: 11px; font-weight: 500; color: var(--muted); white-space: nowrap; letter-spacing: 0.05em; text-transform: uppercase; }
+.section-note { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+
+.session-block { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 12px; }
+.session-block-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+.session-num { width: 24px; height: 24px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+
+.field-group { margin-bottom: 1rem; }
+.field-label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.field-required { color: var(--red); margin-left: 2px; }
+
+input[type=text], input[type=tel], input[type=email], input[type=date] {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--white);
+  outline: none; transition: border-color 0.15s; -webkit-appearance: none; appearance: none;
+}
+input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+input.invalid { border-color: var(--red); }
+input::placeholder { color: #b0b0a8; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.instructor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.instructor-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 8px; cursor: pointer; text-align: center; transition: all 0.15s; }
+.instructor-btn:hover { border-color: var(--green); }
+.instructor-btn.selected { border-color: var(--green); background: var(--green-light); }
+.i-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-mid); color: var(--green-dark); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; }
+.i-name { font-size: 13px; font-weight: 500; color: var(--text); }
+
+.slot-list { display: flex; flex-direction: column; gap: 6px; }
+.slot-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; width: 100%; text-align: left; }
+.slot-btn:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
+.slot-btn.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); font-weight: 500; }
+.slot-btn:disabled { opacity: 0.4; cursor: not-allowed; background: var(--faint); }
+.slot-tag { font-size: 11px; color: var(--muted); }
+.slot-btn.selected .slot-tag { color: var(--green-dark); }
+.slot-btn:disabled .slot-tag { color: var(--red); }
+
+.btn-primary { width: 100%; padding: 13px 20px; background: var(--green); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.1s; margin-top: 6px; }
+.btn-primary:hover { background: var(--green-dark); }
+.btn-primary:active { transform: scale(0.99); }
+.btn-back { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; padding: 0; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 4px; }
+.btn-back:hover { color: var(--text); }
+.btn-print { width: 100%; padding: 13px 20px; background: var(--white); color: var(--green); border: 1.5px solid var(--green); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 10px; transition: all 0.15s; }
+.btn-print:hover { background: var(--green-light); }
+
+.err-msg { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+.info-banner { border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; margin-bottom: 1.25rem; line-height: 1.5; }
+.banner-yellow { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.banner-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+.distance-notice { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 8px; font-size: 13px; color: #9a3412; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
+.notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.receipt { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.receipt-header { background: var(--green); padding: 1.5rem 1.5rem 1.25rem; text-align: center; color: white; }
+.receipt-school { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 2px; }
+.receipt-addr { font-size: 12px; opacity: 0.85; }
+.receipt-ref { font-size: 11px; opacity: 0.7; margin-top: 8px; background: rgba(0,0,0,0.15); display: inline-block; padding: 3px 10px; border-radius: 20px; }
+.receipt-body { padding: 1.25rem 1.5rem; }
+.r-section { margin-bottom: 1rem; }
+.r-section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.r-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+.r-row:last-child { border-bottom: none; }
+.r-key { color: var(--muted); flex-shrink: 0; }
+.r-val { font-weight: 500; text-align: right; }
+.receipt-total-bar { background: var(--faint); border-top: 1.5px solid var(--border); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.total-label { font-size: 14px; color: var(--muted); }
+.total-amount { font-size: 24px; font-weight: 600; color: var(--green); }
+.payment-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.receipt-distance-note { background: #fff7ed; border-top: 1px solid #fed7aa; padding: 10px 1.5rem; font-size: 12px; color: #9a3412; line-height: 1.5; }
+
+.contact-box { background: var(--green-light); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-top: 1rem; text-align: center; }
+.contact-box p { font-size: 13px; color: var(--green-dark); margin-bottom: 5px; }
+.contact-box a { color: var(--green-dark); font-weight: 500; font-size: 14px; text-decoration: none; }
+
+.loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 12px; }
+.loading-overlay.show { display: flex; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--green-mid); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--muted); }
+
+@media print {
+  header, .progress-wrap, .btn-print, .contact-box, .btn-back, .btn-primary, .loading-overlay { display: none !important; }
+  body { background: white; }
+  .container { padding: 0; }
+  .step { display: block !important; }
+  #step1, #step2cert, #step2sessions, #step3 { display: none !important; }
+  #step4 { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Checking availability...</div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zm-2-2c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1zm-8 0c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1z"/></svg>
+    </div>
+    <div class="logo-text">Kaisar's Driving School<span>Frisco, TX · DFW Area</span></div>
+  </div>
+  <div class="header-contact"><a href="tel:+14697405327">469-740-5327</a></div>
+</header>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-step"><div class="p-circle active" id="pc1">1</div><div class="p-label">Service</div></div>
+    <div class="p-line" id="pl1"></div>
+    <div class="progress-step"><div class="p-circle" id="pc2">2</div><div class="p-label">Details</div></div>
+    <div class="p-line" id="pl2"></div>
+    <div class="progress-step"><div class="p-circle" id="pc3">3</div><div class="p-label">Your info</div></div>
+    <div class="p-line" id="pl3"></div>
+    <div class="progress-step"><div class="p-circle" id="pc4">4</div><div class="p-label">Confirm</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step1">
+    <h2 class="section-title">Choose a service</h2>
+    <p class="section-sub">All behind-the-wheel sessions include free pickup & dropoff in the DFW area</p>
+
+    <div class="section-divider"><div></div><span>Driving lessons</span><div></div></div>
+    <div class="pkg-grid">
+
+      <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">6 hr course certificate</div>
+            <div class="pkg-detail">Adult only · Includes DPS appointment · We'll reach out to schedule</div>
+          </div>
+          <div class="pkg-price">$85</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Single class</div>
+            <div class="pkg-detail">1 session · 2 hrs · Behind-the-wheel</div>
+          </div>
+          <div class="pkg-price">$90</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Highway class</div>
+            <div class="pkg-detail">1 session · 2 hrs · Highway driving focus</div>
+            <span class="pkg-badge badge-highway">Highway focus</span>
+          </div>
+          <div class="pkg-price">$110</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">3 classes + road test</div>
+            <div class="pkg-detail">3 sessions · 6 hrs total · $83/session · $100 deposit required</div>
+          </div>
+          <div class="pkg-price">$350</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">4 classes + road test</div>
+            <div class="pkg-detail">4 sessions · 8 hrs total · $80/session · $100 deposit required</div>
+            <span class="pkg-badge badge-popular">Most popular</span>
+          </div>
+          <div class="pkg-price">$420</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">5 classes + road test</div>
+            <div class="pkg-detail">5 sessions · 10 hrs total · $78/session · $100 deposit required</div>
+          </div>
+          <div class="pkg-price">$490</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">6 classes + road test</div>
+            <div class="pkg-detail">6 sessions · 12 hrs total · $76/session · $100 deposit required</div>
+            <span class="pkg-badge badge-value">Best value</span>
+          </div>
+          <div class="pkg-price">$560</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-divider"><div></div><span>Road test services</span><div></div></div>
+    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time. No scheduling needed upfront.</p>
+    <div class="pkg-grid">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test — Own Vehicle',85,0,'signup')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Road test — own vehicle</div>
+            <div class="pkg-detail">15–30 min · You bring your own vehicle</div>
+          </div>
+          <div class="pkg-price">$85</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test — School Vehicle',100,0,'signup')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Road test — school vehicle</div>
+            <div class="pkg-detail">15–30 min · We provide the vehicle</div>
+          </div>
+          <div class="pkg-price">$100</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">1 hr practice + road test</div>
+            <div class="pkg-detail">1 hr warmup at our location · followed by road test · Come to school</div>
+            <span class="pkg-badge badge-recommended">Recommended</span>
+          </div>
+          <div class="pkg-price">$150</div>
+        </div>
+      </div>
+
+      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class')">
+        <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Class + road test</div>
+            <div class="pkg-detail">1 session · 2 hrs behind-the-wheel · followed by road test</div>
+          </div>
+          <div class="pkg-price">$190</div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="err-msg" id="pkg-err">Please select a service to continue.</p>
+    <button class="btn-primary" style="margin-top:1.25rem" onclick="goToStep2()">Continue →</button>
+  </div>
+
+  <!-- STEP 2a: Cert / Signup -->
+  <div class="step" id="step2cert">
+    <button class="btn-back" onclick="goStep(1)">← Back</button>
+    <h2 class="section-title" id="cert-title">Sign up</h2>
+    <p class="section-sub" id="cert-sub">Fill in your details and we'll be in touch.</p>
+    <div class="info-banner banner-yellow" id="cert-banner"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="cert-fname" placeholder="First name" /></div>
+      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="cert-lname" placeholder="Last name" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="cert-phone" placeholder="(469) 000-0000" /></div>
+    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="cert-email" placeholder="you@email.com" /></div>
+    <div class="field-group" id="cert-date-group" style="display:none">
+      <label class="field-label">Preferred date <span class="field-required">*</span></label>
+      <input type="date" id="cert-date" />
+      <p style="font-size:12px;color:var(--muted);margin-top:5px;">We'll contact you to confirm the exact time.</p>
+      <p class="err-msg" id="cert-date-err">Please select a preferred date.</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Home / pickup address <span class="field-required">*</span></label>
+      <input type="text" id="cert-address" placeholder="Street address, city, TX" />
+      <p class="err-msg" id="cert-addr-err">Please enter your address.</p>
+    </div>
+    <p class="err-msg" id="cert-err">Please fill in all required fields.</p>
+    <button class="btn-primary" onclick="submitCert()">Submit →</button>
+  </div>
+
+  <!-- STEP 2b: Sessions -->
+  <div class="step" id="step2sessions">
+    <button class="btn-back" onclick="goStep(1)">← Back</button>
+    <h2 class="section-title">Book your sessions</h2>
+    <p class="section-sub" id="sessions-sub">Each session is 2 hrs on a different day. Fridays are unavailable.</p>
+    <div id="sessions-container"></div>
+    <p class="err-msg" id="sessions-err">Please complete all sessions before continuing.</p>
+    <button class="btn-primary" onclick="goToInfo()">Continue →</button>
+  </div>
+
+  <!-- STEP 3: Info -->
+  <div class="step" id="step3">
+    <button class="btn-back" onclick="backToSessions()">← Back</button>
+    <h2 class="section-title">Your details</h2>
+    <p class="section-sub">We'll use this to confirm your booking</p>
+    <div id="deposit-banner-wrap"></div>
+    <div class="row2">
+      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="fname" placeholder="First name" /></div>
+      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="lname" placeholder="Last name" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="phone" placeholder="(469) 000-0000" /></div>
+    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="email" placeholder="you@email.com" /></div>
+    <div class="field-group">
+      <label class="field-label">Pickup address <span class="field-required">*</span></label>
+      <input type="text" id="address" placeholder="Street address, city, TX" />
+      <div class="distance-notice">
+        <span class="notice-icon">⚠️</span>
+        <span>Pickup & dropoff is included. If your address is outside our usual service area, the instructor may add <strong>$10–$15</strong> to the session price. You'll always be notified before your session if this applies.</span>
+      </div>
+      <p class="err-msg" id="addr-err">Please enter your pickup address.</p>
+    </div>
+    <p class="err-msg" id="info-err">Please fill in all required fields.</p>
+    <button class="btn-primary" onclick="submitBooking()">Confirm booking →</button>
+  </div>
+
+  <!-- STEP 4: Receipt -->
+  <div class="step" id="step4">
+    <div class="receipt">
+      <div class="receipt-header">
+        <div class="receipt-school">Kaisar's Driving School</div>
+        <div class="receipt-addr">4645 Avon Ln Ste 355, Frisco, TX 75033</div>
+        <div class="receipt-ref" id="rec-ref">Booking ref: —</div>
+      </div>
+      <div class="receipt-body">
+        <div class="r-section">
+          <div class="r-section-title">Student</div>
+          <div class="r-row"><span class="r-key">Name</span><span class="r-val" id="rec-name">—</span></div>
+          <div class="r-row"><span class="r-key">Phone</span><span class="r-val" id="rec-phone">—</span></div>
+          <div class="r-row"><span class="r-key">Email</span><span class="r-val" id="rec-email">—</span></div>
+          <div class="r-row"><span class="r-key">Address</span><span class="r-val" id="rec-addr">—</span></div>
+        </div>
+        <div class="r-section">
+          <div class="r-section-title">Service</div>
+          <div class="r-row"><span class="r-key">Package</span><span class="r-val" id="rec-pkg">—</span></div>
+          <div class="r-row" id="rec-pickup-row"><span class="r-key">Pickup & dropoff</span><span class="r-val" style="color:var(--green)">Included ✓</span></div>
+          <div class="r-row" id="rec-prefdate-row" style="display:none"><span class="r-key">Preferred date</span><span class="r-val" id="rec-prefdate">—</span></div>
+        </div>
+        <div class="r-section" id="rec-sessions-section">
+          <div class="r-section-title">Scheduled sessions</div>
+          <div id="rec-sessions-list"></div>
+        </div>
+        <div class="r-section">
+          <div class="r-section-title">Payment</div>
+          <div class="r-row"><span class="r-key">Method</span><span class="r-val">Cash / Zelle / Card in-person</span></div>
+          <div id="rec-deposit-rows"></div>
+        </div>
+      </div>
+      <div class="receipt-distance-note" id="rec-distance-note">
+        ⚠️ <strong>Distance note:</strong> If your address is outside our usual service area, the instructor may adjust the session price by $10–$15. You'll be contacted before your session if this applies.
+      </div>
+      <div class="receipt-total-bar">
+        <div><div class="total-label">Total</div><div class="payment-note" id="rec-payment-note">—</div></div>
+        <div class="total-amount" id="rec-total">—</div>
+      </div>
+    </div>
+    <div class="contact-box">
+      <p>We'll reach out to confirm your booking. Questions?</p>
+      <a href="tel:+14697405327">469-740-5327</a> &nbsp;·&nbsp;
+      <a href="/cdn-cgi/l/email-protection#0b606a62786a79786f79627d62656c7868636464674b6c666a626725686466"><span class="__cf_email__" data-cfemail="076c666e7466757463756e716e696074646f68686b47606a666e6b2964686a">[email&#160;protected]</span></a>
+    </div>
+    <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const INSTRUCTORS = [
+  { id: 'kaisar', name: 'Kaisar', initials: 'KA' },
+  { id: 'adib',   name: 'Adib',   initials: 'AD' },
+  { id: 'kaifi',  name: 'Kaifi',  initials: 'KF' }
+];
+const SLOTS = [
+  { id: 'am',  label: '9:00 AM – 11:00 AM' },
+  { id: 'pm',  label: '12:00 PM – 2:00 PM' },
+  { id: 'eve', label: '5:00 PM – 7:00 PM' }
+];
+const ORDINALS = ['First','Second','Third','Fourth','Fifth','Sixth'];
+const DEPOSIT_PKGS = ['3 Classes + Road Test','4 Classes + Road Test','5 Classes + Road Test','6 Classes + Road Test'];
+
+let booking = { pkg: '', price: 0, sessions: 0, type: '', sessionData: [] };
+let bookedSlots = {};
+
+function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function slotKey(inst, date, slot) { return inst + '_' + date + '_' + slot; }
+function needsDeposit() { return DEPOSIT_PKGS.includes(booking.pkg); }
+
+async function loadBookedSlots() {
+  try {
+    const result = await window.storage.list('slot:', true);
+    bookedSlots = {};
+    if (result && result.keys) result.keys.forEach(k => { bookedSlots[k.replace('slot:', '')] = true; });
+  } catch(e) { bookedSlots = {}; }
+}
+async function saveSlot(inst, date, slot) {
+  try { await window.storage.set('slot:' + slotKey(inst, date, slot), '1', true); } catch(e) {}
+}
+function isBooked(inst, date, slot) { return !!bookedSlots[slotKey(inst, date, slot)]; }
+function isFriday(dateStr) { if (!dateStr) return false; return new Date(dateStr + 'T12:00:00').getDay() === 5; }
+
+function setProgress(n) {
+  for (let i = 1; i <= 4; i++) {
+    const c = document.getElementById('pc' + i);
+    if (i < n) { c.className = 'p-circle done'; c.textContent = '✓'; }
+    else if (i === n) { c.className = 'p-circle active'; c.textContent = i; }
+    else { c.className = 'p-circle'; c.textContent = i; }
+    if (i <= 3) document.getElementById('pl' + i).className = 'p-line' + (i < n ? ' done' : '');
+  }
+}
+function showStep(id, n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  setProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goStep(n) {
+  const map = {1:'step1', 2:'step2sessions', 3:'step3', 4:'step4'};
+  showStep(map[n], n);
+}
+function selectPkg(el, name, price, sessions, type) {
+  document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  booking = { ...booking, pkg: name, price, sessions, type };
+}
+
+async function goToStep2() {
+  if (!booking.pkg) { document.getElementById('pkg-err').style.display = 'block'; return; }
+  document.getElementById('pkg-err').style.display = 'none';
+
+  if (booking.type === 'cert' || booking.type === 'signup') {
+    const isCert = booking.type === 'cert';
+    document.getElementById('cert-title').textContent = booking.pkg;
+    document.getElementById('cert-sub').textContent = isCert
+      ? 'Fill in your details and we\'ll reach out to schedule everything with you.'
+      : 'Select a preferred date and we\'ll contact you to confirm a time.';
+    document.getElementById('cert-banner').textContent = isCert
+      ? 'No session booking needed — we\'ll contact you directly to arrange your schedule.'
+      : 'No scheduling needed upfront — sign up here and we\'ll confirm your time.';
+    const dateGroup = document.getElementById('cert-date-group');
+    if (!isCert) {
+      dateGroup.style.display = 'block';
+      document.getElementById('cert-date').min = new Date().toISOString().split('T')[0];
+      document.getElementById('cert-date').value = '';
+    } else {
+      dateGroup.style.display = 'none';
+    }
+    ['cert-fname','cert-lname','cert-phone','cert-email','cert-address'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    showStep('step2cert', 2);
+    return;
+  }
+
+  showLoading('Checking availability...');
+  await loadBookedSlots();
+  hideLoading();
+  booking.sessionData = Array.from({ length: booking.sessions }, () => ({ instructor: '', date: '', slot: '' }));
+
+  const wrap = document.getElementById('deposit-banner-wrap');
+  if (needsDeposit()) {
+    const bal = booking.price - 100;
+    wrap.innerHTML = `<div class="info-banner banner-green">A <strong>$100 deposit</strong> is required to reserve your spot. The remaining <strong>$${bal}</strong> balance is due at or before your 2nd session.</div>`;
+  } else {
+    wrap.innerHTML = '';
+  }
+
+  renderSessions();
+  showStep('step2sessions', 2);
+}
+
+function renderSessions() {
+  const c = document.getElementById('sessions-container');
+  c.innerHTML = '';
+  document.getElementById('sessions-sub').textContent =
+    booking.sessions === 1
+      ? 'Pick your instructor, date, and time slot. Fridays are unavailable.'
+      : `Book ${booking.sessions} sessions — each on a different day. Fridays are unavailable.`;
+
+  booking.sessionData.forEach((sd, idx) => {
+    const div = document.createElement('div');
+    div.className = 'session-block';
+    div.innerHTML = `
+      <div class="session-block-title">
+        <div class="session-num">${idx + 1}</div>
+        ${ORDINALS[idx] || (idx+1)+'th'} session
+      </div>
+      <div class="field-group">
+        <label class="field-label">Instructor <span class="field-required">*</span></label>
+        <div class="instructor-grid" id="ig-${idx}">
+          ${INSTRUCTORS.map(inst => `
+            <div class="instructor-btn${sd.instructor===inst.id?' selected':''}" id="ib-${idx}-${inst.id}" onclick="selectInstructor(${idx},'${inst.id}')">
+              <div class="i-avatar">${inst.initials}</div>
+              <div class="i-name">${inst.name}</div>
+            </div>`).join('')}
+        </div>
+        <p class="err-msg" id="ie-${idx}">Please select an instructor.</p>
+      </div>
+      <div class="row2">
+        <div class="field-group">
+          <label class="field-label">Date <span class="field-required">*</span></label>
+          <input type="date" id="di-${idx}" value="${sd.date}" min="${new Date().toISOString().split('T')[0]}" onchange="onDateChange(${idx})" />
+          <p class="err-msg" id="de-${idx}">Please select a date.</p>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Time slot <span class="field-required">*</span></label>
+          <div id="sw-${idx}">${renderSlots(idx)}</div>
+          <p class="err-msg" id="se-${idx}">Please select a time slot.</p>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function renderSlots(idx) {
+  const sd = booking.sessionData[idx];
+  if (!sd.instructor || !sd.date) {
+    return `<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.6">Select an instructor<br>and date first</div>`;
+  }
+  return `<div class="slot-list">` + SLOTS.map(s => {
+    const booked = isBooked(sd.instructor, sd.date, s.id);
+    const sel = sd.slot === s.id;
+    return `<button class="slot-btn${sel?' selected':''}" ${booked?'disabled':''} onclick="selectSlot(${idx},'${s.id}')">
+      <span style="font-size:13px;font-weight:500">${s.label}</span>
+      <span class="slot-tag">${booked ? 'Taken' : sel ? '✓' : ''}</span>
+    </button>`;
+  }).join('') + `</div>`;
+}
+
+function selectInstructor(idx, instId) {
+  booking.sessionData[idx].instructor = instId;
+  booking.sessionData[idx].slot = '';
+  document.querySelectorAll(`#ig-${idx} .instructor-btn`).forEach(b => b.classList.remove('selected'));
+  document.getElementById(`ib-${idx}-${instId}`).classList.add('selected');
+  document.getElementById(`ie-${idx}`).style.display = 'none';
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+}
+
+function onDateChange(idx) {
+  const val = document.getElementById(`di-${idx}`).value;
+  if (isFriday(val)) {
+    document.getElementById(`di-${idx}`).value = '';
+    booking.sessionData[idx].date = '';
+    const el = document.getElementById(`de-${idx}`);
+    el.textContent = 'Fridays are unavailable — please choose another day.';
+    el.style.display = 'block';
+    document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+    return;
+  }
+  booking.sessionData[idx].date = val;
+  booking.sessionData[idx].slot = '';
+  document.getElementById(`de-${idx}`).style.display = 'none';
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+  checkDupeDates();
+}
+
+function selectSlot(idx, slotId) {
+  booking.sessionData[idx].slot = slotId;
+  document.getElementById(`se-${idx}`).style.display = 'none';
+  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+}
+
+function checkDupeDates() {
+  const dates = booking.sessionData.map(sd => sd.date);
+  booking.sessionData.forEach((sd, i) => {
+    const el = document.getElementById(`de-${i}`);
+    if (el && sd.date && dates.filter(d => d === sd.date).length > 1) {
+      el.textContent = 'Each session must be on a different day.';
+      el.style.display = 'block';
+    } else if (el && el.textContent.includes('different')) {
+      el.style.display = 'none';
+    }
+  });
+}
+
+function backToSessions() {
+  if (booking.type === 'cert' || booking.type === 'signup') showStep('step2cert', 2);
+  else showStep('step2sessions', 2);
+}
+
+async function goToInfo() {
+  const sd = booking.sessionData;
+  let valid = true;
+  sd.forEach((s, i) => {
+    if (!s.instructor) { document.getElementById(`ie-${i}`).style.display = 'block'; valid = false; }
+    if (!s.date) { document.getElementById(`de-${i}`).style.display = 'block'; valid = false; }
+    if (s.date && isFriday(s.date)) {
+      const el = document.getElementById(`de-${i}`);
+      el.textContent = 'Fridays are unavailable — please choose another day.';
+      el.style.display = 'block'; valid = false;
+    }
+    if (!s.slot) { document.getElementById(`se-${i}`).style.display = 'block'; valid = false; }
+  });
+  const dates = sd.map(s => s.date);
+  if (new Set(dates).size !== dates.length) {
+    document.getElementById('sessions-err').textContent = 'Each session must be on a different day.';
+    document.getElementById('sessions-err').style.display = 'block';
+    valid = false;
+  } else { document.getElementById('sessions-err').style.display = 'none'; }
+  if (!valid) return;
+
+  showLoading('Confirming availability...');
+  await loadBookedSlots();
+  hideLoading();
+  let conflict = false;
+  sd.forEach((s, i) => {
+    if (isBooked(s.instructor, s.date, s.slot)) {
+      const name = INSTRUCTORS.find(x => x.id === s.instructor)?.name;
+      document.getElementById(`se-${i}`).textContent = `${name} is no longer available at this time — please choose another slot.`;
+      document.getElementById(`se-${i}`).style.display = 'block';
+      booking.sessionData[i].slot = '';
+      document.getElementById(`sw-${i}`).innerHTML = renderSlots(i);
+      conflict = true;
+    }
+  });
+  if (conflict) return;
+  showStep('step3', 3);
+}
+
+async function saveBookingRecord(record) {
+  try {
+    const key = 'booking:' + Date.now() + ':' + Math.random().toString(36).slice(2, 7);
+    await window.storage.set(key, JSON.stringify(record), true);
+  } catch(e) {}
+}
+
+async function submitCert() {
+  const fn = document.getElementById('cert-fname').value.trim();
+  const ln = document.getElementById('cert-lname').value.trim();
+  const ph = document.getElementById('cert-phone').value.trim();
+  const em = document.getElementById('cert-email').value.trim();
+  const addr = document.getElementById('cert-address').value.trim();
+  const prefDate = document.getElementById('cert-date').value;
+  const isSignup = booking.type === 'signup';
+  let valid = true;
+  if (!fn || !ln || !ph || !em) { document.getElementById('cert-err').style.display = 'block'; valid = false; }
+  else { document.getElementById('cert-err').style.display = 'none'; }
+  if (!addr) { document.getElementById('cert-addr-err').style.display = 'block'; document.getElementById('cert-address').classList.add('invalid'); valid = false; }
+  else { document.getElementById('cert-addr-err').style.display = 'none'; document.getElementById('cert-address').classList.remove('invalid'); }
+  if (isSignup && !prefDate) { document.getElementById('cert-date-err').style.display = 'block'; valid = false; }
+  else { const el = document.getElementById('cert-date-err'); if (el) el.style.display = 'none'; }
+  if (!valid) return;
+
+  let formattedDate = '';
+  if (prefDate) {
+    const d = new Date(prefDate + 'T12:00:00');
+    formattedDate = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  const ref = 'KDS-' + Date.now().toString().slice(-7);
+  await saveBookingRecord({
+    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addr,
+    package: booking.pkg, price: booking.price, type: booking.type,
+    preferredDate: formattedDate, sessions: [], bookedAt: new Date().toISOString()
+  });
+
+  buildReceipt(fn + ' ' + ln, ph, em, addr, false, formattedDate, ref);
+}
+
+async function submitBooking() {
+  const fn = document.getElementById('fname').value.trim();
+  const ln = document.getElementById('lname').value.trim();
+  const ph = document.getElementById('phone').value.trim();
+  const em = document.getElementById('email').value.trim();
+  const addr = document.getElementById('address').value.trim();
+  let valid = true;
+  if (!fn || !ln || !ph || !em) { document.getElementById('info-err').style.display = 'block'; valid = false; }
+  else { document.getElementById('info-err').style.display = 'none'; }
+  if (!addr) { document.getElementById('addr-err').style.display = 'block'; document.getElementById('address').classList.add('invalid'); valid = false; }
+  else { document.getElementById('addr-err').style.display = 'none'; document.getElementById('address').classList.remove('invalid'); }
+  if (!valid) return;
+
+  showLoading('Saving your booking...');
+  await loadBookedSlots();
+  const sd = booking.sessionData;
+  let conflict = false;
+  sd.forEach(s => { if (isBooked(s.instructor, s.date, s.slot)) conflict = true; });
+  if (conflict) {
+    hideLoading();
+    alert('A slot was just taken by another customer. Please go back and choose a different time.');
+    backToSessions();
+    return;
+  }
+  for (const s of sd) {
+    await saveSlot(s.instructor, s.date, s.slot);
+    bookedSlots[slotKey(s.instructor, s.date, s.slot)] = true;
+  }
+
+  const sessionsSummary = sd.map((s, i) => {
+    const d = new Date(s.date + 'T12:00:00');
+    return {
+      session: i + 1,
+      instructor: INSTRUCTORS.find(x => x.id === s.instructor)?.name || s.instructor,
+      instructorId: s.instructor,
+      date: s.date,
+      dateFormatted: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+      slot: s.slot,
+      slotLabel: SLOTS.find(x => x.id === s.slot)?.label || s.slot
+    };
+  });
+
+  const ref = 'KDS-' + Date.now().toString().slice(-7);
+  await saveBookingRecord({
+    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addr,
+    package: booking.pkg, price: booking.price, type: booking.type,
+    preferredDate: '', sessions: sessionsSummary, bookedAt: new Date().toISOString(),
+    deposit: needsDeposit() ? 100 : 0
+  });
+
+  hideLoading();
+  buildReceipt(fn + ' ' + ln, ph, em, addr, true, '', ref);
+}
+
+function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
+  ref = ref || ('KDS-' + Date.now().toString().slice(-7));
+  document.getElementById('rec-ref').textContent = 'Booking ref: ' + ref + ' · ' + new Date().toLocaleDateString('en-US');
+  document.getElementById('rec-name').textContent = name;
+  document.getElementById('rec-phone').textContent = phone;
+  document.getElementById('rec-email').textContent = email;
+  document.getElementById('rec-addr').textContent = addr;
+  document.getElementById('rec-pkg').textContent = booking.pkg;
+  document.getElementById('rec-total').textContent = '$' + booking.price;
+
+  // Preferred date
+  if (prefDate) {
+    document.getElementById('rec-prefdate').textContent = prefDate;
+    document.getElementById('rec-prefdate-row').style.display = 'flex';
+  } else {
+    document.getElementById('rec-prefdate-row').style.display = 'none';
+  }
+
+  // Pickup row
+  document.getElementById('rec-pickup-row').style.display = hasSessions ? 'flex' : 'none';
+
+  // Sessions
+  if (hasSessions) {
+    document.getElementById('rec-sessions-section').style.display = 'block';
+    const list = document.getElementById('rec-sessions-list');
+    list.innerHTML = '';
+    booking.sessionData.forEach((s, i) => {
+      const d = new Date(s.date + 'T12:00:00');
+      const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const slotLabel = SLOTS.find(x => x.id === s.slot)?.label || s.slot;
+      const instName = INSTRUCTORS.find(x => x.id === s.instructor)?.name || s.instructor;
+      const row = document.createElement('div');
+      row.className = 'r-row';
+      row.innerHTML = `<span class="r-key">Session ${i+1}</span><span class="r-val">${dateStr} · ${slotLabel} · ${instName}</span>`;
+      list.appendChild(row);
+    });
+  } else {
+    document.getElementById('rec-sessions-section').style.display = 'none';
+  }
+
+  // Payment rows
+  const depRows = document.getElementById('rec-deposit-rows');
+  const payNote = document.getElementById('rec-payment-note');
+  if (hasSessions && needsDeposit()) {
+    const bal = booking.price - 100;
+    depRows.innerHTML = `
+      <div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#d97706">$100</span></div>
+      <div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$${bal}</span></div>
+      <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before 2nd session</span></div>`;
+    payNote.textContent = '$100 deposit due to confirm · $' + bal + ' balance at 2nd session';
+  } else {
+    depRows.innerHTML = `<div class="r-row"><span class="r-key">Due</span><span class="r-val" style="color:#d97706">Pay at time of service</span></div>
