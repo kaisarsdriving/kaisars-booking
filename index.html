@@ -695,10 +695,13 @@ window.selectInstructor = async function(idx, instId) {
     showLoading('Searching for earliest slot...');
     await loadBookedSlots();
     hideLoading();
-    // Collect dates already assigned to other sessions so we don't double-book same day
-    const usedDates = booking.sessionData
-      .filter((s, i) => i !== idx && s.date)
-      .map(s => s.date);
+    // Collect dates already used by other sessions (confirmed or pending auto-assign)
+    const usedDates = [];
+    for (let i = 0; i < booking.sessionData.length; i++) {
+      if (i === idx) continue;
+      if (booking.sessionData[i].date) usedDates.push(booking.sessionData[i].date);
+      else if (autoAssigned[i]) usedDates.push(autoAssigned[i].dateStr);
+    }
     const result = findEarliestAvailable(usedDates);
     if (!result) {
       autoBox.innerHTML = `<div class="auto-confirm-title" style="color:var(--red)">No available slots found in the next 60 days.</div><div class="auto-confirm-detail">Please call us directly: <a href="tel:+14697405327" style="color:var(--green)">469-740-5327</a></div>`;
