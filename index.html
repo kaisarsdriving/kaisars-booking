@@ -455,13 +455,13 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="contact-box">
       <p>Questions? We're happy to help.</p>
       <a href="tel:+14697405327">469-740-5327</a> &nbsp;·&nbsp;
-      <a href="mailto:kaisarsdrivingschool@gmail.com">kaisarsdrivingschool@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#cfa4aea6bcaebdbcabbda6b9a6a1a8bcaca7a0a0a38fa8a2aea6a3e1aca0a2"><span class="__cf_email__" data-cfemail="a3c8c2cad0c2d1d0c7d1cad5cacdc4d0c0cbcccccfe3c4cec2cacf8dc0ccce">[email&#160;protected]</span></a>
     </div>
     <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
   </div>
 </div>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -541,14 +541,15 @@ function isBooked(inst, date, slot) { return !!bookedSlots[slotKey(inst, date, s
 function anyAvailable(date, slot) { return REAL_INSTRUCTORS.some(i => !isBooked(i, date, slot)); }
 function pickInstructor(date, slot) { return REAL_INSTRUCTORS.find(i => !isBooked(i, date, slot)) || null; }
 
-// Find earliest available: loops through upcoming dates and slots to find the next open one
-function findEarliestAvailable() {
+// Find earliest available: loops through upcoming dates and slots, skipping excludeDates
+function findEarliestAvailable(excludeDates = []) {
   const today = new Date();
   for (let d = 0; d < 60; d++) {
     const date = new Date(today);
     date.setDate(today.getDate() + d);
     if (date.getDay() === 5) continue; // skip Friday
     const dateStr = date.toISOString().split('T')[0];
+    if (excludeDates.includes(dateStr)) continue; // skip dates already used by other sessions
     for (const slot of SLOTS) {
       const inst = pickInstructor(dateStr, slot.id);
       if (inst) {
@@ -694,7 +695,11 @@ window.selectInstructor = async function(idx, instId) {
     showLoading('Searching for earliest slot...');
     await loadBookedSlots();
     hideLoading();
-    const result = findEarliestAvailable();
+    // Collect dates already assigned to other sessions so we don't double-book same day
+    const usedDates = booking.sessionData
+      .filter((s, i) => i !== idx && s.date)
+      .map(s => s.date);
+    const result = findEarliestAvailable(usedDates);
     if (!result) {
       autoBox.innerHTML = `<div class="auto-confirm-title" style="color:var(--red)">No available slots found in the next 60 days.</div><div class="auto-confirm-detail">Please call us directly: <a href="tel:+14697405327" style="color:var(--green)">469-740-5327</a></div>`;
       return;
@@ -793,10 +798,16 @@ window.goToInfo = async function() {
   const sd = booking.sessionData;
   let valid = true;
   sd.forEach((s, i) => {
-    if (!s.instructor) { document.getElementById(`ie-${i}`).style.display = 'block'; valid = false; }
-    if (!s.date) { const el = document.getElementById(`de-${i}`); el.textContent = 'Please select a date.'; el.style.display = 'block'; valid = false; }
-    if (s.date && isFriday(s.date)) { const el = document.getElementById(`de-${i}`); el.textContent = 'Fridays are unavailable.'; el.style.display = 'block'; valid = false; }
-    if (!s.slot) { document.getElementById(`se-${i}`).style.display = 'block'; valid = false; }
+    // If this session was auto-assigned and confirmed, skip manual field validation
+    const isAutoConfirmed = autoAssigned[i] && s.date && s.slot && s.instructor && s.instructor !== 'any';
+    if (!s.instructor || s.instructor === '') {
+      document.getElementById(`ie-${i}`).style.display = 'block'; valid = false;
+    }
+    if (!isAutoConfirmed) {
+      if (!s.date) { const el = document.getElementById(`de-${i}`); if(el){el.textContent='Please select a date.';el.style.display='block';} valid = false; }
+      if (s.date && isFriday(s.date)) { const el = document.getElementById(`de-${i}`); if(el){el.textContent='Fridays are unavailable.';el.style.display='block';} valid = false; }
+      if (!s.slot) { const el = document.getElementById(`se-${i}`); if(el) el.style.display='block'; valid = false; }
+    }
   });
   const dates = sd.map(s => s.date);
   if (new Set(dates).size !== dates.length) {
@@ -964,12 +975,4 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
     depRows.innerHTML = `
       <div class="r-row"><span class="r-key">Deposit due now</span><span class="r-val" style="color:#6d1ed4">$${booking.deposit} via Zelle</span></div>
       <div class="r-row"><span class="r-key">Remaining balance</span><span class="r-val">$${bal}</span></div>
-      <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before ${hasSessions && booking.sessions > 1 ? '2nd session' : 'service'}</span></div>`;
-    payNote.textContent = `$${booking.deposit} deposit via Zelle · $${bal} balance at service`;
-  }
-  document.getElementById('rec-distance-note').style.display = hasSessions ? 'block' : 'none';
-  showStep('step4', 4);
-}
-</script>
-</body>
-</html>
+      <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before ${hasSessions && booking.sessions > 1 ? '2nd session' : 'service'
