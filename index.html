@@ -25,7 +25,6 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 .header-contact a { color: var(--green); text-decoration: none; font-weight: 500; }
 
 .container { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-
 .progress-wrap { display: flex; align-items: center; margin-bottom: 2rem; }
 .progress-step { display: flex; align-items: center; gap: 6px; flex: 1; }
 .progress-step:last-child { flex: 0; }
@@ -70,31 +69,32 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 .session-block-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
 .session-num { width: 24px; height: 24px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
 
+/* Form fields */
 .field-group { margin-bottom: 1rem; }
 .field-label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
 .field-required { color: var(--red); margin-left: 2px; }
+.field-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-input[type=text], input[type=tel], input[type=email], input[type=date], select {
+input[type=text], input[type=tel], input[type=email], input[type=date], input[type=number], select {
   width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
   font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--white);
-  outline: none; transition: border-color 0.15s; -webkit-appearance: none; appearance: none;
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s; -webkit-appearance: none; appearance: none;
 }
 input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
-input.invalid, select.invalid { border-color: var(--red); }
+input.invalid, select.invalid { border-color: var(--red) !important; box-shadow: 0 0 0 3px #fee2e2; }
 input::placeholder { color: #b0b0a8; }
 select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .row3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
 
-/* Instructor cards */
 .instructor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .instructor-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 6px; cursor: pointer; text-align: center; transition: all 0.15s; }
 .instructor-btn:hover { border-color: var(--green); }
 .instructor-btn.selected { border-color: var(--green); background: var(--green-light); }
 .i-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green-mid); color: var(--green-dark); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; }
-.i-avatar.any { background: #f1f5f9; color: #475569; font-size: 18px; }
-.i-name { font-size: 12px; font-weight: 500; color: var(--text); }
+.i-avatar.any { background: #f1f5f9; color: #475569; font-size: 16px; }
+.i-name { font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.3; }
 
 .slot-list { display: flex; flex-direction: column; gap: 6px; }
 .slot-btn { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; width: 100%; text-align: left; }
@@ -104,6 +104,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .slot-tag { font-size: 11px; color: var(--muted); }
 .slot-btn.selected .slot-tag { color: var(--green-dark); }
 .slot-btn:disabled .slot-tag { color: var(--red); }
+
+/* Auto-assign confirm box */
+.auto-confirm-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 10px; display: none; }
+.auto-confirm-box.show { display: block; }
+.auto-confirm-title { font-size: 13px; font-weight: 600; color: #166534; margin-bottom: 4px; }
+.auto-confirm-detail { font-size: 13px; color: #15803d; margin-bottom: 10px; }
+.auto-confirm-btns { display: flex; gap: 8px; }
+.btn-confirm-yes { background: var(--green); color: white; border: none; border-radius: var(--radius-sm); padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+.btn-confirm-yes:hover { background: var(--green-dark); }
+.btn-confirm-no { background: var(--white); color: var(--muted); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+.btn-confirm-no:hover { border-color: var(--text); color: var(--text); }
 
 .btn-primary { width: 100%; padding: 13px 20px; background: var(--green); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.1s; margin-top: 6px; }
 .btn-primary:hover { background: var(--green-dark); }
@@ -117,27 +128,25 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .info-banner { border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; margin-bottom: 1.25rem; line-height: 1.5; }
 .banner-yellow { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
 .banner-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
-
 .distance-notice { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 8px; font-size: 13px; color: #9a3412; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
 .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
 
-/* Zelle payment box */
+/* Zelle box */
 .zelle-box { background: #f5f0ff; border: 2px solid #c4b5fd; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.25rem; }
 .zelle-title { font-size: 16px; font-weight: 600; color: var(--zelle); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-.zelle-title span { font-size: 20px; }
 .zelle-sub { font-size: 13px; color: #5b21b6; margin-bottom: 1rem; line-height: 1.5; }
-.zelle-detail { background: white; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.zelle-amount { font-size: 32px; font-weight: 700; color: var(--zelle); text-align: center; padding: 10px 0 2px; }
+.zelle-amount-label { font-size: 12px; color: #7c3aed; text-align: center; margin-bottom: 12px; }
+.zelle-detail { background: white; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #ede9fe; }
 .zelle-detail-label { font-size: 12px; color: var(--muted); }
 .zelle-detail-val { font-size: 14px; font-weight: 600; color: var(--text); }
-.zelle-amount { font-size: 28px; font-weight: 700; color: var(--zelle); text-align: center; padding: 12px 0 4px; }
-.zelle-amount-label { font-size: 12px; color: #7c3aed; text-align: center; margin-bottom: 10px; }
-.zelle-note { font-size: 12px; color: #6d28d9; line-height: 1.5; background: #ede9fe; border-radius: var(--radius-sm); padding: 8px 12px; }
+.zelle-note { font-size: 12px; color: #6d28d9; line-height: 1.6; background: #ede9fe; border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 4px; }
 
 /* Receipt */
 .receipt { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .receipt-header { background: var(--green); padding: 1.5rem 1.5rem 1.25rem; text-align: center; color: white; }
 .receipt-school { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 2px; }
-.receipt-addr { font-size: 12px; opacity: 0.85; }
+.receipt-addr-text { font-size: 12px; opacity: 0.85; }
 .receipt-ref { font-size: 11px; opacity: 0.7; margin-top: 8px; background: rgba(0,0,0,0.15); display: inline-block; padding: 3px 10px; border-radius: 20px; }
 .receipt-body { padding: 1.25rem 1.5rem; }
 .r-section { margin-bottom: 1rem; }
@@ -151,7 +160,6 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .total-amount { font-size: 24px; font-weight: 600; color: var(--green); }
 .payment-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .receipt-distance-note { background: #fff7ed; border-top: 1px solid #fed7aa; padding: 10px 1.5rem; font-size: 12px; color: #9a3412; line-height: 1.5; }
-
 .contact-box { background: var(--green-light); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-top: 1rem; text-align: center; }
 .contact-box p { font-size: 13px; color: var(--green-dark); margin-bottom: 5px; }
 .contact-box a { color: var(--green-dark); font-weight: 500; font-size: 14px; text-decoration: none; }
@@ -162,12 +170,11 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: 14px; color: var(--muted); }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .row3 { grid-template-columns: 1fr 1fr; }
-  .row3 .street { grid-column: 1 / -1; }
+  .row3 .full-col { grid-column: 1 / -1; }
   .instructor-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media print {
   header, .progress-wrap, .btn-print, .contact-box, .btn-back, .btn-primary, .loading-overlay, .zelle-box { display: none !important; }
   body { background: white; }
@@ -210,12 +217,11 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <div class="step active" id="step1">
     <h2 class="section-title">Choose a service</h2>
     <p class="section-sub">All behind-the-wheel sessions include free pickup & dropoff in the DFW area</p>
-
     <div class="section-divider"><div></div><span>Driving lessons</span><div></div></div>
     <div class="pkg-grid">
       <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert',85)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only · Includes DPS appointment · Full payment of $85 due to confirm</div></div><div class="pkg-price">$85</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only · Includes DPS appointment · Full $85 payment to confirm</div></div><div class="pkg-price">$85</div></div>
       </div>
       <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class',25)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
@@ -227,22 +233,21 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       </div>
       <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions · 6 hrs total · $83/session · $50 deposit to confirm</div></div><div class="pkg-price">$350</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions · 6 hrs · $83/session · $50 deposit to confirm</div></div><div class="pkg-price">$350</div></div>
       </div>
       <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions · 8 hrs total · $80/session · $50 deposit to confirm</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions · 8 hrs · $80/session · $50 deposit to confirm</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div>
       </div>
       <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions · 10 hrs total · $78/session · $50 deposit to confirm</div></div><div class="pkg-price">$490</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions · 10 hrs · $78/session · $50 deposit to confirm</div></div><div class="pkg-price">$490</div></div>
       </div>
       <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class',50)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions · 12 hrs total · $76/session · $50 deposit to confirm</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div>
+        <div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions · 12 hrs · $76/session · $50 deposit to confirm</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div>
       </div>
     </div>
-
     <div class="section-divider"><div></div><span>Road test services</span><div></div></div>
     <p class="section-note">Pick a preferred date and we'll reach out to confirm your time. $25 deposit required.</p>
     <div class="pkg-grid">
@@ -263,7 +268,6 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         <div class="pkg-top"><div><div class="pkg-name">Class + road test</div><div class="pkg-detail">1 session · 2 hrs behind-the-wheel · followed by road test</div></div><div class="pkg-price">$190</div></div>
       </div>
     </div>
-
     <p class="err-msg" id="pkg-err">Please select a service to continue.</p>
     <button class="btn-primary" style="margin-top:1.25rem" onclick="goToStep2()">Continue →</button>
   </div>
@@ -275,41 +279,54 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <p class="section-sub" id="cert-sub">Fill in your details and we'll be in touch.</p>
     <div class="info-banner banner-yellow" id="cert-banner"></div>
     <div class="row2">
-      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="cert-fname" placeholder="First name" /></div>
-      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="cert-lname" placeholder="Last name" /></div>
+      <div class="field-group">
+        <label class="field-label">First name <span class="field-required">*</span></label>
+        <input type="text" id="cert-fname" placeholder="First name" autocomplete="given-name" />
+        <p class="err-msg" id="cert-fname-err">Please enter your first name.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Last name <span class="field-required">*</span></label>
+        <input type="text" id="cert-lname" placeholder="Last name" autocomplete="family-name" />
+        <p class="err-msg" id="cert-lname-err">Please enter your last name.</p>
+      </div>
     </div>
-    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="cert-phone" placeholder="(469) 000-0000" /></div>
-    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="cert-email" placeholder="you@email.com" /></div>
+    <div class="field-group">
+      <label class="field-label">Phone number <span class="field-required">*</span></label>
+      <input type="tel" id="cert-phone" placeholder="(000) 000-0000" maxlength="14" autocomplete="tel" oninput="formatPhone(this)" />
+      <p class="err-msg" id="cert-phone-err">Please enter a valid 10-digit phone number.</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Email address <span class="field-required">*</span></label>
+      <input type="email" id="cert-email" placeholder="you@email.com" autocomplete="email" />
+      <p class="err-msg" id="cert-email-err">Please enter a valid email address.</p>
+    </div>
     <div class="field-group" id="cert-date-group" style="display:none">
       <label class="field-label">Preferred date <span class="field-required">*</span></label>
       <input type="date" id="cert-date" />
-      <p style="font-size:12px;color:var(--muted);margin-top:5px;">We'll contact you to confirm the exact time.</p>
+      <p class="field-hint">We'll contact you to confirm the exact time.</p>
       <p class="err-msg" id="cert-date-err">Please select a preferred date.</p>
     </div>
-    <!-- Address fields -->
     <div class="field-group">
       <label class="field-label">Street address <span class="field-required">*</span></label>
-      <input type="text" id="cert-street" placeholder="123 Main St" />
+      <input type="text" id="cert-street" placeholder="123 Main St" autocomplete="street-address" />
       <p class="err-msg" id="cert-street-err">Please enter your street address.</p>
     </div>
     <div class="row3">
-      <div class="field-group street">
+      <div class="field-group full-col">
         <label class="field-label">City <span class="field-required">*</span></label>
-        <input type="text" id="cert-city" placeholder="Frisco" />
-        <p class="err-msg" id="cert-city-err">Required.</p>
+        <input type="text" id="cert-city" placeholder="Frisco" autocomplete="address-level2" />
+        <p class="err-msg" id="cert-city-err">Please enter your city.</p>
       </div>
       <div class="field-group">
         <label class="field-label">State <span class="field-required">*</span></label>
-        <select id="cert-state">
-          <option value="">State</option>
-          <option value="TX" selected>TX</option>
-          <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+        <select id="cert-state" autocomplete="address-level1">
+          <option value="TX">TX</option><option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
         </select>
       </div>
       <div class="field-group">
-        <label class="field-label">ZIP <span class="field-required">*</span></label>
-        <input type="text" id="cert-zip" placeholder="75033" maxlength="5" />
-        <p class="err-msg" id="cert-zip-err">Required.</p>
+        <label class="field-label">ZIP code <span class="field-required">*</span></label>
+        <input type="text" id="cert-zip" placeholder="75033" maxlength="5" inputmode="numeric" pattern="[0-9]*" autocomplete="postal-code" oninput="this.value=this.value.replace(/\D/g,'')" />
+        <p class="err-msg" id="cert-zip-err">Please enter a valid 5-digit ZIP.</p>
       </div>
     </div>
     <p class="err-msg" id="cert-err">Please fill in all required fields.</p>
@@ -333,64 +350,74 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <p class="section-sub">We'll use this to confirm your booking</p>
     <div id="deposit-banner-wrap"></div>
     <div class="row2">
-      <div class="field-group"><label class="field-label">First name <span class="field-required">*</span></label><input type="text" id="fname" placeholder="First name" /></div>
-      <div class="field-group"><label class="field-label">Last name <span class="field-required">*</span></label><input type="text" id="lname" placeholder="Last name" /></div>
+      <div class="field-group">
+        <label class="field-label">First name <span class="field-required">*</span></label>
+        <input type="text" id="fname" placeholder="First name" autocomplete="given-name" />
+        <p class="err-msg" id="fname-err">Please enter your first name.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Last name <span class="field-required">*</span></label>
+        <input type="text" id="lname" placeholder="Last name" autocomplete="family-name" />
+        <p class="err-msg" id="lname-err">Please enter your last name.</p>
+      </div>
     </div>
-    <div class="field-group"><label class="field-label">Phone number <span class="field-required">*</span></label><input type="tel" id="phone" placeholder="(469) 000-0000" /></div>
-    <div class="field-group"><label class="field-label">Email address <span class="field-required">*</span></label><input type="email" id="email" placeholder="you@email.com" /></div>
-    <!-- Address fields -->
+    <div class="field-group">
+      <label class="field-label">Phone number <span class="field-required">*</span></label>
+      <input type="tel" id="phone" placeholder="(000) 000-0000" maxlength="14" autocomplete="tel" oninput="formatPhone(this)" />
+      <p class="err-msg" id="phone-err">Please enter a valid 10-digit phone number.</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Email address <span class="field-required">*</span></label>
+      <input type="email" id="email" placeholder="you@email.com" autocomplete="email" />
+      <p class="err-msg" id="email-err">Please enter a valid email address (must include @).</p>
+    </div>
     <div class="field-group">
       <label class="field-label">Street address <span class="field-required">*</span></label>
-      <input type="text" id="street" placeholder="123 Main St" />
-      <div class="distance-notice" style="margin-top:8px;">
+      <input type="text" id="street" placeholder="123 Main St" autocomplete="street-address" />
+      <div class="distance-notice">
         <span class="notice-icon">⚠️</span>
         <span>Pickup & dropoff is included. If your address is outside our usual service area, the instructor may add <strong>$10–$15</strong>. You'll always be notified first.</span>
       </div>
       <p class="err-msg" id="street-err">Please enter your street address.</p>
     </div>
     <div class="row3">
-      <div class="field-group street">
+      <div class="field-group full-col">
         <label class="field-label">City <span class="field-required">*</span></label>
-        <input type="text" id="city" placeholder="Frisco" />
-        <p class="err-msg" id="city-err">Required.</p>
+        <input type="text" id="city" placeholder="Frisco" autocomplete="address-level2" />
+        <p class="err-msg" id="city-err">Please enter your city.</p>
       </div>
       <div class="field-group">
         <label class="field-label">State <span class="field-required">*</span></label>
-        <select id="state">
-          <option value="">State</option>
-          <option value="TX" selected>TX</option>
-          <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+        <select id="state" autocomplete="address-level1">
+          <option value="TX">TX</option><option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
         </select>
       </div>
       <div class="field-group">
-        <label class="field-label">ZIP <span class="field-required">*</span></label>
-        <input type="text" id="zip" placeholder="75033" maxlength="5" />
-        <p class="err-msg" id="zip-err">Required.</p>
+        <label class="field-label">ZIP code <span class="field-required">*</span></label>
+        <input type="text" id="zip" placeholder="75033" maxlength="5" inputmode="numeric" pattern="[0-9]*" autocomplete="postal-code" oninput="this.value=this.value.replace(/\D/g,'')" />
+        <p class="err-msg" id="zip-err">Please enter a valid 5-digit ZIP.</p>
       </div>
     </div>
-    <p class="err-msg" id="info-err">Please fill in all required fields.</p>
+    <p class="err-msg" id="info-err">Please fix the errors above before continuing.</p>
     <button class="btn-primary" onclick="submitBooking()">Continue to payment →</button>
   </div>
 
   <!-- STEP 4: Payment + Receipt -->
   <div class="step" id="step4">
-
-    <!-- Zelle payment box -->
-    <div class="zelle-box" id="zelle-box">
-      <div class="zelle-title"><span>💜</span> Pay your deposit via Zelle</div>
-      <div class="zelle-sub">Send your deposit now to reserve your spot. Your booking is confirmed once we receive payment.</div>
+    <div class="zelle-box">
+      <div class="zelle-title"><span>💜</span> Send your deposit via Zelle</div>
+      <div class="zelle-sub">Send the amount below to reserve your spot. Once we receive it, your booking is confirmed.</div>
       <div class="zelle-amount" id="zelle-amount">$50</div>
       <div class="zelle-amount-label" id="zelle-amount-label">Deposit due now</div>
-      <div class="zelle-detail"><div class="zelle-detail-label">Send to (phone)</div><div class="zelle-detail-val">469-740-5327</div></div>
+      <div class="zelle-detail"><div class="zelle-detail-label">Zelle phone number</div><div class="zelle-detail-val">469-740-5327</div></div>
       <div class="zelle-detail"><div class="zelle-detail-label">Name on Zelle</div><div class="zelle-detail-val">Kaisar's Driving School LLC</div></div>
       <div class="zelle-detail"><div class="zelle-detail-label">Memo / note</div><div class="zelle-detail-val" id="zelle-memo">—</div></div>
-      <div class="zelle-note">After sending, screenshot your payment and text it to <strong>469-740-5327</strong>. We'll confirm your booking within a few hours.</div>
+      <div class="zelle-note">📸 After sending, <strong>screenshot your Zelle payment</strong> and text it to <strong>469-740-5327</strong>. We'll confirm your booking within a few hours.</div>
     </div>
-
     <div class="receipt">
       <div class="receipt-header">
         <div class="receipt-school">Kaisar's Driving School</div>
-        <div class="receipt-addr">4645 Avon Ln Ste 355, Frisco, TX 75033</div>
+        <div class="receipt-addr-text">4645 Avon Ln Ste 355, Frisco, TX 75033</div>
         <div class="receipt-ref" id="rec-ref">Booking ref: —</div>
       </div>
       <div class="receipt-body">
@@ -418,7 +445,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         </div>
       </div>
       <div class="receipt-distance-note" id="rec-distance-note">
-        ⚠️ <strong>Distance note:</strong> If your address is outside our usual service area, the instructor may adjust the price by $10–$15. You'll be contacted before your session.
+        ⚠️ <strong>Distance note:</strong> If your address is outside our usual service area, your instructor may adjust the price by $10–$15. You'll be contacted before your session.
       </div>
       <div class="receipt-total-bar">
         <div><div class="total-label">Total</div><div class="payment-note" id="rec-payment-note">—</div></div>
@@ -434,7 +461,6 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -447,7 +473,6 @@ const firebaseConfig = {
   messagingSenderId: "920051696926",
   appId: "1:920051696926:web:7eefcadaf11db47894b50f"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -457,6 +482,7 @@ const INSTRUCTORS = [
   { id: 'adib',   name: 'Adib',            initials: 'AD' },
   { id: 'kaifi',  name: 'Kaifi',           initials: 'KF' }
 ];
+const REAL_INSTRUCTORS = ['kaisar','adib','kaifi'];
 const SLOTS = [
   { id: 'am',  label: '9:00 AM – 11:00 AM' },
   { id: 'pm',  label: '12:00 PM – 2:00 PM' },
@@ -466,15 +492,28 @@ const ORDINALS = ['First','Second','Third','Fourth','Fifth','Sixth'];
 
 let booking = { pkg: '', price: 0, sessions: 0, type: '', sessionData: [], deposit: 0 };
 let bookedSlots = {};
+// Track auto-assigned results per session
+let autoAssigned = {};
+
+// ── Phone formatter ──
+window.formatPhone = function(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 10);
+  if (v.length >= 7) v = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6);
+  else if (v.length >= 4) v = '(' + v.slice(0,3) + ') ' + v.slice(3);
+  else if (v.length > 0) v = '(' + v;
+  input.value = v;
+};
+
+function isValidPhone(v) { return v.replace(/\D/g,'').length === 10; }
+function isValidEmail(v) { return v.includes('@') && v.includes('.') && v.indexOf('@') < v.lastIndexOf('.'); }
+function isValidZip(v) { return /^\d{5}$/.test(v); }
+function isValidName(v) { return v.trim().length >= 1 && /^[a-zA-Z\s'\-]+$/.test(v.trim()); }
 
 function showLoading(t) { document.getElementById('loadingText').textContent = t; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 function slotKey(inst, date, slot) { return inst + '_' + date + '_' + slot; }
 function isFriday(d) { if (!d) return false; return new Date(d + 'T12:00:00').getDay() === 5; }
-
-function fullAddress(street, city, state, zip) {
-  return [street, city, state, zip].filter(Boolean).join(', ');
-}
+function fullAddress(street, city, state, zip) { return [street, city, state + ' ' + zip].filter(Boolean).join(', '); }
 
 async function loadBookedSlots() {
   bookedSlots = {};
@@ -483,7 +522,6 @@ async function loadBookedSlots() {
     if (snap.exists()) bookedSlots = snap.data();
   } catch(e) {}
 }
-
 async function saveSlot(inst, date, slot) {
   try {
     const key = slotKey(inst, date, slot);
@@ -495,21 +533,31 @@ async function saveSlot(inst, date, slot) {
     bookedSlots[key] = true;
   } catch(e) {}
 }
-
 async function saveBookingRecord(record) {
   try { await addDoc(collection(db, 'bookings'), record); } catch(e) {}
 }
 
 function isBooked(inst, date, slot) { return !!bookedSlots[slotKey(inst, date, slot)]; }
+function anyAvailable(date, slot) { return REAL_INSTRUCTORS.some(i => !isBooked(i, date, slot)); }
+function pickInstructor(date, slot) { return REAL_INSTRUCTORS.find(i => !isBooked(i, date, slot)) || null; }
 
-// Check if ANY instructor is available for a date+slot
-function anyAvailable(date, slot) {
-  return ['kaisar','adib','kaifi'].some(i => !isBooked(i, date, slot));
-}
-
-// Pick first available instructor for a date+slot
-function pickInstructor(date, slot) {
-  return ['kaisar','adib','kaifi'].find(i => !isBooked(i, date, slot)) || null;
+// Find earliest available: loops through upcoming dates and slots to find the next open one
+function findEarliestAvailable() {
+  const today = new Date();
+  for (let d = 0; d < 60; d++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + d);
+    if (date.getDay() === 5) continue; // skip Friday
+    const dateStr = date.toISOString().split('T')[0];
+    for (const slot of SLOTS) {
+      const inst = pickInstructor(dateStr, slot.id);
+      if (inst) {
+        const dateFormatted = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        return { inst, dateStr, dateFormatted, slot: slot.id, slotLabel: slot.label };
+      }
+    }
+  }
+  return null;
 }
 
 function setProgress(n) {
@@ -521,14 +569,12 @@ function setProgress(n) {
     if (i <= 3) document.getElementById('pl' + i).className = 'p-line' + (i < n ? ' done' : '');
   }
 }
-
 function showStep(id, n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   setProgress(n);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function goStep(n) {
   const map = { 1:'step1', 2:'step2sessions', 3:'step3', 4:'step4' };
   showStep(map[n], n);
@@ -543,38 +589,29 @@ window.selectPkg = function(el, name, price, sessions, type, deposit) {
 window.goToStep2 = async function() {
   if (!booking.pkg) { document.getElementById('pkg-err').style.display = 'block'; return; }
   document.getElementById('pkg-err').style.display = 'none';
-
   if (booking.type === 'cert' || booking.type === 'signup') {
     const isCert = booking.type === 'cert';
     document.getElementById('cert-title').textContent = booking.pkg;
     document.getElementById('cert-sub').textContent = isCert
-      ? 'Fill in your details and we\'ll reach out to schedule everything with you.'
+      ? 'Fill in your details and we\'ll reach out to schedule everything.'
       : 'Select a preferred date and we\'ll contact you to confirm a time.';
     document.getElementById('cert-banner').textContent = isCert
       ? 'Full payment of $85 is due via Zelle to confirm your spot.'
       : 'A $25 deposit via Zelle is required to confirm your booking.';
-    const dateGroup = document.getElementById('cert-date-group');
-    if (!isCert) {
-      dateGroup.style.display = 'block';
-      document.getElementById('cert-date').min = new Date().toISOString().split('T')[0];
-      document.getElementById('cert-date').value = '';
-    } else { dateGroup.style.display = 'none'; }
-    ['cert-fname','cert-lname','cert-phone','cert-email','cert-street','cert-city','cert-zip'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
-    });
+    const dg = document.getElementById('cert-date-group');
+    if (!isCert) { dg.style.display = 'block'; document.getElementById('cert-date').min = new Date().toISOString().split('T')[0]; document.getElementById('cert-date').value = ''; }
+    else { dg.style.display = 'none'; }
+    ['cert-fname','cert-lname','cert-phone','cert-email','cert-street','cert-city','cert-zip'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     showStep('step2cert', 2);
     return;
   }
-
   showLoading('Checking availability...');
   await loadBookedSlots();
   hideLoading();
   booking.sessionData = Array.from({ length: booking.sessions }, () => ({ instructor: '', date: '', slot: '' }));
-
-  const wrap = document.getElementById('deposit-banner-wrap');
+  autoAssigned = {};
   const bal = booking.price - booking.deposit;
-  wrap.innerHTML = `<div class="info-banner banner-green">A <strong>$${booking.deposit} deposit</strong> via Zelle is required to confirm your booking. The remaining <strong>$${bal}</strong> is due at or before your ${booking.sessions > 1 ? '2nd' : ''} session.</div>`;
-
+  document.getElementById('deposit-banner-wrap').innerHTML = `<div class="info-banner banner-green">A <strong>$${booking.deposit} deposit</strong> via Zelle is required to confirm. The remaining <strong>$${bal}</strong> is due at or before your${booking.sessions > 1 ? ' 2nd' : ''} session.</div>`;
   renderSessions();
   showStep('step2sessions', 2);
 };
@@ -582,40 +619,39 @@ window.goToStep2 = async function() {
 function renderSessions() {
   const c = document.getElementById('sessions-container');
   c.innerHTML = '';
-  document.getElementById('sessions-sub').textContent =
-    booking.sessions === 1
-      ? 'Pick your instructor, date, and time slot. Fridays are unavailable.'
-      : `Book ${booking.sessions} sessions — each on a different day. Fridays are unavailable.`;
+  document.getElementById('sessions-sub').textContent = booking.sessions === 1
+    ? 'Pick your instructor, date, and time slot. Fridays are unavailable.'
+    : `Book ${booking.sessions} sessions — each on a different day. Fridays are unavailable.`;
 
   booking.sessionData.forEach((sd, idx) => {
     const div = document.createElement('div');
     div.className = 'session-block';
     div.innerHTML = `
-      <div class="session-block-title">
-        <div class="session-num">${idx + 1}</div>
-        ${ORDINALS[idx] || (idx+1)+'th'} session
-      </div>
+      <div class="session-block-title"><div class="session-num">${idx+1}</div>${ORDINALS[idx]||'Session '+(idx+1)} session</div>
       <div class="field-group">
         <label class="field-label">Instructor <span class="field-required">*</span></label>
         <div class="instructor-grid" id="ig-${idx}">
           ${INSTRUCTORS.map(inst => `
             <div class="instructor-btn${sd.instructor===inst.id?' selected':''}" id="ib-${idx}-${inst.id}" onclick="selectInstructor(${idx},'${inst.id}')">
-              <div class="i-avatar${inst.any?' any':''}">${inst.any ? '★' : inst.initials}</div>
-              <div class="i-name">${inst.any ? 'Any / Earliest' : inst.name}</div>
+              <div class="i-avatar${inst.any?' any':''}">${inst.any?'★':inst.initials}</div>
+              <div class="i-name">${inst.any?'Any /<br>Earliest':inst.name}</div>
             </div>`).join('')}
         </div>
         <p class="err-msg" id="ie-${idx}">Please select an instructor.</p>
       </div>
-      <div class="row2">
-        <div class="field-group">
-          <label class="field-label">Date <span class="field-required">*</span></label>
-          <input type="date" id="di-${idx}" value="${sd.date}" min="${new Date().toISOString().split('T')[0]}" onchange="onDateChange(${idx})" />
-          <p class="err-msg" id="de-${idx}">Please select a date.</p>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Time slot <span class="field-required">*</span></label>
-          <div id="sw-${idx}">${renderSlots(idx)}</div>
-          <p class="err-msg" id="se-${idx}">Please select a time slot.</p>
+      <div id="auto-box-${idx}" class="auto-confirm-box"></div>
+      <div id="manual-fields-${idx}">
+        <div class="row2">
+          <div class="field-group">
+            <label class="field-label">Date <span class="field-required">*</span></label>
+            <input type="date" id="di-${idx}" value="${sd.date}" min="${new Date().toISOString().split('T')[0]}" onchange="onDateChange(${idx})" />
+            <p class="err-msg" id="de-${idx}">Please select a date.</p>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Time slot <span class="field-required">*</span></label>
+            <div id="sw-${idx}">${renderSlots(idx)}</div>
+            <p class="err-msg" id="se-${idx}">Please select a time slot.</p>
+          </div>
         </div>
       </div>`;
     c.appendChild(div);
@@ -624,30 +660,91 @@ function renderSessions() {
 
 function renderSlots(idx) {
   const sd = booking.sessionData[idx];
-  if (!sd.instructor || !sd.date) {
+  if (!sd.instructor || sd.instructor === 'any' || !sd.date) {
+    if (sd.instructor === 'any') return `<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.5">Finding earliest slot…</div>`;
     return `<div style="font-size:12px;color:var(--muted);padding:8px 0;line-height:1.6">Select an instructor<br>and date first</div>`;
   }
   return `<div class="slot-list">` + SLOTS.map(s => {
-    let booked, sel = sd.slot === s.id;
-    if (sd.instructor === 'any') {
-      booked = !anyAvailable(sd.date, s.id);
-    } else {
-      booked = isBooked(sd.instructor, sd.date, s.id);
-    }
+    const booked = isBooked(sd.instructor, sd.date, s.id);
+    const sel = sd.slot === s.id;
     return `<button class="slot-btn${sel?' selected':''}" ${booked?'disabled':''} onclick="selectSlot(${idx},'${s.id}')">
       <span style="font-size:13px;font-weight:500">${s.label}</span>
-      <span class="slot-tag">${booked ? 'Taken' : sel ? '✓' : ''}</span>
+      <span class="slot-tag">${booked?'Taken':sel?'✓':''}</span>
     </button>`;
   }).join('') + `</div>`;
 }
 
-window.selectInstructor = function(idx, instId) {
+window.selectInstructor = async function(idx, instId) {
   booking.sessionData[idx].instructor = instId;
   booking.sessionData[idx].slot = '';
+  booking.sessionData[idx].date = '';
   document.querySelectorAll(`#ig-${idx} .instructor-btn`).forEach(b => b.classList.remove('selected'));
   document.getElementById(`ib-${idx}-${instId}`).classList.add('selected');
   document.getElementById(`ie-${idx}`).style.display = 'none';
-  document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+  delete autoAssigned[idx];
+
+  const autoBox = document.getElementById(`auto-box-${idx}`);
+  const manualFields = document.getElementById(`manual-fields-${idx}`);
+
+  if (instId === 'any') {
+    // Hide manual fields, show loading
+    manualFields.style.display = 'none';
+    autoBox.className = 'auto-confirm-box show';
+    autoBox.innerHTML = `<div class="auto-confirm-title">Finding earliest available slot…</div>`;
+    showLoading('Searching for earliest slot...');
+    await loadBookedSlots();
+    hideLoading();
+    const result = findEarliestAvailable();
+    if (!result) {
+      autoBox.innerHTML = `<div class="auto-confirm-title" style="color:var(--red)">No available slots found in the next 60 days.</div><div class="auto-confirm-detail">Please call us directly: <a href="tel:+14697405327" style="color:var(--green)">469-740-5327</a></div>`;
+      return;
+    }
+    const instName = INSTRUCTORS.find(x => x.id === result.inst)?.name || result.inst;
+    autoBox.innerHTML = `
+      <div class="auto-confirm-title">✓ Earliest available slot found</div>
+      <div class="auto-confirm-detail"><strong>${result.dateFormatted}</strong><br>${result.slotLabel} · Instructor: ${instName}</div>
+      <div class="auto-confirm-btns">
+        <button class="btn-confirm-yes" onclick="confirmAutoAssign(${idx})">Yes, book this slot</button>
+        <button class="btn-confirm-no" onclick="declineAutoAssign(${idx})">Choose manually instead</button>
+      </div>`;
+    autoAssigned[idx] = result;
+  } else {
+    manualFields.style.display = 'block';
+    autoBox.className = 'auto-confirm-box';
+    autoBox.innerHTML = '';
+    const di = document.getElementById(`di-${idx}`);
+    if (di) di.value = '';
+    document.getElementById(`sw-${idx}`).innerHTML = renderSlots(idx);
+  }
+};
+
+window.confirmAutoAssign = function(idx) {
+  const result = autoAssigned[idx];
+  if (!result) return;
+  booking.sessionData[idx].instructor = result.inst;
+  booking.sessionData[idx].date = result.dateStr;
+  booking.sessionData[idx].slot = result.slot;
+  const autoBox = document.getElementById(`auto-box-${idx}`);
+  const instName = INSTRUCTORS.find(x => x.id === result.inst)?.name || result.inst;
+  autoBox.innerHTML = `
+    <div class="auto-confirm-title">✓ Slot confirmed</div>
+    <div class="auto-confirm-detail"><strong>${result.dateFormatted}</strong><br>${result.slotLabel} · ${instName}</div>`;
+  document.getElementById(`manual-fields-${idx}`).style.display = 'none';
+  document.getElementById(`ie-${idx}`).style.display = 'none';
+  document.getElementById(`se-${idx}`).style.display = 'none';
+  document.getElementById(`de-${idx}`).style.display = 'none';
+};
+
+window.declineAutoAssign = function(idx) {
+  delete autoAssigned[idx];
+  booking.sessionData[idx].instructor = '';
+  booking.sessionData[idx].date = '';
+  booking.sessionData[idx].slot = '';
+  document.querySelectorAll(`#ig-${idx} .instructor-btn`).forEach(b => b.classList.remove('selected'));
+  const autoBox = document.getElementById(`auto-box-${idx}`);
+  autoBox.className = 'auto-confirm-box';
+  autoBox.innerHTML = '';
+  document.getElementById(`manual-fields-${idx}`).style.display = 'block';
 };
 
 window.onDateChange = function(idx) {
@@ -697,12 +794,8 @@ window.goToInfo = async function() {
   let valid = true;
   sd.forEach((s, i) => {
     if (!s.instructor) { document.getElementById(`ie-${i}`).style.display = 'block'; valid = false; }
-    if (!s.date) { document.getElementById(`de-${i}`).style.display = 'block'; valid = false; }
-    if (s.date && isFriday(s.date)) {
-      const el = document.getElementById(`de-${i}`);
-      el.textContent = 'Fridays are unavailable — please choose another day.';
-      el.style.display = 'block'; valid = false;
-    }
+    if (!s.date) { const el = document.getElementById(`de-${i}`); el.textContent = 'Please select a date.'; el.style.display = 'block'; valid = false; }
+    if (s.date && isFriday(s.date)) { const el = document.getElementById(`de-${i}`); el.textContent = 'Fridays are unavailable.'; el.style.display = 'block'; valid = false; }
     if (!s.slot) { document.getElementById(`se-${i}`).style.display = 'block'; valid = false; }
   });
   const dates = sd.map(s => s.date);
@@ -717,14 +810,12 @@ window.goToInfo = async function() {
   hideLoading();
   let conflict = false;
   sd.forEach((s, i) => {
-    const taken = s.instructor === 'any'
-      ? !anyAvailable(s.date, s.slot)
-      : isBooked(s.instructor, s.date, s.slot);
+    const taken = isBooked(s.instructor, s.date, s.slot);
     if (taken) {
       document.getElementById(`se-${i}`).textContent = 'This slot is no longer available — please choose another.';
       document.getElementById(`se-${i}`).style.display = 'block';
       booking.sessionData[i].slot = '';
-      document.getElementById(`sw-${i}`).innerHTML = renderSlots(i);
+      if (document.getElementById(`sw-${i}`)) document.getElementById(`sw-${i}`).innerHTML = renderSlots(i);
       conflict = true;
     }
   });
@@ -732,110 +823,105 @@ window.goToInfo = async function() {
   showStep('step3', 3);
 };
 
-function validateAddress(prefix) {
-  const street = document.getElementById(prefix + 'street')?.value.trim() || document.getElementById(prefix.replace('-','') + 'street')?.value.trim();
-  const city = document.getElementById(prefix + 'city')?.value.trim();
-  const state = document.getElementById(prefix + 'state')?.value;
-  const zip = document.getElementById(prefix + 'zip')?.value.trim();
-  let valid = true;
-  const setErr = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? 'block' : 'none'; };
-  if (!street) { setErr(prefix + 'street-err', true); valid = false; } else { setErr(prefix + 'street-err', false); }
-  if (!city) { setErr(prefix + 'city-err', true); valid = false; } else { setErr(prefix + 'city-err', false); }
-  if (!zip) { setErr(prefix + 'zip-err', true); valid = false; } else { setErr(prefix + 'zip-err', false); }
-  return { valid, street, city, state: state || 'TX', zip };
+// Field validation helpers
+function validateField(id, validatorFn, errId, errMsg) {
+  const el = document.getElementById(id);
+  const errEl = document.getElementById(errId);
+  if (!el || !errEl) return true;
+  const ok = validatorFn(el.value);
+  el.classList.toggle('invalid', !ok);
+  errEl.style.display = ok ? 'none' : 'block';
+  if (!ok) errEl.textContent = errMsg;
+  return ok;
+}
+
+function validateAddressFields(prefix) {
+  const p = prefix;
+  let ok = true;
+  if (!validateField(p+'street', v => v.trim().length > 3, p+'street-err', 'Please enter your street address.')) ok = false;
+  if (!validateField(p+'city', v => /^[a-zA-Z\s\-]+$/.test(v.trim()) && v.trim().length > 1, p+'city-err', 'Please enter a valid city name.')) ok = false;
+  if (!validateField(p+'zip', v => isValidZip(v), p+'zip-err', 'Please enter a valid 5-digit ZIP code.')) ok = false;
+  return ok;
+}
+
+function getAddressStr(prefix) {
+  const street = document.getElementById(prefix+'street').value.trim();
+  const city = document.getElementById(prefix+'city').value.trim();
+  const state = document.getElementById(prefix+'state').value;
+  const zip = document.getElementById(prefix+'zip').value.trim();
+  return fullAddress(street, city, state, zip);
 }
 
 window.submitCert = async function() {
+  let ok = true;
+  if (!validateField('cert-fname', v => isValidName(v), 'cert-fname-err', 'Please enter your first name (letters only).')) ok = false;
+  if (!validateField('cert-lname', v => isValidName(v), 'cert-lname-err', 'Please enter your last name (letters only).')) ok = false;
+  if (!validateField('cert-phone', v => isValidPhone(v), 'cert-phone-err', 'Please enter a valid 10-digit phone number.')) ok = false;
+  if (!validateField('cert-email', v => isValidEmail(v), 'cert-email-err', 'Please enter a valid email address (must include @).')) ok = false;
+  if (!validateAddressFields('cert-')) ok = false;
+  const isSignup = booking.type === 'signup';
+  const prefDate = document.getElementById('cert-date').value;
+  if (isSignup && !prefDate) { document.getElementById('cert-date-err').style.display = 'block'; ok = false; }
+  else { const el = document.getElementById('cert-date-err'); if (el) el.style.display = 'none'; }
+  if (!ok) { document.getElementById('cert-err').style.display = 'block'; return; }
+  document.getElementById('cert-err').style.display = 'none';
+
+  showLoading('Saving your request...');
   const fn = document.getElementById('cert-fname').value.trim();
   const ln = document.getElementById('cert-lname').value.trim();
   const ph = document.getElementById('cert-phone').value.trim();
   const em = document.getElementById('cert-email').value.trim();
-  const prefDate = document.getElementById('cert-date').value;
-  const isSignup = booking.type === 'signup';
-  let valid = true;
-  if (!fn || !ln || !ph || !em) { document.getElementById('cert-err').style.display = 'block'; valid = false; }
-  else { document.getElementById('cert-err').style.display = 'none'; }
-  if (isSignup && !prefDate) { document.getElementById('cert-date-err').style.display = 'block'; valid = false; }
-  else { const el = document.getElementById('cert-date-err'); if (el) el.style.display = 'none'; }
-  const addr = validateAddress('cert-');
-  if (!addr.valid) valid = false;
-  if (!valid) return;
-
-  showLoading('Saving your request...');
+  const addrStr = getAddressStr('cert-');
   let formattedDate = '';
-  if (prefDate) {
-    const d = new Date(prefDate + 'T12:00:00');
-    formattedDate = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  }
+  if (prefDate) { const d = new Date(prefDate+'T12:00:00'); formattedDate = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
   const ref = 'KDS-' + Date.now().toString().slice(-7);
-  const addrStr = fullAddress(addr.street, addr.city, addr.state, addr.zip);
-  await saveBookingRecord({
-    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addrStr,
-    package: booking.pkg, price: booking.price, type: booking.type,
-    preferredDate: formattedDate, sessions: [], bookedAt: new Date().toISOString(), deposit: booking.deposit
-  });
+  await saveBookingRecord({ ref, name: fn+' '+ln, phone: ph, email: em, address: addrStr, package: booking.pkg, price: booking.price, type: booking.type, preferredDate: formattedDate, sessions: [], bookedAt: new Date().toISOString(), deposit: booking.deposit });
   hideLoading();
-  buildReceipt(fn + ' ' + ln, ph, em, addrStr, false, formattedDate, ref);
+  buildReceipt(fn+' '+ln, ph, em, addrStr, false, formattedDate, ref);
 };
 
 window.submitBooking = async function() {
-  const fn = document.getElementById('fname').value.trim();
-  const ln = document.getElementById('lname').value.trim();
-  const ph = document.getElementById('phone').value.trim();
-  const em = document.getElementById('email').value.trim();
-  let valid = true;
-  if (!fn || !ln || !ph || !em) { document.getElementById('info-err').style.display = 'block'; valid = false; }
-  else { document.getElementById('info-err').style.display = 'none'; }
-  const addr = validateAddress('');
-  if (!addr.valid) valid = false;
-  if (!valid) return;
+  let ok = true;
+  if (!validateField('fname', v => isValidName(v), 'fname-err', 'Please enter your first name (letters only).')) ok = false;
+  if (!validateField('lname', v => isValidName(v), 'lname-err', 'Please enter your last name (letters only).')) ok = false;
+  if (!validateField('phone', v => isValidPhone(v), 'phone-err', 'Please enter a valid 10-digit phone number.')) ok = false;
+  if (!validateField('email', v => isValidEmail(v), 'email-err', 'Please enter a valid email address (must include @).')) ok = false;
+  if (!validateAddressFields('')) ok = false;
+  if (!ok) { document.getElementById('info-err').style.display = 'block'; return; }
+  document.getElementById('info-err').style.display = 'none';
 
   showLoading('Saving your booking...');
   await loadBookedSlots();
   const sd = booking.sessionData;
   let conflict = false;
-  sd.forEach(s => {
-    const taken = s.instructor === 'any' ? !anyAvailable(s.date, s.slot) : isBooked(s.instructor, s.date, s.slot);
-    if (taken) conflict = true;
-  });
-  if (conflict) {
-    hideLoading();
-    alert('A slot was just taken. Please go back and choose a different time.');
-    window.backToSessions();
-    return;
-  }
+  sd.forEach(s => { if (isBooked(s.instructor, s.date, s.slot)) conflict = true; });
+  if (conflict) { hideLoading(); alert('A slot was just taken. Please go back and choose a different time.'); window.backToSessions(); return; }
 
-  // For "any" instructor — assign actual instructor now
   const sessionsSummary = [];
   for (let i = 0; i < sd.length; i++) {
     const s = sd[i];
-    let assignedInst = s.instructor;
-    if (s.instructor === 'any') {
-      assignedInst = pickInstructor(s.date, s.slot);
-      if (!assignedInst) { alert('No instructor available for one of your sessions. Please go back and choose a different time.'); hideLoading(); window.backToSessions(); return; }
-    }
-    await saveSlot(assignedInst, s.date, s.slot);
-    const d = new Date(s.date + 'T12:00:00');
+    await saveSlot(s.instructor, s.date, s.slot);
+    const d = new Date(s.date+'T12:00:00');
     sessionsSummary.push({
-      session: i + 1,
-      instructor: INSTRUCTORS.find(x => x.id === assignedInst)?.name || assignedInst,
-      instructorId: assignedInst,
+      session: i+1,
+      instructor: INSTRUCTORS.find(x => x.id === s.instructor)?.name || s.instructor,
+      instructorId: s.instructor,
       date: s.date,
-      dateFormatted: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+      dateFormatted: d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}),
       slot: s.slot,
       slotLabel: SLOTS.find(x => x.id === s.slot)?.label || s.slot
     });
   }
 
+  const fn = document.getElementById('fname').value.trim();
+  const ln = document.getElementById('lname').value.trim();
+  const ph = document.getElementById('phone').value.trim();
+  const em = document.getElementById('email').value.trim();
+  const addrStr = getAddressStr('');
   const ref = 'KDS-' + Date.now().toString().slice(-7);
-  const addrStr = fullAddress(addr.street, addr.city, addr.state, addr.zip);
-  await saveBookingRecord({
-    ref, name: fn + ' ' + ln, phone: ph, email: em, address: addrStr,
-    package: booking.pkg, price: booking.price, type: booking.type,
-    preferredDate: '', sessions: sessionsSummary, bookedAt: new Date().toISOString(), deposit: booking.deposit
-  });
+  await saveBookingRecord({ ref, name: fn+' '+ln, phone: ph, email: em, address: addrStr, package: booking.pkg, price: booking.price, type: booking.type, preferredDate: '', sessions: sessionsSummary, bookedAt: new Date().toISOString(), deposit: booking.deposit });
   hideLoading();
-  buildReceipt(fn + ' ' + ln, ph, em, addrStr, true, '', ref);
+  buildReceipt(fn+' '+ln, ph, em, addrStr, true, '', ref);
 };
 
 function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
@@ -846,18 +932,12 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
   document.getElementById('rec-addr').textContent = addr;
   document.getElementById('rec-pkg').textContent = booking.pkg;
   document.getElementById('rec-total').textContent = '$' + booking.price;
-
-  // Zelle box
-  const isCertFull = booking.type === 'cert';
   document.getElementById('zelle-amount').textContent = '$' + booking.deposit;
-  document.getElementById('zelle-amount-label').textContent = isCertFull ? 'Full payment due now' : 'Deposit due now';
+  document.getElementById('zelle-amount-label').textContent = booking.type === 'cert' ? 'Full payment due now' : 'Deposit due now';
   document.getElementById('zelle-memo').textContent = ref + ' · ' + booking.pkg;
 
-  if (prefDate) {
-    document.getElementById('rec-prefdate').textContent = prefDate;
-    document.getElementById('rec-prefdate-row').style.display = 'flex';
-  } else { document.getElementById('rec-prefdate-row').style.display = 'none'; }
-
+  if (prefDate) { document.getElementById('rec-prefdate').textContent = prefDate; document.getElementById('rec-prefdate-row').style.display = 'flex'; }
+  else { document.getElementById('rec-prefdate-row').style.display = 'none'; }
   document.getElementById('rec-pickup-row').style.display = hasSessions ? 'flex' : 'none';
 
   if (hasSessions) {
@@ -865,20 +945,18 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
     const list = document.getElementById('rec-sessions-list');
     list.innerHTML = '';
     booking.sessionData.forEach((s, i) => {
-      const d = new Date(s.date + 'T12:00:00');
-      const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      const slotLabel = SLOTS.find(x => x.id === s.slot)?.label || s.slot;
-      const instName = INSTRUCTORS.find(x => x.id === s.instructor)?.name || s.instructor;
+      const d = new Date(s.date+'T12:00:00');
+      const dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
       const row = document.createElement('div');
       row.className = 'r-row';
-      row.innerHTML = `<span class="r-key">Session ${i+1}</span><span class="r-val">${dateStr} · ${slotLabel} · ${instName}</span>`;
+      row.innerHTML = `<span class="r-key">Session ${i+1}</span><span class="r-val">${dateStr} · ${SLOTS.find(x=>x.id===s.slot)?.label||s.slot} · ${INSTRUCTORS.find(x=>x.id===s.instructor)?.name||s.instructor}</span>`;
       list.appendChild(row);
     });
   } else { document.getElementById('rec-sessions-section').style.display = 'none'; }
 
   const depRows = document.getElementById('rec-deposit-rows');
   const payNote = document.getElementById('rec-payment-note');
-  if (isCertFull) {
+  if (booking.type === 'cert') {
     depRows.innerHTML = `<div class="r-row"><span class="r-key">Amount due</span><span class="r-val" style="color:#6d1ed4">$${booking.deposit} via Zelle</span></div>`;
     payNote.textContent = 'Full payment due via Zelle';
   } else {
@@ -889,7 +967,6 @@ function buildReceipt(name, phone, email, addr, hasSessions, prefDate, ref) {
       <div class="r-row"><span class="r-key">Balance due</span><span class="r-val" style="color:var(--muted)">At or before ${hasSessions && booking.sessions > 1 ? '2nd session' : 'service'}</span></div>`;
     payNote.textContent = `$${booking.deposit} deposit via Zelle · $${bal} balance at service`;
   }
-
   document.getElementById('rec-distance-note').style.display = hasSessions ? 'block' : 'none';
   showStep('step4', 4);
 }

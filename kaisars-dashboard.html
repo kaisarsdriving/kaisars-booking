@@ -116,6 +116,18 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem; }
 .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: all 0.25s; z-index: 300; white-space: nowrap; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.payment-status-bar { display: flex; align-items: center; justify-content: space-between; background: var(--faint); border-top: 1px solid var(--border); padding: 10px 1.25rem; gap: 12px; }
+.payment-status-label { font-size: 13px; color: var(--muted); }
+.payment-toggle { display: flex; gap: 6px; }
+.pay-btn { padding: 5px 14px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid; transition: all 0.15s; }
+.pay-btn.paid { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); }
+.pay-btn.paid.active { background: var(--green); color: white; border-color: var(--green); }
+.pay-btn.unpaid { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+.pay-btn.unpaid.active { background: var(--red); color: white; border-color: var(--red); }
+.badge-paid { background: var(--green-light); color: var(--green-dark); }
+.badge-unpaid { background: var(--red-light); color: var(--red); }
+.stat-val.red { color: var(--red); }
+.booking-card.unpaid-deposit { border-left: 4px solid var(--red); }
 @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } .filter-search { width: 100%; } }
 </style>
 </head>
@@ -153,11 +165,14 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
       <div class="stat-card"><div class="stat-label">Total bookings</div><div class="stat-val" id="stat-total">-</div></div>
       <div class="stat-card"><div class="stat-label">Upcoming sessions</div><div class="stat-val green" id="stat-upcoming">-</div></div>
       <div class="stat-card"><div class="stat-label">Pending signups</div><div class="stat-val amber" id="stat-signups">-</div></div>
+      <div class="stat-card"><div class="stat-label">Deposits received</div><div class="stat-val green" id="stat-paid">-</div></div>
+      <div class="stat-card"><div class="stat-label">Awaiting deposit</div><div class="stat-val red" id="stat-unpaid">-</div></div>
       <div class="stat-card"><div class="stat-label">Revenue booked</div><div class="stat-val" id="stat-revenue">-</div></div>
     </div>
     <div class="tab-bar">
       <div class="tab active" id="tab-all" onclick="setTab('all')">All</div>
       <div class="tab" id="tab-upcoming" onclick="setTab('upcoming')">Upcoming</div>
+      <div class="tab" id="tab-unpaid" onclick="setTab('unpaid')">⚠ Unpaid deposits</div>
       <div class="tab" id="tab-signups" onclick="setTab('signups')">Signups and cert</div>
       <div class="tab" id="tab-past" onclick="setTab('past')">Past</div>
       <div class="tab" id="tab-cancelled" onclick="setTab('cancelled')">Cancelled</div>
@@ -265,16 +280,19 @@ async function freeSlot(i,d,s) { try { await deleteDoc(doc(db,'slots',slotKey(i,
 async function resSlot(i,d,s) { try { await setDoc(doc(db,'slots',slotKey(i,d,s)),{reserved:true}); } catch(e){} }
 
 function updateStats() {
-  let up=0,sg=0,rev=0;
+  let up=0,sg=0,rev=0,paid=0,unpaid=0;
   allBookings.forEach(b => {
     if(b.cancelled) return;
     rev += b.price||0;
     if(b.type==='cert'||b.type==='signup'){sg++;return;}
     (b.sessions||[]).forEach(s => { if(!s.cancelled&&!s.completed&&s.date>=today) up++; });
+    if(b.depositPaid) paid++; else unpaid++;
   });
   document.getElementById('stat-total').textContent = allBookings.filter(b=>!b.cancelled).length;
   document.getElementById('stat-upcoming').textContent = up;
   document.getElementById('stat-signups').textContent = sg;
+  document.getElementById('stat-paid').textContent = paid;
+  document.getElementById('stat-unpaid').textContent = unpaid;
   document.getElementById('stat-revenue').textContent = '$'+rev.toLocaleString();
 }
 
@@ -295,6 +313,7 @@ function matchTab(b) {
   const cs = b.type==='cert'||b.type==='signup';
   if(b.cancelled) return currentTab==='cancelled';
   if(currentTab==='cancelled') return false;
+  if(currentTab==='unpaid') return !b.cancelled && !b.depositPaid;
   if(currentTab==='all') return true;
   if(currentTab==='signups') return cs;
   if(cs) return false;
@@ -331,7 +350,17 @@ function buildCard(b) {
   const ss=b.sessions||[];
   const up=!cs&&ss.some(s=>!s.cancelled&&s.date>=today);
   let cc='booking-card ';
-  if(b.cancelled) cc+='cancelled'; else if(cs) cc+='signup'; else if(up) cc+='upcoming'; else cc+='past';
+  if(b.cancelled) cc+='cancelled';
+  else if(!b.depositPaid && !b.cancelled) cc+= (cs?'signup':'unpaid-deposit');
+  else if(cs) cc+='signup';
+  else if(up) cc+='upcoming';
+  else cc+='past';
+
+  const payBadge = !b.cancelled
+    ? (b.depositPaid
+        ? '<span class="badge badge-paid">✓ Deposit received</span>'
+        : '<span class="badge badge-unpaid">⚠ Deposit pending</span>')
+    : '';
 
   let badge='';
   if(b.cancelled) badge='<span class="badge badge-cancelled">Cancelled</span>';
@@ -340,7 +369,7 @@ function buildCard(b) {
   else if(up) badge='<span class="badge badge-upcoming">Upcoming</span>';
   else badge='<span class="badge badge-past">Past</span>';
 
-  const bd = b.bookedAt?.seconds ? new Date(b.bookedAt.seconds*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '-';
+  const bd = b.bookedAt?.seconds ? new Date(b.bookedAt.seconds*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : (b.bookedAt ? new Date(b.bookedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '-');
 
   let sessHtml='';
   if(!cs&&ss.length>0){
@@ -368,10 +397,20 @@ function buildCard(b) {
   let payHtml='';
   if(b.deposit&&b.deposit>0){
     const bal=(b.price||0)-b.deposit;
-    payHtml=`<div class="bc-row"><span class="bc-key">Deposit</span><span class="bc-val">$${b.deposit} due to confirm</span></div><div class="bc-row"><span class="bc-key">Balance</span><span class="bc-val">$${bal} at 2nd session</span></div>`;
+    payHtml=`<div class="bc-row"><span class="bc-key">Deposit</span><span class="bc-val">$${b.deposit} via Zelle</span></div><div class="bc-row"><span class="bc-key">Balance</span><span class="bc-val">$${bal} at session</span></div>`;
   } else {
     payHtml=`<div class="bc-row"><span class="bc-key">Due</span><span class="bc-val">Pay at time of service</span></div>`;
   }
+
+  // Payment status bar
+  const payStatusBar = !b.cancelled ? `
+    <div class="payment-status-bar">
+      <span class="payment-status-label">Deposit status:</span>
+      <div class="payment-toggle">
+        <button class="pay-btn paid${b.depositPaid?' active':''}" onclick="setPaymentStatus('${b._id}',true)">✓ Received</button>
+        <button class="pay-btn unpaid${!b.depositPaid?' active':''}" onclick="setPaymentStatus('${b._id}',false)">✗ Pending</button>
+      </div>
+    </div>` : '';
 
   const bkAct=!b.cancelled?`<div class="bc-section" style="display:flex;gap:8px;flex-wrap:wrap;">
     <button class="btn-sm btn-note" onclick="openNote('${b._id}')">${b.note?'Edit note':'Add note'}</button>
@@ -385,10 +424,12 @@ function buildCard(b) {
     <div class="bc-header" onclick="toggleCard('${sid}')">
       <div class="bc-left">
         <div class="bc-name">${esc(b.name)} <span class="chevron" id="chev-${sid}">v</span></div>
-        <div class="bc-pkg">${esc(b.package)}</div>${badge}
+        <div class="bc-pkg">${esc(b.package)}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">${badge}${payBadge}</div>
       </div>
       <div class="bc-right"><div class="bc-price">$${b.price||0}</div><div class="bc-ref">${esc(b.ref)}</div><div class="bc-ref">Booked ${bd}</div></div>
     </div>
+    ${payStatusBar}
     <div class="bc-body" id="body-${sid}">
       <div class="bc-section"><div class="bc-section-title">Student</div>
         <div class="bc-row"><span class="bc-key">Phone</span><span class="bc-val"><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></span></div>
@@ -401,6 +442,16 @@ function buildCard(b) {
     </div>`;
   return card;
 }
+
+window.setPaymentStatus = async function(id, paid) {
+  const b = getB(id);
+  if(!b) return;
+  b.depositPaid = paid;
+  await saveB(b);
+  toast(paid ? '✓ Deposit marked as received' : 'Deposit marked as pending');
+  updateStats();
+  renderBookings();
+};
 
 window.toggleCard = function(sid) {
   const body=document.getElementById('body-'+sid);
