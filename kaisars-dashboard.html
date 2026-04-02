@@ -223,21 +223,12 @@ header { background: var(--white); border-bottom: 1px solid var(--border); paddi
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",
-  authDomain: "kaisars-driving-school.firebaseapp.com",
-  projectId: "kaisars-driving-school",
-  storageBucket: "kaisars-driving-school.firebasestorage.app",
-  messagingSenderId: "920051696926",
-  appId: "1:920051696926:web:7eefcadaf11db47894b50f"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+var firebaseConfig={apiKey:"AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",authDomain:"kaisars-driving-school.firebaseapp.com",projectId:"kaisars-driving-school",storageBucket:"kaisars-driving-school.firebasestorage.app",messagingSenderId:"920051696926",appId:"1:920051696926:web:7eefcadaf11db47894b50f"};
+firebase.initializeApp(firebaseConfig);
+var db=firebase.firestore();
 const PW = 'Wadud7180';
 const SLOT_LABELS = { am: '9:00 AM - 11:00 AM', pm: '12:00 PM - 2:00 PM', eve: '5:00 PM - 7:00 PM' };
 const INSTS = { kaisar: 'Kaisar', adib: 'Adib', kaifi: 'Kaifi' };
@@ -264,20 +255,34 @@ window.logout = function() {
   document.getElementById('pw-err').style.display = 'none';
 };
 
-window.loadDashboard = async function() {
+window.loadDashboard = function() {
   document.getElementById('bookings-list').innerHTML = '<div class="loading-msg">Loading bookings...</div>';
-  try {
-    const snap = await getDocs(collection(db, 'bookings'));
-    allBookings = snap.docs.map(d => ({...d.data(), _id: d.id}));
-    allBookings.sort((a,b) => (b.bookedAt?.seconds||0) - (a.bookedAt?.seconds||0));
-  } catch(e) { allBookings = []; }
-  updateStats(); renderBookings();
-  document.getElementById('last-refresh').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  db.collection('bookings').get().then(function(snap) {
+    allBookings = snap.docs.map(function(d){return Object.assign({},d.data(),{_id:d.id});});
+    allBookings.sort(function(a,b){return (b.bookedAt||'')>(a.bookedAt||'')?1:-1;});
+    updateStats(); renderBookings();
+    document.getElementById('last-refresh').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  }).catch(function(){allBookings=[];document.getElementById('bookings-list').innerHTML='<div class="loading-msg">Could not load bookings.</div>';});
 };
 
-async function saveB(b) { try { await updateDoc(doc(db,'bookings',b._id), b); } catch(e){} }
-async function freeSlot(i,d,s) { try { await deleteDoc(doc(db,'slots',slotKey(i,d,s))); } catch(e){} }
-async function resSlot(i,d,s) { try { await setDoc(doc(db,'slots',slotKey(i,d,s)),{reserved:true}); } catch(e){} }
+function saveB(b) {
+  var data=Object.assign({},b);delete data._id;
+  return db.collection('bookings').doc(b._id).update(data).catch(function(){});
+}
+function freeSlot(i,d,s) {
+  return db.collection('slots').doc('booked').get().then(function(snap){
+    if(!snap.exists)return;
+    var data=snap.data();delete data[slotKey(i,d,s)];
+    return db.collection('slots').doc('booked').set(data);
+  }).catch(function(){});
+}
+function resSlot(i,d,s) {
+  return db.collection('slots').doc('booked').get().then(function(snap){
+    var data=snap.exists?snap.data():{};
+    data[slotKey(i,d,s)]=true;
+    return db.collection('slots').doc('booked').set(data);
+  }).catch(function(){});
+}
 
 function updateStats() {
   let up=0,sg=0,rev=0,paid=0,unpaid=0;
@@ -483,72 +488,76 @@ window.openReschedule=function(id,si){
   openModal('modal-reschedule');
 };
 
-window.confirmReschedule=async function(){
-  const nd=document.getElementById('reschedule-date').value;
-  const ns=document.getElementById('reschedule-slot').value;
-  const ni=document.getElementById('reschedule-inst').value;
-  let valid=true;
+window.confirmReschedule=function(){
+  var nd=document.getElementById('reschedule-date').value;
+  var ns=document.getElementById('reschedule-slot').value;
+  var ni=document.getElementById('reschedule-inst').value;
+  var valid=true;
   if(!nd||new Date(nd+'T12:00:00').getDay()===5){document.getElementById('reschedule-date-err').style.display='block';valid=false;}
   else{document.getElementById('reschedule-date-err').style.display='none';}
   if(!ns){document.getElementById('reschedule-slot-err').style.display='block';valid=false;}
   else{document.getElementById('reschedule-slot-err').style.display='none';}
-  if(!valid) return;
-  const b=getB(pendingId); const s=b.sessions[pendingIdx];
-  await freeSlot(s.instructorId,s.date,s.slot);
-  await resSlot(ni,nd,ns);
-  const d=new Date(nd+'T12:00:00');
-  s.date=nd; s.dateFormatted=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-  s.slot=ns; s.slotLabel=SLOT_LABELS[ns]; s.instructorId=ni; s.instructor=INSTS[ni];
-  await saveB(b);
-  closeModal('modal-reschedule'); toast('Session rescheduled'); renderBookings();
+  if(!valid)return;
+  var b=getB(pendingId);var s=b.sessions[pendingIdx];
+  freeSlot(s.instructorId,s.date,s.slot).then(function(){return resSlot(ni,nd,ns);}).then(function(){
+    var d=new Date(nd+'T12:00:00');
+    s.date=nd;s.dateFormatted=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    s.slot=ns;s.slotLabel=SLOT_LABELS[ns];s.instructorId=ni;s.instructor=INSTS[ni];
+    return saveB(b);
+  }).then(function(){closeModal('modal-reschedule');toast('Session rescheduled');renderBookings();});
 };
 
-window.markComplete=async function(id,si){
-  const b=getB(id); b.sessions[si].completed=true;
-  await saveB(b); toast('Session marked as completed'); updateStats(); renderBookings();
+window.markComplete=function(id,si){
+  var b=getB(id);b.sessions[si].completed=true;
+  saveB(b).then(function(){toast('Session marked as completed');updateStats();renderBookings();});
 };
 
 window.openCancel=function(id,si){
-  pendingId=id; pendingIdx=si;
-  const s=getB(id).sessions[si];
-  document.getElementById('cancel-sub').textContent=`Cancel session ${s.session} on ${s.dateFormatted} at ${s.slotLabel} with ${s.instructor}? The slot will be freed for other customers.`;
+  pendingId=id;pendingIdx=si;
+  var s=getB(id).sessions[si];
+  document.getElementById('cancel-sub').textContent='Cancel session '+s.session+' on '+s.dateFormatted+' at '+s.slotLabel+' with '+s.instructor+'? The slot will be freed for other customers.';
   openModal('modal-cancel');
 };
 
-window.confirmCancel=async function(){
-  const b=getB(pendingId); const s=b.sessions[pendingIdx];
-  await freeSlot(s.instructorId,s.date,s.slot);
-  s.cancelled=true; await saveB(b);
-  closeModal('modal-cancel'); toast('Session cancelled - slot freed'); updateStats(); renderBookings();
+window.confirmCancel=function(){
+  var b=getB(pendingId);var s=b.sessions[pendingIdx];
+  freeSlot(s.instructorId,s.date,s.slot).then(function(){
+    s.cancelled=true;return saveB(b);
+  }).then(function(){closeModal('modal-cancel');toast('Session cancelled - slot freed');updateStats();renderBookings();});
 };
 
-window.cancelWhole=async function(id){
-  if(!confirm('Cancel this entire booking? All upcoming sessions will be freed.')) return;
-  const b=getB(id);
-  for(const s of (b.sessions||[])){
-    if(!s.cancelled&&!s.completed&&s.date>=today){ await freeSlot(s.instructorId,s.date,s.slot); s.cancelled=true; }
-  }
-  b.cancelled=true; await saveB(b);
-  toast('Booking cancelled - slots freed'); updateStats(); renderBookings();
+window.cancelWhole=function(id){
+  if(!confirm('Cancel this entire booking? All upcoming sessions will be freed.'))return;
+  var b=getB(id);var chain=Promise.resolve();
+  (b.sessions||[]).forEach(function(s){
+    if(!s.cancelled&&!s.completed&&s.date>=today){chain=chain.then(function(){return freeSlot(s.instructorId,s.date,s.slot);}).then(function(){s.cancelled=true;});}
+  });
+  chain.then(function(){b.cancelled=true;return saveB(b);}).then(function(){toast('Booking cancelled - slots freed');updateStats();renderBookings();});
 };
 
 window.openNote=function(id){
-  pendingId=id; const b=getB(id);
+  pendingId=id;var b=getB(id);
   document.getElementById('note-input').value=b.note||'';
   document.getElementById('note-sub').textContent='Adding a note for '+b.name+'.';
   openModal('modal-note');
 };
 
-window.confirmNote=async function(){
-  const note=document.getElementById('note-input').value.trim();
-  const b=getB(pendingId); b.note=note; await saveB(b);
-  closeModal('modal-note'); toast(note?'Note saved':'Note removed'); renderBookings();
+window.confirmNote=function(){
+  var note=document.getElementById('note-input').value.trim();
+  var b=getB(pendingId);b.note=note;
+  saveB(b).then(function(){closeModal('modal-note');toast(note?'Note saved':'Note removed');renderBookings();});
 };
 
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show');});
+window.setPaymentStatus=function(id,paid){
+  var b=getB(id);if(!b)return;
+  b.depositPaid=paid;
+  saveB(b).then(function(){toast(paid?'Deposit marked as received':'Deposit marked as pending');updateStats();renderBookings();});
+};
+
+document.querySelectorAll('.modal-overlay').forEach(function(el){
+  el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('show');});
 });
-setInterval(()=>{ if(document.getElementById('dashboard').style.display!=='none') loadDashboard(); },60000);
+setInterval(function(){if(document.getElementById('dashboard').style.display!=='none')loadDashboard();},60000);
 </script>
 </body>
 </html>
