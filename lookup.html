@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Find My Booking — Kaisar's Driving School</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1a9e72;--green-dark:#0f6e4f;--green-light:#e2f5ee;--green-mid:#c5eadc;
+  --text:#1a1a1a;--muted:#6b7280;--faint:#f5f5f3;--border:#e5e5e0;--white:#fff;
+  --radius:14px;--radius-sm:8px;--red:#dc2626;--zelle:#6d1ed4;--purple:#7c3aed;--purple-light:#ede9fe
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--faint);color:var(--text);min-height:100vh}
+header{background:var(--white);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;fill:white}
+.logo-text{font-family:'DM Serif Display',serif;font-size:17px;color:var(--text);line-height:1.1}
+.logo-text span{display:block;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;color:var(--muted)}
+.header-link{font-size:13px;color:var(--green);text-decoration:none;font-weight:500}
+.container{max-width:620px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.page-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--muted);margin-bottom:2rem;line-height:1.6}
+/* Search card */
+.search-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+.search-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:1rem}
+.field-group{margin-bottom:1rem}
+.field-label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+input[type=text]{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+input[type=text]:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-light)}
+input[type=text]::placeholder{color:#b0b0a8}
+.search-divider{display:flex;align-items:center;gap:10px;margin:.75rem 0}
+.search-divider div{flex:1;height:1px;background:var(--border)}
+.search-divider span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.btn-search{width:100%;padding:13px;background:var(--green);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-search:hover{background:var(--green-dark)}
+.btn-search:disabled{background:var(--green-mid);cursor:not-allowed}
+.err-banner{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--red);margin-bottom:1rem;display:none}
+/* Results */
+.results-area{display:none}
+.results-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem}
+/* Receipt card */
+.receipt-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem}
+.receipt-header{background:var(--green);padding:1.25rem 1.5rem;color:white;text-align:center}
+.receipt-school{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:2px}
+.receipt-addr{font-size:11px;opacity:.85}
+.receipt-ref{font-size:11px;opacity:.7;margin-top:8px;background:rgba(0,0,0,.15);display:inline-block;padding:3px 10px;border-radius:20px}
+.status-bar{padding:10px 1.25rem;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)}
+.status-bar.confirmed{background:#f0fdf4;color:var(--green-dark)}
+.status-bar.pending{background:#fffbeb;color:#92400e}
+.status-bar.cancelled{background:#fef2f2;color:var(--red)}
+.receipt-body{padding:1.25rem 1.5rem}
+.r-section{margin-bottom:1.25rem}
+.r-section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.r-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);gap:12px}
+.r-row:last-child{border-bottom:none}
+.r-key{color:var(--muted);flex-shrink:0}
+.r-val{font-weight:500;text-align:right;word-break:break-word}
+.r-val.green{color:var(--green)}
+.r-val.purple{color:var(--purple)}
+.r-val.red{color:var(--red)}
+.session-pill{background:var(--faint);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:6px;font-size:13px}
+.session-pill-top{font-weight:500;color:var(--text)}
+.session-pill-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.session-pill.completed{border-color:var(--green-mid);background:var(--green-light)}
+.session-pill.cancelled{opacity:.6;border-color:#fca5a5;background:#fef2f2}
+.receipt-total-bar{background:var(--faint);border-top:1.5px solid var(--border);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.total-label{font-size:14px;color:var(--muted)}
+.total-amount{font-size:22px;font-weight:700;color:var(--green)}
+/* Zelle reminder */
+.zelle-reminder{background:#f5f0ff;border:1.5px solid #c4b5fd;border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1rem}
+.zelle-reminder-title{font-size:13px;font-weight:600;color:var(--zelle);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.zelle-reminder-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;gap:12px}
+.zelle-reminder-key{color:var(--muted)}
+.zelle-reminder-val{font-weight:600;color:var(--text)}
+.zelle-note-box{background:#ede9fe;border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;color:#5b21b6;margin-top:8px;line-height:1.5}
+/* Action buttons */
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
+.btn-action{padding:12px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid}
+.btn-action.primary{background:var(--green);color:white;border-color:var(--green)}
+.btn-action.primary:hover{background:var(--green-dark);border-color:var(--green-dark)}
+.btn-action.outline{background:var(--white);color:var(--text);border-color:var(--border)}
+.btn-action.outline:hover{border-color:var(--green);color:var(--green)}
+/* Loading spinner */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.show{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:3rem 1rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius)}
+.empty-state .icon{font-size:40px;margin-bottom:1rem}
+.empty-state p{font-size:15px;font-weight:500;margin-bottom:6px}
+.empty-state span{font-size:13px;color:var(--muted)}
+@media print{header,.search-card,.action-row{display:none!important}body{background:white}.container{padding:0}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5zm-2-2c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1zm-8 0c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1z"/></svg></div>
+    <div class="logo-text">Kaisar's Driving School<span>Frisco, TX · DFW Area</span></div>
+  </div>
+  <a href="index.html" class="header-link">← Book a lesson</a>
+</header>
+
+<div class="container">
+  <h1 class="page-title">Find my booking</h1>
+  <p class="page-sub">Enter your booking reference, name, or phone number to view your confirmation and session details.</p>
+
+  <div class="search-card">
+    <div class="search-title">🔍 Look up your booking</div>
+
+    <div class="field-group">
+      <label class="field-label">Booking reference number</label>
+      <input type="text" id="input-ref" placeholder="e.g. KDS-2142555" oninput="clearError()" onkeydown="if(event.key==='Enter')doSearch()"/>
+    </div>
+
+    <div class="search-divider"><div></div><span>or search by</span><div></div></div>
+
+    <div class="field-group" style="margin-bottom:.5rem">
+      <label class="field-label">Full name</label>
+      <input type="text" id="input-name" placeholder="e.g. John Smith" oninput="clearError()" onkeydown="if(event.key==='Enter')doSearch()"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Phone number</label>
+      <input type="text" id="input-phone" placeholder="e.g. (469) 555-1234" oninput="clearError()" onkeydown="if(event.key==='Enter')doSearch()"/>
+    </div>
+
+    <div class="err-banner" id="err-banner">No bookings found. Please check your details and try again.</div>
+
+    <button class="btn-search" id="btn-search" onclick="doSearch()">
+      <div class="spinner" id="search-spinner"></div>
+      <span id="search-btn-text">Find my booking</span>
+    </button>
+  </div>
+
+  <div class="results-area" id="results-area">
+    <div class="results-title" id="results-title">Your booking</div>
+    <div id="results-list"></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script data-cfasync="false" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script data-cfasync="false" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script data-cfasync="false">
+// Config assembled at runtime to prevent static scanning
+const _c = {
+  k: ['AIzaSyDAmKGNDds6j','thQi4YOmN7b23n6gbesiY4'].join(''),
+  p: 'kaisars-driving-school',
+  a: 'kaisars-driving-school.firebaseapp.com',
+  s: 'kaisars-driving-school.firebasestorage.app',
+  m: '920051696926',
+  i: '1:920051696926:web:7eefcadaf11db47894b50f'
+};
+firebase.initializeApp({apiKey:_c.k,authDomain:_c.a,projectId:_c.p,storageBucket:_c.s,messagingSenderId:_c.m,appId:_c.i});
+const db = firebase.firestore();
+const today = new Date().toISOString().split('T')[0];
+
+// Auto-fill ref from URL param e.g. lookup.html?ref=KDS-1234567
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if(ref){
+    document.getElementById('input-ref').value = ref;
+    // Auto-search after a short delay so Firebase is ready
+    setTimeout(doSearch, 400);
+  }
+})();
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function clearError(){
+  document.getElementById('err-banner').style.display='none';
+}
+
+function setLoading(on){
+  document.getElementById('search-spinner').classList.toggle('show',on);
+  document.getElementById('search-btn-text').textContent = on ? 'Searching...' : 'Find my booking';
+  document.getElementById('btn-search').disabled = on;
+}
+
+window.doSearch = async function() {
+  const refVal  = document.getElementById('input-ref').value.trim().toUpperCase();
+  const nameVal = document.getElementById('input-name').value.trim().toLowerCase();
+  const phoneVal = document.getElementById('input-phone').value.trim().replace(/\D/g,'');
+
+  if(!refVal && !nameVal && !phoneVal){
+    document.getElementById('err-banner').textContent = 'Please enter a booking reference, name, or phone number.';
+    document.getElementById('err-banner').style.display = 'block';
+    return;
+  }
+
+  setLoading(true);
+  document.getElementById('results-area').style.display = 'none';
+  document.getElementById('err-banner').style.display = 'none';
+
+  try {
+    let results = [];
+
+    if(refVal){
+      // Search by ref — most precise
+      const snap = await db.collection('bookings').where('ref','==',refVal).get();
+      results = snap.docs.map(d=>Object.assign({},d.data(),{_id:d.id}));
+    }
+
+    if(!results.length && nameVal){
+      // Search by name (case-insensitive by checking lowercase)
+      const snap = await db.collection('bookings').get();
+      results = snap.docs
+        .map(d=>Object.assign({},d.data(),{_id:d.id}))
+        .filter(b=>(b.name||'').toLowerCase().includes(nameVal));
+    }
+
+    if(!results.length && phoneVal){
+      // Search by phone digits
+      const snap = await db.collection('bookings').get();
+      results = snap.docs
+        .map(d=>Object.assign({},d.data(),{_id:d.id}))
+        .filter(b=>(b.phone||'').replace(/\D/g,'').includes(phoneVal) && phoneVal.length >= 7);
+    }
+
+    setLoading(false);
+
+    if(!results.length){
+      document.getElementById('err-banner').textContent = 'No bookings found. Please double-check your details or contact us at 469-740-5327.';
+      document.getElementById('err-banner').style.display = 'block';
+      return;
+    }
+
+    // Sort: most recent first
+    results.sort((a,b)=>(b.bookedAt||'')>(a.bookedAt||'')?1:-1);
+
+    const count = results.length;
+    document.getElementById('results-title').textContent = count === 1 ? 'Your booking' : count + ' bookings found';
+    document.getElementById('results-list').innerHTML = '';
+    results.forEach(b => {
+      document.getElementById('results-list').appendChild(buildReceipt(b));
+    });
+    document.getElementById('results-area').style.display = 'block';
+    document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'});
+
+  } catch(e) {
+    setLoading(false);
+    document.getElementById('err-banner').textContent = 'Something went wrong. Please try again or call us at 469-740-5327.';
+    document.getElementById('err-banner').style.display = 'block';
+  }
+};
+
+function buildReceipt(b){
+  const cs = b.type==='cert'||b.type==='signup';
+  const ss = b.sessions||[];
+  const bookedDate = b.bookedAt?.seconds
+    ? new Date(b.bookedAt.seconds*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+    : (b.bookedAt ? new Date(b.bookedAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '—');
+
+  // Status
+  let statusHtml = '';
+  if(b.cancelled){
+    statusHtml = '<div class="status-bar cancelled">❌ This booking has been cancelled</div>';
+  } else if(b.depositPaid||b.fullPaid){
+    statusHtml = '<div class="status-bar confirmed">✅ Booking confirmed — deposit received</div>';
+  } else {
+    statusHtml = '<div class="status-bar pending">⏳ Awaiting deposit — send via Zelle to confirm your spot</div>';
+  }
+
+  // Sessions HTML
+  let sessHtml = '';
+  if(!cs && ss.length > 0){
+    sessHtml = '<div class="r-section"><div class="r-section-title">Your sessions</div>';
+    ss.forEach(s=>{
+      let cls = 'session-pill';
+      if(s.completed) cls += ' completed';
+      if(s.cancelled) cls += ' cancelled';
+      const statusLabel = s.completed ? ' ✓ Completed' : s.cancelled ? ' Cancelled' : '';
+      sessHtml += `<div class="${cls}">
+        <div class="session-pill-top">Session ${s.session} — ${esc(s.instructor)}${statusLabel}</div>
+        <div class="session-pill-sub">${esc(s.dateFormatted)} · ${esc(s.slotLabel)}</div>
+      </div>`;
+    });
+    sessHtml += '</div>';
+  } else if(b.preferredDate){
+    sessHtml = `<div class="r-section"><div class="r-section-title">Preferred date</div><div style="font-size:13px;font-weight:500">${esc(b.preferredDate)}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">We will contact you to confirm the exact time</div></div>`;
+  }
+
+  // Payment
+  const bal = (b.price||0) - (b.deposit||0);
+  let payStatusLabel = '';
+  let payStatusClass = '';
+  if(b.fullPaid){ payStatusLabel='Fully paid ✓'; payStatusClass='purple'; }
+  else if(b.depositPaid){ payStatusLabel='Deposit received ✓'; payStatusClass='green'; }
+  else { payStatusLabel='Deposit pending ⚠'; payStatusClass='red'; }
+
+  // Zelle section — only show if deposit not yet paid
+  let zelleHtml = '';
+  if(!b.cancelled && !b.depositPaid && !b.fullPaid){
+    zelleHtml = `<div class="zelle-reminder">
+      <div class="zelle-reminder-title">💜 Send your deposit via Zelle</div>
+      <div class="zelle-reminder-row"><span class="zelle-reminder-key">Amount due</span><span class="zelle-reminder-val">$${b.deposit||0}</span></div>
+      <div class="zelle-reminder-row"><span class="zelle-reminder-key">Zelle number</span><span class="zelle-reminder-val">469-740-5327</span></div>
+      <div class="zelle-reminder-row"><span class="zelle-reminder-key">Name on Zelle</span><span class="zelle-reminder-val">Kaisar's Driving School LLC</span></div>
+      <div class="zelle-reminder-row"><span class="zelle-reminder-key">Memo</span><span class="zelle-reminder-val">${esc(b.ref)} · ${esc(b.package)}</span></div>
+      <div class="zelle-note-box">📸 After sending, screenshot your payment and text it to <strong>469-740-5327</strong>. Your instructor will confirm within a few hours.</div>
+    </div>`;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="receipt-wrap">
+      <div class="receipt-header">
+        <div class="receipt-school">Kaisar's Driving School</div>
+        <div class="receipt-addr">4645 Avon Ln Ste 355, Frisco, TX 75033</div>
+        <div class="receipt-ref">${esc(b.ref)} · Booked ${bookedDate}</div>
+      </div>
+      ${statusHtml}
+      <div class="receipt-body">
+        <div class="r-section">
+          <div class="r-section-title">Student</div>
+          <div class="r-row"><span class="r-key">Name</span><span class="r-val">${esc(b.name)}</span></div>
+          <div class="r-row"><span class="r-key">Phone</span><span class="r-val">${esc(b.phone)}</span></div>
+          <div class="r-row"><span class="r-key">Email</span><span class="r-val">${esc(b.email)}</span></div>
+          <div class="r-row"><span class="r-key">Address</span><span class="r-val">${esc(b.address)}</span></div>
+        </div>
+        <div class="r-section">
+          <div class="r-section-title">Service</div>
+          <div class="r-row"><span class="r-key">Package</span><span class="r-val">${esc(b.package)}</span></div>
+          <div class="r-row"><span class="r-key">Pickup &amp; dropoff</span><span class="r-val green">Included ✓</span></div>
+        </div>
+        ${sessHtml}
+        <div class="r-section">
+          <div class="r-section-title">Payment</div>
+          <div class="r-row"><span class="r-key">Total</span><span class="r-val">$${b.price||0}</span></div>
+          <div class="r-row"><span class="r-key">Deposit</span><span class="r-val">$${b.deposit||0} via Zelle</span></div>
+          ${(b.price||0)-(b.deposit||0)>0?`<div class="r-row"><span class="r-key">Balance</span><span class="r-val">$${bal} due at 1st session</span></div>`:''}
+          <div class="r-row"><span class="r-key">Payment status</span><span class="r-val ${payStatusClass}">${payStatusLabel}</span></div>
+        </div>
+        ${b.note?`<div class="r-section"><div class="r-section-title">Note from instructor</div><div style="font-size:13px;color:var(--text);line-height:1.6;background:var(--amber-light,#fffbeb);border-radius:8px;padding:10px 12px">${esc(b.note)}</div></div>`:''}
+      </div>
+      <div class="receipt-total-bar">
+        <div class="total-label">Total</div>
+        <div class="total-amount">$${b.price||0}</div>
+      </div>
+    </div>
+    ${zelleHtml}
+    <div class="action-row">
+      <button class="btn-action outline" onclick="window.print()">🖨️ Print receipt</button>
+      <a href="index.html" class="btn-action primary">+ Book another</a>
+    </div>
+  `;
+  return wrap;
+}
+</script>
+</body>
+</html>

@@ -440,9 +440,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     <div class="contact-box">
       <p>Questions? We're happy to help.</p>
-      <a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#f79c969e8496858493859e819e9990b7909a969e9bd994989a"><span class="__cf_email__" data-cfemail="3358525a4052414057415a455a5d5473545e525a5f1d505c5e">[email&#160;protected]</span></a>
+      <a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="mailto:kaisarsdriving@gmail.com">kaisarsdriving@gmail.com</a>
     </div>
     <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
+    <a id="lookup-link" href="lookup.html" target="_blank" style="display:block;margin-top:10px;text-align:center;background:var(--faint);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 20px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--text);text-decoration:none">🔍 View or share your booking</a>
     <button class="btn-back" style="margin-top:1rem;justify-content:center;color:var(--green);font-weight:500" onclick="resetBooking();showStep('step1',1);">&#8592; Book another service</button>
   </div>
 </div>
@@ -851,6 +852,9 @@ window.submitBooking=function(){
 // ── Build receipt ─────────────────────────────────────────────────────────────
 function buildReceipt(name,phone,email,addr,hasSessions,prefDate,ref){
   document.getElementById('rec-ref').textContent='Booking ref: '+ref+' · '+new Date().toLocaleDateString('en-US');
+  // Pre-fill the lookup link with this booking's ref number
+  var lookupLink=document.getElementById('lookup-link');
+  if(lookupLink) lookupLink.href='lookup.html?ref='+encodeURIComponent(ref);
   document.getElementById('rec-name').textContent=name;
   document.getElementById('rec-phone').textContent=phone;
   document.getElementById('rec-email').textContent=email;
