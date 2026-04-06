@@ -203,55 +203,115 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     <div class="section-divider"><div></div><span>Driving lessons</span><div></div></div>
     <div class="pkg-grid">
+
       <div class="pkg-card" onclick="selectPkg(this,'6 Hr Course Certificate',85,0,'cert',85)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only &middot; Includes DPS appointment &middot; Full $85 payment to confirm</div></div><div class="pkg-price">$85</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">6 hr course certificate</div><div class="pkg-detail">Adult only &middot; Includes DPS appointment &middot; Full $85 due to confirm</div></div>
+          <div class="pkg-price">$85</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Single Class',90,1,'class',45)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Single class</div><div class="pkg-detail">1 session &middot; 2 hrs &middot; Behind-the-wheel &middot; $25 deposit to confirm</div></div><div class="pkg-price">$90</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">Single class</div><div class="pkg-detail">1 session &middot; 2 hrs behind-the-wheel &middot; $45 deposit to confirm</div></div>
+          <div class="pkg-price">$90</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Highway Class',110,1,'class',55)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Highway class</div><div class="pkg-detail">1 session &middot; 2 hrs &middot; Highway driving focus &middot; $25 deposit to confirm</div><span class="pkg-badge badge-highway">Highway focus</span></div><div class="pkg-price">$110</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">Highway class</div><div class="pkg-detail">1 session &middot; 2 hrs &middot; Highway driving focus &middot; $55 deposit to confirm</div><span class="pkg-badge badge-highway">Highway focus</span></div>
+          <div class="pkg-price">$110</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class',50)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'3 Classes + Road Test',350,3,'class',120)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">3 classes + road test</div><div class="pkg-detail">3 sessions &middot; 6 hrs &middot; $83/session &middot; $50 deposit to confirm</div></div><div class="pkg-price">$350</div></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">3 classes + road test</div>
+            <div class="pkg-detail">3 sessions &middot; 6 hrs &middot; $120 deposit &middot; balance due at 2nd session</div>
+          </div>
+          <div class="pkg-price">$350</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class',50)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'4 Classes + Road Test',420,4,'class',130)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">4 classes + road test</div><div class="pkg-detail">4 sessions &middot; 8 hrs &middot; $80/session &middot; $50 deposit to confirm</div><span class="pkg-badge badge-popular">Most popular</span></div><div class="pkg-price">$420</div></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">4 classes + road test</div>
+            <div class="pkg-detail">4 sessions &middot; 8 hrs &middot; $130 deposit &middot; balance due at 2nd session</div>
+            <span class="pkg-badge badge-popular">Most popular</span>
+          </div>
+          <div class="pkg-price">$420</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class',50)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'5 Classes + Road Test',490,5,'class',140)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">5 classes + road test</div><div class="pkg-detail">5 sessions &middot; 10 hrs &middot; $78/session &middot; $50 deposit to confirm</div></div><div class="pkg-price">$490</div></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">5 classes + road test</div>
+            <div class="pkg-detail">5 sessions &middot; 10 hrs &middot; $140 deposit &middot; balance due at 2nd session</div>
+          </div>
+          <div class="pkg-price">$490</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class',50)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'6 Classes + Road Test',560,6,'class',150)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">6 classes + road test</div><div class="pkg-detail">6 sessions &middot; 12 hrs &middot; $76/session &middot; $50 deposit to confirm</div><span class="pkg-badge badge-value">Best value</span></div><div class="pkg-price">$560</div></div>
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">6 classes + road test</div>
+            <div class="pkg-detail">6 sessions &middot; 12 hrs &middot; $150 deposit &middot; balance due at 2nd session</div>
+            <span class="pkg-badge badge-value">Best value</span>
+          </div>
+          <div class="pkg-price">$560</div>
+        </div>
       </div>
+
     </div>
 
     <div class="section-divider"><div></div><span>Road test services</span><div></div></div>
-    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time. $25 deposit required.</p>
+    <p class="section-note">Pick a preferred date and we'll reach out to confirm your time.</p>
     <div class="pkg-grid">
-      <div class="pkg-card" onclick="selectPkg(this,'Road Test - Own Vehicle',85,0,'signup',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test - Own Vehicle',85,0,'signup',35)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Road test &mdash; own vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; You bring your own vehicle</div></div><div class="pkg-price">$85</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">Road test &mdash; own vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; You bring your own car &middot; $35 deposit to confirm</div></div>
+          <div class="pkg-price">$85</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Road Test - School Vehicle',100,0,'signup',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Road Test - School Vehicle',100,0,'signup',40)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Road test &mdash; school vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; We provide the vehicle</div></div><div class="pkg-price">$100</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">Road test &mdash; school vehicle</div><div class="pkg-detail">15&ndash;30 min &middot; We provide the vehicle &middot; $40 deposit to confirm</div></div>
+          <div class="pkg-price">$100</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'1 Hr Practice + Road Test',150,0,'signup',75)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">1 hr practice + road test</div><div class="pkg-detail">1 hr warmup at our location &middot; followed by road test</div><span class="pkg-badge badge-recommended">Recommended</span></div><div class="pkg-price">$150</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">1 hr practice + road test</div><div class="pkg-detail">1 hr warmup at our location &middot; followed by road test &middot; $75 deposit</div><span class="pkg-badge badge-recommended">Recommended</span></div>
+          <div class="pkg-price">$150</div>
+        </div>
       </div>
-      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class',25)">
+
+      <div class="pkg-card" onclick="selectPkg(this,'Class + Road Test',190,1,'class',100)">
         <div class="check-icon"><svg viewBox="0 0 12 10" fill="none" stroke="white" stroke-width="2"><path d="M1 5l3.5 3.5L11 1"/></svg></div>
-        <div class="pkg-top"><div><div class="pkg-name">Class + road test</div><div class="pkg-detail">1 session &middot; 2 hrs behind-the-wheel &middot; followed by road test</div></div><div class="pkg-price">$190</div></div>
+        <div class="pkg-top">
+          <div><div class="pkg-name">Class + road test</div><div class="pkg-detail">1 session &middot; 2 hrs behind-the-wheel &middot; followed by road test &middot; $100 deposit</div></div>
+          <div class="pkg-price">$190</div>
+        </div>
       </div>
+
     </div>
 
     <p class="err-msg" id="pkg-err">Please select a service to continue.</p>
@@ -544,7 +604,8 @@ window.goToStep2=function(){
     for(var i=0;i<booking.sessions;i++)booking.sessionData.push({instructor:'',date:'',slot:''});
     autoAssigned={};
     var bal=booking.price-booking.deposit;
-    document.getElementById('deposit-banner-wrap').innerHTML='<div class="info-banner banner-green">A <strong>$'+booking.deposit+' deposit</strong> via Zelle is required to confirm. The remaining <strong>$'+bal+'</strong> is due at or before your'+(booking.sessions>1?' 2nd':'')+' session.</div>';
+    var balDueText=booking.sessions>1?'The remaining <strong>$'+bal+'</strong> is due at or before your 2nd session.':'The remaining <strong>$'+bal+'</strong> is due at or before your session.';
+    document.getElementById('deposit-banner-wrap').innerHTML='<div class="info-banner banner-green">A <strong>$'+booking.deposit+' deposit</strong> via Zelle is required to confirm your booking. '+balDueText+'</div>';
     renderSessions();
     showStep('step2sessions',2);
   });
