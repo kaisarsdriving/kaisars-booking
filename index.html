@@ -151,6 +151,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   .row3 .full-col{grid-column:1/-1}
   .instructor-grid{grid-template-columns:repeat(2,1fr)}
 }
+.sticky-continue{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1.5px solid var(--border);padding:12px 1.25rem;display:none;align-items:center;justify-content:space-between;gap:12px;z-index:90;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.sticky-continue.show{display:flex}
+.sticky-info{flex:1;min-width:0}
+.sticky-pkg-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sticky-pkg-price{font-size:13px;color:var(--muted);margin-top:1px}
+.sticky-btn{background:var(--green);color:white;border:none;border-radius:var(--radius-sm);padding:12px 24px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.sticky-btn:hover{background:var(--green-dark)}
 @media print{
   header,.progress-wrap,.btn-print,.contact-box,.btn-back,.btn-primary,.loading-overlay,.zelle-box{display:none!important}
   body{background:white}
@@ -491,6 +498,12 @@ function showStep(id,n){
   document.getElementById(id).classList.add('active');
   setProgress(n);
   window.scrollTo({top:0,behavior:'smooth'});
+  // Hide sticky continue bar unless we're on step 1
+  var bar=document.getElementById('stickyContinue');
+  if(bar){
+    if(id==='step1'){if(booking.pkg)bar.classList.add('show');}
+    else{bar.classList.remove('show');document.querySelector('.container').style.paddingBottom='';}
+  }
 }
 window.goStep=function(n){showStep({1:'step1',2:'step2sessions',3:'step3',4:'step4'}[n],n);};
 
@@ -499,6 +512,15 @@ window.selectPkg=function(el,name,price,sessions,type,deposit){
   document.querySelectorAll('.pkg-card').forEach(function(c){c.classList.remove('selected');});
   el.classList.add('selected');
   booking.pkg=name;booking.price=price;booking.sessions=sessions;booking.type=type;booking.deposit=deposit;
+  // Show sticky continue bar
+  var bar=document.getElementById('stickyContinue');
+  bar.classList.add('show');
+  document.getElementById('sticky-pkg-name').textContent=name;
+  document.getElementById('sticky-pkg-price').textContent='$'+price+(deposit?' · $'+deposit+' deposit to confirm':'');
+  // Scroll the selected card into view nicely
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  // Add bottom padding so sticky bar doesn't cover content
+  document.querySelector('.container').style.paddingBottom='90px';
 };
 
 window.goToStep2=function(){
@@ -804,5 +826,14 @@ function buildReceipt(name,phone,email,addr,hasSessions,prefDate,ref){
   showStep('step4',4);
 }
 </script>
+
+<!-- Sticky continue bar — appears when a package is selected on step 1 -->
+<div class="sticky-continue" id="stickyContinue">
+  <div class="sticky-info">
+    <div class="sticky-pkg-name" id="sticky-pkg-name">—</div>
+    <div class="sticky-pkg-price" id="sticky-pkg-price"></div>
+  </div>
+  <button class="sticky-btn" onclick="goToStep2()">Continue &rarr;</button>
+</div>
 </body>
 </html>
