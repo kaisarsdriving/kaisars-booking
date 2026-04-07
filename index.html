@@ -440,7 +440,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     <div class="contact-box">
       <p>Questions? We're happy to help.</p>
-      <a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="mailto:kaisarsdriving@gmail.com">kaisarsdriving@gmail.com</a>
+      <a href="tel:+14697405327">469-740-5327</a> &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#0a616b63796b78796e78637c63646d4a6d676b636624696567"><span class="__cf_email__" data-cfemail="492228203a283b3a2d3b203f20272e092e24282025672a2624">[email&#160;protected]</span></a>
     </div>
     <button class="btn-print" onclick="window.print()">Print / Save receipt</button>
     <a id="lookup-link" href="lookup.html" target="_blank" style="display:block;margin-top:10px;text-align:center;background:var(--faint);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 20px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--text);text-decoration:none">🔍 View or share your booking</a>
@@ -448,6 +448,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+<!-- EmailJS — sends booking confirmation emails -->
+<script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Firebase Compat SDK — data-cfasync=false prevents Cloudflare injection -->
 <script data-cfasync="false" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script data-cfasync="false" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -456,6 +458,17 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 var firebaseConfig={apiKey:"AIzaSyDAmKGNDds6jthQi4YOmN7b23n6gbesiY4",authDomain:"kaisars-driving-school.firebaseapp.com",projectId:"kaisars-driving-school",storageBucket:"kaisars-driving-school.firebasestorage.app",messagingSenderId:"920051696926",appId:"1:920051696926:web:7eefcadaf11db47894b50f"};
 firebase.initializeApp(firebaseConfig);
 var db=firebase.firestore();
+
+// ── EmailJS ───────────────────────────────────────────────────────────────────
+emailjs.init('Wk6Zr3A6OtcXkKnWI');
+
+function sendConfirmationEmail(params){
+  // params: {to_email, student_name, booking_ref, package_name, total_price, deposit_amount, sessions_summary, student_address}
+  emailjs.send('service_4dvuxji','template_dd3jeoo', params)
+    .then(function(){console.log('Confirmation email sent');})
+    .catch(function(err){console.warn('Email failed (booking still saved):', err);});
+  // Note: email failure does NOT block the booking — it's fire-and-forget
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var INSTRUCTORS=[{id:'any',name:'Any / Earliest',initials:'★',any:true},{id:'kaisar',name:'Kaisar',initials:'KA'},{id:'adib',name:'Adib',initials:'AD'},{id:'kaifi',name:'Kaifi',initials:'KF'}];
@@ -812,7 +825,19 @@ window.submitCert=function(){
   if(prefDate){var dd=new Date(prefDate+'T12:00:00');formattedDate=dd.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
   var ref='KDS-'+Date.now().toString().slice(-7);
   saveBookingRecord({ref:ref,name:fn+' '+ln,phone:ph,email:em,address:addrStr,package:booking.pkg,price:booking.price,type:booking.type,preferredDate:formattedDate,sessions:[],bookedAt:new Date().toISOString(),deposit:booking.deposit}).then(function(){
-    hideLoading();buildReceipt(fn+' '+ln,ph,em,addrStr,false,formattedDate,ref);
+    hideLoading();
+    // Send confirmation email
+    sendConfirmationEmail({
+      to_email: em,
+      student_name: fn+' '+ln,
+      booking_ref: ref,
+      package_name: booking.pkg,
+      total_price: booking.price,
+      deposit_amount: booking.deposit,
+      sessions_summary: formattedDate ? 'Preferred date: '+formattedDate+' (we will contact you to confirm)' : 'We will contact you to schedule',
+      student_address: addrStr
+    });
+    buildReceipt(fn+' '+ln,ph,em,addrStr,false,formattedDate,ref);
   });
 };
 
@@ -843,7 +868,22 @@ window.submitBooking=function(){
       var addrStr=getAddr('');
       var ref='KDS-'+Date.now().toString().slice(-7);
       saveBookingRecord({ref:ref,name:fn+' '+ln,phone:ph,email:em,address:addrStr,package:booking.pkg,price:booking.price,type:booking.type,preferredDate:'',sessions:sessionsSummary,bookedAt:new Date().toISOString(),deposit:booking.deposit}).then(function(){
-        hideLoading();buildReceipt(fn+' '+ln,ph,em,addrStr,true,'',ref);
+        hideLoading();
+        // Send confirmation email
+        var sessSummaryText=sessionsSummary.map(function(s){
+          return 'Session '+s.session+': '+s.dateFormatted+' at '+s.slotLabel+' with '+s.instructor;
+        }).join(' | ');
+        sendConfirmationEmail({
+          to_email: em,
+          student_name: fn+' '+ln,
+          booking_ref: ref,
+          package_name: booking.pkg,
+          total_price: booking.price,
+          deposit_amount: booking.deposit,
+          sessions_summary: sessSummaryText,
+          student_address: addrStr
+        });
+        buildReceipt(fn+' '+ln,ph,em,addrStr,true,'',ref);
       });
     });
   });
@@ -894,11 +934,4 @@ function buildReceipt(name,phone,email,addr,hasSessions,prefDate,ref){
 
 <!-- Sticky continue bar — appears when a package is selected on step 1 -->
 <div class="sticky-continue" id="stickyContinue">
-  <div class="sticky-info">
-    <div class="sticky-pkg-name" id="sticky-pkg-name">—</div>
-    <div class="sticky-pkg-price" id="sticky-pkg-price"></div>
-  </div>
-  <button class="sticky-btn" onclick="goToStep2()">Continue &rarr;</button>
-</div>
-</body>
-</html>
+  <div cla
