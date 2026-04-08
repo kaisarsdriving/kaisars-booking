@@ -45,6 +45,20 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .btn-logout,.btn-refresh{background:none;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer}
 .btn-logout:hover{border-color:var(--red);color:var(--red)}
 .btn-refresh:hover{border-color:var(--green);color:var(--green)}
+.btn-add-student{background:var(--green);color:white;border:none;border-radius:var(--radius-sm);padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-add-student:hover{background:var(--green-dark)}
+.modal-wide{max-width:560px}
+.modal-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 .75rem;padding-top:1rem;border-top:1px solid var(--border)}
+.modal-section-title:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.row2-modal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-option-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.pay-option{padding:8px 16px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);transition:all .15s}
+.pay-option.active-paid{background:var(--green-light);border-color:var(--green);color:var(--green-dark)}
+.pay-option.active-deposit{background:var(--purple-light);border-color:#c4b5fd;color:var(--purple)}
+.pay-option.active-unpaid{background:var(--red-light);border-color:#fca5a5;color:var(--red)}
+.duration-row{display:flex;gap:8px;margin-top:6px}
+.duration-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);text-align:center;transition:all .15s}
+.duration-btn.active{background:var(--green-light);border-color:var(--green);color:var(--green-dark)}
 .dashboard{display:none}
 header{background:var(--white);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header-left{display:flex;align-items:center;gap:10px}
@@ -211,6 +225,7 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:1re
       <div class="logo-text">Kaisar's Driving School<span>Instructor Dashboard</span></div>
     </div>
     <div class="header-right">
+      <button class="btn-add-student" onclick="openAddStudent()">+ Add Student</button>
       <button class="btn-refresh" onclick="loadDashboard()">Refresh</button>
       <button class="btn-logout" onclick="logout()">Sign out</button>
     </div>
@@ -365,6 +380,184 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:1re
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- Modal: Add Student Manually -->
+<div class="modal-overlay" id="modal-add-student">
+  <div class="modal modal-wide" style="max-width:580px">
+    <div class="modal-title">+ Add Student</div>
+    <div class="modal-sub">Manually add a student to the schedule. The time slot will be blocked on the booking site.</div>
+
+    <!-- Type selector -->
+    <div class="modal-section-title">Type</div>
+    <div class="duration-row" id="as-type-row">
+      <button class="duration-btn active" id="as-type-class" onclick="setASType('class')">🚗 Driving Class</button>
+      <button class="duration-btn" id="as-type-rt" onclick="setASType('roadtest')">🏁 Road Test</button>
+    </div>
+
+    <!-- Student info -->
+    <div class="modal-section-title">Student info</div>
+    <div class="row2-modal">
+      <div class="field-group">
+        <label class="field-label">First name *</label>
+        <input type="text" id="as-fname" placeholder="First name"/>
+        <p class="err-msg" id="as-fname-err">Required.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Last name *</label>
+        <input type="text" id="as-lname" placeholder="Last name"/>
+        <p class="err-msg" id="as-lname-err">Required.</p>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Phone number *</label>
+      <input type="text" id="as-phone" placeholder="(000) 000-0000" maxlength="14" oninput="fmtPhone(this)"/>
+      <p class="err-msg" id="as-phone-err">Please enter a valid phone number.</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Address</label>
+      <input type="text" id="as-address" placeholder="123 Main St, Frisco, TX 75033"/>
+    </div>
+
+    <!-- CLASS fields -->
+    <div id="as-class-fields">
+      <div class="modal-section-title">Class details</div>
+      <div class="row2-modal">
+        <div class="field-group">
+          <label class="field-label">Instructor *</label>
+          <select id="as-inst">
+            <option value="kaisar">Kaisar</option>
+            <option value="adib">Adib</option>
+            <option value="kaifi">Kaifi</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date *</label>
+          <input type="date" id="as-date"/>
+          <p class="err-msg" id="as-date-err">Please select a date.</p>
+        </div>
+      </div>
+
+      <!-- Duration -->
+      <div class="field-group">
+        <label class="field-label">Duration</label>
+        <div class="duration-row">
+          <button class="duration-btn active" id="dur-2hr" onclick="setDuration('2hr')">2 hr block</button>
+          <button class="duration-btn" id="dur-1hr" onclick="setDuration('1hr')">1 hr class</button>
+        </div>
+      </div>
+
+      <!-- 2hr slot picker -->
+      <div id="slot-2hr-wrap" class="field-group">
+        <label class="field-label">Time slot *</label>
+        <select id="as-slot">
+          <option value="">Select a slot</option>
+          <option value="am">9:00 AM – 11:00 AM</option>
+          <option value="pm">12:00 PM – 2:00 PM</option>
+          <option value="eve">5:00 PM – 7:00 PM</option>
+        </select>
+        <p class="err-msg" id="as-slot-err">Please select a time slot.</p>
+      </div>
+
+      <!-- 1hr custom time -->
+      <div id="slot-1hr-wrap" class="field-group" style="display:none">
+        <label class="field-label">Start time *</label>
+        <input type="text" id="as-custom-time" placeholder="e.g. 10:00 AM"/>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='8:00 AM'" style="font-size:11px;padding:4px 10px">8 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='9:00 AM'" style="font-size:11px;padding:4px 10px">9 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='10:00 AM'" style="font-size:11px;padding:4px 10px">10 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='11:00 AM'" style="font-size:11px;padding:4px 10px">11 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='12:00 PM'" style="font-size:11px;padding:4px 10px">12 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='1:00 PM'" style="font-size:11px;padding:4px 10px">1 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='2:00 PM'" style="font-size:11px;padding:4px 10px">2 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='3:00 PM'" style="font-size:11px;padding:4px 10px">3 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='4:00 PM'" style="font-size:11px;padding:4px 10px">4 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='5:00 PM'" style="font-size:11px;padding:4px 10px">5 PM</button>
+        </div>
+        <p class="err-msg" id="as-custom-time-err">Please enter a start time.</p>
+      </div>
+
+      <!-- Class number -->
+      <div class="field-group">
+        <label class="field-label">Class number (e.g. 1st class, 2nd class...)</label>
+        <input type="text" id="as-classnum" placeholder="e.g. 1  or  2  or  3 of 4"/>
+      </div>
+    </div>
+
+    <!-- ROAD TEST fields -->
+    <div id="as-rt-fields" style="display:none">
+      <div class="modal-section-title">Road test details</div>
+      <div class="row2-modal">
+        <div class="field-group">
+          <label class="field-label">Instructor *</label>
+          <select id="as-rt-inst">
+            <option value="kaisar">Kaisar</option>
+            <option value="adib">Adib</option>
+            <option value="kaifi">Kaifi</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date *</label>
+          <input type="date" id="as-rt-date"/>
+          <p class="err-msg" id="as-rt-date-err">Please select a date.</p>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Preferred time *</label>
+        <input type="text" id="as-rt-time" placeholder="e.g. 10:30 AM"/>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='9:00 AM'" style="font-size:11px;padding:4px 10px">9 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='10:00 AM'" style="font-size:11px;padding:4px 10px">10 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='11:00 AM'" style="font-size:11px;padding:4px 10px">11 AM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='12:00 PM'" style="font-size:11px;padding:4px 10px">12 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='1:00 PM'" style="font-size:11px;padding:4px 10px">1 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='2:00 PM'" style="font-size:11px;padding:4px 10px">2 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='3:00 PM'" style="font-size:11px;padding:4px 10px">3 PM</button>
+          <button type="button" class="filter-btn" onclick="document.getElementById('as-rt-time').value='4:00 PM'" style="font-size:11px;padding:4px 10px">4 PM</button>
+        </div>
+        <p class="err-msg" id="as-rt-time-err">Please enter a time.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Vehicle *</label>
+        <div class="duration-row">
+          <button class="duration-btn active" id="as-rt-own" onclick="setRTVehicle('own')">🚗 Own vehicle</button>
+          <button class="duration-btn" id="as-rt-school" onclick="setRTVehicle('school')">🏫 School vehicle</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment -->
+    <div class="modal-section-title">Payment</div>
+    <div class="field-group">
+      <label class="field-label">Payment status</label>
+      <div class="pay-option-row">
+        <button class="pay-option active-paid" id="pay-opt-full" onclick="setPayOpt('full')">✓ Fully paid</button>
+        <button class="pay-option" id="pay-opt-deposit" onclick="setPayOpt('deposit')">Deposit only</button>
+        <button class="pay-option" id="pay-opt-unpaid" onclick="setPayOpt('unpaid')">Unpaid</button>
+      </div>
+    </div>
+    <div id="as-amount-wrap" class="field-group" style="display:none">
+      <label class="field-label" id="as-amount-lbl">Amount owed ($)</label>
+      <input type="number" id="as-amount" placeholder="e.g. 90" min="0"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Total price ($)</label>
+      <input type="number" id="as-price" placeholder="e.g. 90" min="0"/>
+    </div>
+
+    <!-- Notes -->
+    <div class="field-group" style="margin-top:.5rem">
+      <label class="field-label">Additional notes</label>
+      <textarea id="as-notes" placeholder="e.g. Student needs work on parking, has their own car, etc."></textarea>
+    </div>
+
+    <p class="err-msg" id="as-general-err" style="margin-bottom:.5rem">Please fix the errors above.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('modal-add-student')">Cancel</button>
+      <button class="btn-save" onclick="confirmAddStudent()">Add to schedule</button>
+    </div>
+  </div>
+</div>
 
 <!-- Firebase loaded ONLY after login — this stops GitHub secret scanning from finding the key -->
 <script data-cfasync="false" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -663,7 +856,8 @@ function renderSchedule() {
   const slots = ['am','pm','eve'];
   const slotFull = {am:'9:00 AM – 11:00 AM', pm:'12:00 PM – 2:00 PM', eve:'5:00 PM – 7:00 PM'};
   const lkp = {}; // lkp[instId][slotId] = [{b,s,si}]
-  INST_LIST.forEach(i=>{lkp[i]={am:[],pm:[],eve:[],rt:[]};});
+  // 'custom' key holds 1hr/custom-time manual entries
+  INST_LIST.forEach(i=>{lkp[i]={am:[],pm:[],eve:[],custom:[],rt:[]};});
 
   allBookings.forEach(b=>{
     if(b.cancelled) return;
@@ -671,10 +865,13 @@ function renderSchedule() {
     if(b.type!=='cert'&&b.type!=='signup'){
       (b.sessions||[]).forEach((s,si)=>{
         if(s.cancelled||s.date!==dateStr) return;
-        if(lkp[s.instructorId]) lkp[s.instructorId][s.slot].push({b,s,si,type:'session'});
+        if(!lkp[s.instructorId]) return;
+        // Custom/1hr slot goes in 'custom' bucket, standard slots go in their bucket
+        const bucket = slots.includes(s.slot) ? s.slot : 'custom';
+        lkp[s.instructorId][bucket].push({b,s,si,type:'session'});
       });
     }
-    // Road tests / signups with assigned date
+    // Road tests / signups with assigned date (legacy single model)
     if((b.type==='signup'||b.type==='cert') && b.assignedDate===dateStr && b.assignedInstructor){
       if(lkp[b.assignedInstructor]) lkp[b.assignedInstructor]['rt'].push({b,type:'roadtest'});
     }
@@ -752,6 +949,47 @@ function renderSchedule() {
     });
     html += `</tr>`;
   });
+
+  // ── Custom / 1hr row — for manually added classes with non-standard times ──
+  const anyCustom = INST_LIST.some(i=>lkp[i]['custom'].length>0);
+  if(anyCustom){
+    html += `<tr style="border-top:1.5px dashed var(--border)">`;
+    html += `<td class="sched-td-time" style="background:var(--blue-light,#eff6ff);border-right:1.5px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;color:var(--blue,#2563eb);text-transform:uppercase;letter-spacing:.05em;line-height:1.3">🕐<br>Custom<br>Times</div>
+    </td>`;
+    INST_LIST.forEach(i=>{
+      const entries = lkp[i]['custom'];
+      html += `<td style="padding:6px;border-right:1px solid var(--border);vertical-align:top;background:#f0f7ff${isToday?';background:#e8f4ff':''}">`;
+      if(!entries.length){
+        html += `<div class="cell-empty" style="color:#bfdbfe">·</div>`;
+      } else {
+        entries.forEach(({b,s,si})=>{
+          const total=(b.sessions||[]).length;
+          const sNum=s.session||si+1;
+          const bal=(b.price||0)-(b.deposit||0);
+          let payTag='',blockCls=`class-block inst-${i}`;
+          if(b.fullPaid){payTag=`<div class="cb-pay pay-full">Fully paid ✓</div>`;}
+          else if(b.depositPaid){payTag=`<div class="cb-pay pay-dep">Deposit ✓ · $${bal} due</div>`;}
+          else{payTag=`<div class="cb-pay pay-none">⚠ $${b.amountOwed||0} owed</div>`;blockCls+=' unpaid';}
+          if(s.completed) blockCls+=' done';
+          const addr=(b.address||'').split(',')[0]||'';
+          html+=`<div class="${blockCls}">
+            <div class="cb-session">Class ${sNum} · ${esc(s.slotLabel)}</div>
+            <div class="cb-name">${esc(b.name)}</div>
+            <div class="cb-addr" title="${esc(b.address)}">${esc(addr)}</div>
+            <div class="cb-phone"><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>
+            ${payTag}
+            <div class="cb-confirm">
+              <input type="checkbox" id="cb-${b._id}-${si}" ${s.studentConfirmed?'checked':''} onchange="toggleConfirm('${b._id}',${si},this.checked)"/>
+              <label for="cb-${b._id}-${si}" class="${s.studentConfirmed?'confirmed':''}">${s.studentConfirmed?'✓ Confirmed':'Confirmed?'}</label>
+            </div>
+          </div>`;
+        });
+      }
+      html += `</td>`;
+    });
+    html += `</tr>`;
+  }
 
   // ── Road Tests row inside the grid ──────────────────────────────────────────
   // Collect all road tests for this day per instructor (supports multiple per instructor)
@@ -971,6 +1209,209 @@ window.confirmAssignRT=function(){
 };
 document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show');}));
 setInterval(()=>{if(document.getElementById('dashboard').style.display!=='none')loadDashboard();},60000);
+
+// ── Manual Add Student ────────────────────────────────────────────────────────
+let asType = 'class'; // 'class' or 'roadtest'
+let asDuration = '2hr'; // '2hr' or '1hr'
+let asPayOpt = 'full'; // 'full' | 'deposit' | 'unpaid'
+let asRTVehicle = 'own'; // 'own' | 'school'
+
+window.openAddStudent = function() {
+  // Reset form
+  asType='class'; asDuration='2hr'; asPayOpt='full'; asRTVehicle='own';
+  ['as-fname','as-lname','as-phone','as-address','as-classnum','as-notes','as-custom-time','as-rt-time'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['as-date','as-rt-date'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.min=today;}});
+  document.getElementById('as-slot').value='';
+  document.getElementById('as-price').value='';
+  document.getElementById('as-amount').value='';
+  // Reset UI state
+  setASType('class');
+  setDuration('2hr');
+  setPayOpt('full');
+  setRTVehicle('own');
+  document.querySelectorAll('#modal-add-student .err-msg').forEach(el=>el.style.display='none');
+  openModal('modal-add-student');
+};
+
+window.setASType = function(t) {
+  asType = t;
+  document.getElementById('as-type-class').className = 'duration-btn'+(t==='class'?' active':'');
+  document.getElementById('as-type-rt').className = 'duration-btn'+(t==='roadtest'?' active':'');
+  document.getElementById('as-class-fields').style.display = t==='class' ? 'block' : 'none';
+  document.getElementById('as-rt-fields').style.display = t==='roadtest' ? 'block' : 'none';
+};
+
+window.setDuration = function(d) {
+  asDuration = d;
+  document.getElementById('dur-2hr').className = 'duration-btn'+(d==='2hr'?' active':'');
+  document.getElementById('dur-1hr').className = 'duration-btn'+(d==='1hr'?' active':'');
+  document.getElementById('slot-2hr-wrap').style.display = d==='2hr' ? 'block' : 'none';
+  document.getElementById('slot-1hr-wrap').style.display = d==='1hr' ? 'block' : 'none';
+};
+
+window.setRTVehicle = function(v) {
+  asRTVehicle = v;
+  document.getElementById('as-rt-own').className = 'duration-btn'+(v==='own'?' active':'');
+  document.getElementById('as-rt-school').className = 'duration-btn'+(v==='school'?' active':'');
+};
+
+window.setPayOpt = function(opt) {
+  asPayOpt = opt;
+  document.getElementById('pay-opt-full').className = 'pay-option'+(opt==='full'?' active-paid':'');
+  document.getElementById('pay-opt-deposit').className = 'pay-option'+(opt==='deposit'?' active-deposit':'');
+  document.getElementById('pay-opt-unpaid').className = 'pay-option'+(opt==='unpaid'?' active-unpaid':'');
+  const wrap = document.getElementById('as-amount-wrap');
+  const lbl = document.getElementById('as-amount-lbl');
+  if(opt==='unpaid'){
+    wrap.style.display='block';
+    lbl.textContent='Amount owed ($)';
+  } else if(opt==='deposit'){
+    wrap.style.display='block';
+    lbl.textContent='Deposit amount paid ($)';
+  } else {
+    wrap.style.display='none';
+  }
+};
+
+window.fmtPhone = function(input) {
+  let v=input.value.replace(/\D/g,'').slice(0,10);
+  if(v.length>=7) v='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);
+  else if(v.length>=4) v='('+v.slice(0,3)+') '+v.slice(3);
+  else if(v.length>0) v='('+v;
+  input.value=v;
+};
+
+window.confirmAddStudent = function() {
+  // Clear errors
+  document.querySelectorAll('#modal-add-student .err-msg').forEach(el=>el.style.display='none');
+  let ok = true;
+
+  const fn = document.getElementById('as-fname').value.trim();
+  const ln = document.getElementById('as-lname').value.trim();
+  const ph = document.getElementById('as-phone').value.trim();
+  const addr = document.getElementById('as-address').value.trim();
+  const notes = document.getElementById('as-notes').value.trim();
+  const priceVal = parseFloat(document.getElementById('as-price').value)||0;
+  const amountVal = parseFloat(document.getElementById('as-amount').value)||0;
+  const classNum = document.getElementById('as-classnum').value.trim();
+
+  if(!fn){document.getElementById('as-fname-err').style.display='block';ok=false;}
+  if(!ln){document.getElementById('as-lname-err').style.display='block';ok=false;}
+  if(ph.replace(/\D/g,'').length<10){document.getElementById('as-phone-err').style.display='block';ok=false;}
+
+  const ref = 'KDS-M'+Date.now().toString().slice(-7); // M = manually added
+  const name = fn+' '+ln;
+  const bookedAt = new Date().toISOString();
+
+  if(asType === 'class') {
+    const instId = document.getElementById('as-inst').value;
+    const dateVal = document.getElementById('as-date').value;
+    if(!dateVal){document.getElementById('as-date-err').style.display='block';ok=false;}
+
+    let slotId, slotLabel, slotCustom='';
+    if(asDuration==='2hr'){
+      slotId = document.getElementById('as-slot').value;
+      if(!slotId){document.getElementById('as-slot-err').style.display='block';ok=false;}
+      slotLabel = SL[slotId]||slotId;
+    } else {
+      slotCustom = document.getElementById('as-custom-time').value.trim();
+      if(!slotCustom){document.getElementById('as-custom-time-err').style.display='block';ok=false;}
+      slotId = 'custom_'+slotCustom.replace(/[^a-zA-Z0-9]/g,'');
+      slotLabel = slotCustom+' (1 hr)';
+    }
+
+    if(!ok) return;
+
+    const d = new Date(dateVal+'T12:00:00');
+    const dateFormatted = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    const sessNum = classNum ? classNum : '1';
+
+    const session = {
+      session: sessNum,
+      instructor: INSTS[instId]||instId,
+      instructorId: instId,
+      date: dateVal,
+      dateFormatted,
+      slot: slotId,
+      slotLabel,
+      manualEntry: true
+    };
+
+    const record = {
+      ref, name, phone:ph, email:'', address:addr||'—',
+      package: classNum ? 'Class '+classNum : 'Driving Class',
+      price: priceVal,
+      deposit: asPayOpt==='deposit' ? amountVal : (asPayOpt==='full' ? priceVal : 0),
+      type: 'class',
+      sessions: [session],
+      bookedAt,
+      depositPaid: asPayOpt==='deposit'||asPayOpt==='full',
+      fullPaid: asPayOpt==='full',
+      amountOwed: asPayOpt==='unpaid' ? amountVal : (asPayOpt==='deposit' ? priceVal-amountVal : 0),
+      note: notes,
+      manualEntry: true,
+      preferredDate: ''
+    };
+
+    // Save booking + block slot
+    db.collection('bookings').add(record).then(()=>{
+      // Block the slot so online booking can't take it
+      if(asDuration==='2hr'){
+        return resSlot(instId, dateVal, slotId);
+      }
+      // 1hr custom — store under custom key (won't conflict with standard slots)
+      return resSlot(instId, dateVal, slotId);
+    }).then(()=>{
+      closeModal('modal-add-student');
+      toast('✓ '+name+' added to schedule');
+      loadDashboard();
+    }).catch(()=>{toast('Error saving — please try again');});
+
+  } else {
+    // Road test
+    const rtInst = document.getElementById('as-rt-inst').value;
+    const rtDate = document.getElementById('as-rt-date').value;
+    const rtTime = document.getElementById('as-rt-time').value.trim();
+    if(!rtDate){document.getElementById('as-rt-date-err').style.display='block';ok=false;}
+    if(!rtTime){document.getElementById('as-rt-time-err').style.display='block';ok=false;}
+    if(!ok) return;
+
+    const d = new Date(rtDate+'T12:00:00');
+    const dateFormatted = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    const vehicleLabel = asRTVehicle==='own' ? 'Road Test — Own Vehicle' : 'Road Test — School Vehicle';
+
+    const record = {
+      ref, name, phone:ph, email:'', address:addr||'—',
+      package: vehicleLabel,
+      price: priceVal,
+      deposit: asPayOpt==='deposit' ? amountVal : (asPayOpt==='full' ? priceVal : 0),
+      type: 'signup',
+      sessions: [],
+      bookedAt,
+      depositPaid: asPayOpt==='deposit'||asPayOpt==='full',
+      fullPaid: asPayOpt==='full',
+      amountOwed: asPayOpt==='unpaid' ? amountVal : (asPayOpt==='deposit' ? priceVal-amountVal : 0),
+      note: notes,
+      manualEntry: true,
+      preferredDate: '',
+      vehicle: asRTVehicle,
+      roadTests: [{
+        date: rtDate,
+        dateFormatted,
+        time: rtTime,
+        instructor: rtInst
+      }]
+    };
+
+    db.collection('bookings').add(record).then(()=>{
+      closeModal('modal-add-student');
+      toast('🏁 Road test for '+name+' added');
+      loadDashboard();
+    }).catch(()=>{toast('Error saving — please try again');});
+  }
+};
 </script>
 </body>
 </html>
