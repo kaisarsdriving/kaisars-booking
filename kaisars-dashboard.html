@@ -441,40 +441,39 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:1re
       <div class="field-group">
         <label class="field-label">Duration</label>
         <div class="duration-row">
-          <button class="duration-btn active" id="dur-2hr" onclick="setDuration('2hr')">2 hr block</button>
-          <button class="duration-btn" id="dur-1hr" onclick="setDuration('1hr')">1 hr class</button>
+          <button class="duration-btn active" id="dur-2hr" onclick="setDuration('2hr')">2 hrs</button>
+          <button class="duration-btn" id="dur-1hr" onclick="setDuration('1hr')">1 hr</button>
+          <button class="duration-btn" id="dur-custom" onclick="setDuration('custom')">Custom</button>
         </div>
       </div>
 
-      <!-- 2hr slot picker -->
-      <div id="slot-2hr-wrap" class="field-group">
-        <label class="field-label">Time slot *</label>
-        <select id="as-slot">
-          <option value="">Select a slot</option>
-          <option value="am">9:00 AM – 11:00 AM</option>
-          <option value="pm">12:00 PM – 2:00 PM</option>
-          <option value="eve">5:00 PM – 7:00 PM</option>
-        </select>
-        <p class="err-msg" id="as-slot-err">Please select a time slot.</p>
-      </div>
-
-      <!-- 1hr custom time -->
-      <div id="slot-1hr-wrap" class="field-group" style="display:none">
+      <!-- Start time — always shown -->
+      <div class="field-group">
         <label class="field-label">Start time *</label>
-        <input type="text" id="as-custom-time" placeholder="e.g. 10:00 AM"/>
+        <input type="text" id="as-start-time" placeholder="e.g. 10:00 AM" oninput="updateEndTime()"/>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='8:00 AM'" style="font-size:11px;padding:4px 10px">8 AM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='9:00 AM'" style="font-size:11px;padding:4px 10px">9 AM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='10:00 AM'" style="font-size:11px;padding:4px 10px">10 AM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='11:00 AM'" style="font-size:11px;padding:4px 10px">11 AM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='12:00 PM'" style="font-size:11px;padding:4px 10px">12 PM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='1:00 PM'" style="font-size:11px;padding:4px 10px">1 PM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='2:00 PM'" style="font-size:11px;padding:4px 10px">2 PM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='3:00 PM'" style="font-size:11px;padding:4px 10px">3 PM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='4:00 PM'" style="font-size:11px;padding:4px 10px">4 PM</button>
-          <button type="button" class="filter-btn" onclick="document.getElementById('as-custom-time').value='5:00 PM'" style="font-size:11px;padding:4px 10px">5 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('8:00 AM')" style="font-size:11px;padding:4px 10px">8 AM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('9:00 AM')" style="font-size:11px;padding:4px 10px">9 AM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('10:00 AM')" style="font-size:11px;padding:4px 10px">10 AM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('11:00 AM')" style="font-size:11px;padding:4px 10px">11 AM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('12:00 PM')" style="font-size:11px;padding:4px 10px">12 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('1:00 PM')" style="font-size:11px;padding:4px 10px">1 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('2:00 PM')" style="font-size:11px;padding:4px 10px">2 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('3:00 PM')" style="font-size:11px;padding:4px 10px">3 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('4:00 PM')" style="font-size:11px;padding:4px 10px">4 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('5:00 PM')" style="font-size:11px;padding:4px 10px">5 PM</button>
+          <button type="button" class="filter-btn" onclick="setStartTime('6:00 PM')" style="font-size:11px;padding:4px 10px">6 PM</button>
         </div>
-        <p class="err-msg" id="as-custom-time-err">Please enter a start time.</p>
+        <p class="err-msg" id="as-start-time-err">Please enter a start time.</p>
+      </div>
+
+      <!-- End time — auto-filled based on duration, editable for custom -->
+      <div class="field-group">
+        <label class="field-label">End time *</label>
+        <input type="text" id="as-end-time" placeholder="Auto-filled" oninput="checkOverlap()"/>
+        <p class="err-msg" id="as-end-time-err">Please enter an end time.</p>
+        <!-- Overlap warning -->
+        <div id="as-overlap-warn" style="display:none;margin-top:6px;background:#fff3cd;border:1.5px solid #ffc107;border-radius:6px;padding:8px 12px;font-size:12px;color:#7d4e00;line-height:1.5"></div>
       </div>
 
       <!-- Class number -->
@@ -1219,13 +1218,14 @@ let asRTVehicle = 'own'; // 'own' | 'school'
 window.openAddStudent = function() {
   // Reset form
   asType='class'; asDuration='2hr'; asPayOpt='full'; asRTVehicle='own';
-  ['as-fname','as-lname','as-phone','as-address','as-classnum','as-notes','as-custom-time','as-rt-time'].forEach(id=>{
+  ['as-fname','as-lname','as-phone','as-address','as-classnum','as-notes','as-start-time','as-end-time','as-rt-time'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   ['as-date','as-rt-date'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.min=today;}});
-  document.getElementById('as-slot').value='';
   document.getElementById('as-price').value='';
   document.getElementById('as-amount').value='';
+  const ow = document.getElementById('as-overlap-warn');
+  if(ow){ow.style.display='none';}
   // Reset UI state
   setASType('class');
   setDuration('2hr');
@@ -1243,12 +1243,81 @@ window.setASType = function(t) {
   document.getElementById('as-rt-fields').style.display = t==='roadtest' ? 'block' : 'none';
 };
 
+// Parse "10:30 AM" → minutes since midnight
+function parseTime(str) {
+  if(!str) return null;
+  const m = str.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!m) return null;
+  let h = parseInt(m[1]), min = parseInt(m[2]), ap = m[3].toUpperCase();
+  if(ap==='PM' && h!==12) h+=12;
+  if(ap==='AM' && h===12) h=0;
+  return h*60+min;
+}
+
+// Format minutes since midnight → "10:30 AM"
+function formatTime(mins) {
+  let h = Math.floor(mins/60), m = mins%60;
+  const ap = h>=12 ? 'PM' : 'AM';
+  if(h>12) h-=12;
+  if(h===0) h=12;
+  return h+':'+(m<10?'0':'')+m+' '+ap;
+}
+
+// Standard booking slots: [start, end) in minutes
+const BOOKING_SLOTS = {
+  am:  { start: 9*60,   end: 11*60,  label: '9:00 AM – 11:00 AM' },
+  pm:  { start: 12*60,  end: 14*60,  label: '12:00 PM – 2:00 PM' },
+  eve: { start: 17*60,  end: 19*60,  label: '5:00 PM – 7:00 PM'  }
+};
+
+// Returns array of slot ids that overlap with [startMins, endMins)
+function getOverlappingSlots(startMins, endMins) {
+  if(startMins===null || endMins===null) return [];
+  return Object.entries(BOOKING_SLOTS)
+    .filter(([,s]) => startMins < s.end && endMins > s.start)
+    .map(([id]) => id);
+}
+
 window.setDuration = function(d) {
   asDuration = d;
-  document.getElementById('dur-2hr').className = 'duration-btn'+(d==='2hr'?' active':'');
-  document.getElementById('dur-1hr').className = 'duration-btn'+(d==='1hr'?' active':'');
-  document.getElementById('slot-2hr-wrap').style.display = d==='2hr' ? 'block' : 'none';
-  document.getElementById('slot-1hr-wrap').style.display = d==='1hr' ? 'block' : 'none';
+  document.getElementById('dur-2hr').className    = 'duration-btn'+(d==='2hr'   ?' active':'');
+  document.getElementById('dur-1hr').className    = 'duration-btn'+(d==='1hr'   ?' active':'');
+  document.getElementById('dur-custom').className = 'duration-btn'+(d==='custom'?' active':'');
+  // Auto-fill end time from current start
+  updateEndTime();
+};
+
+window.setStartTime = function(t) {
+  document.getElementById('as-start-time').value = t;
+  updateEndTime();
+};
+
+window.updateEndTime = function() {
+  const start = parseTime(document.getElementById('as-start-time').value);
+  if(start === null) { checkOverlap(); return; }
+  let addMins = asDuration==='2hr' ? 120 : asDuration==='1hr' ? 60 : null;
+  if(addMins !== null) {
+    document.getElementById('as-end-time').value = formatTime(start + addMins);
+  }
+  checkOverlap();
+};
+
+window.checkOverlap = function() {
+  const start = parseTime(document.getElementById('as-start-time').value);
+  const end   = parseTime(document.getElementById('as-end-time').value);
+  const warn  = document.getElementById('as-overlap-warn');
+  if(start===null || end===null || end<=start) { warn.style.display='none'; return; }
+  const overlapping = getOverlappingSlots(start, end);
+  if(!overlapping.length) {
+    warn.style.display='block';
+    warn.innerHTML='✅ No overlap with standard slots — booking site stays open for this day.';
+    warn.style.background='#f0fdf4'; warn.style.borderColor='#6ee7b7'; warn.style.color='#065f46';
+  } else {
+    warn.style.display='block';
+    const names = overlapping.map(s=>BOOKING_SLOTS[s].label).join(', ');
+    warn.innerHTML='⚠️ Overlaps with: <strong>'+names+'</strong><br>These slots will be blocked on the booking site for this instructor.';
+    warn.style.background='#fff3cd'; warn.style.borderColor='#ffc107'; warn.style.color='#7d4e00';
+  }
 };
 
 window.setRTVehicle = function(v) {
@@ -1306,27 +1375,38 @@ window.confirmAddStudent = function() {
   const bookedAt = new Date().toISOString();
 
   if(asType === 'class') {
-    const instId = document.getElementById('as-inst').value;
+    // ── Class booking ──
+    const instId  = document.getElementById('as-inst').value;
     const dateVal = document.getElementById('as-date').value;
-    if(!dateVal){document.getElementById('as-date-err').style.display='block';ok=false;}
+    const startStr = document.getElementById('as-start-time').value.trim();
+    const endStr   = document.getElementById('as-end-time').value.trim();
 
-    let slotId, slotLabel, slotCustom='';
-    if(asDuration==='2hr'){
-      slotId = document.getElementById('as-slot').value;
-      if(!slotId){document.getElementById('as-slot-err').style.display='block';ok=false;}
-      slotLabel = SL[slotId]||slotId;
-    } else {
-      slotCustom = document.getElementById('as-custom-time').value.trim();
-      if(!slotCustom){document.getElementById('as-custom-time-err').style.display='block';ok=false;}
-      slotId = 'custom_'+slotCustom.replace(/[^a-zA-Z0-9]/g,'');
-      slotLabel = slotCustom+' (1 hr)';
-    }
-
+    if(!dateVal)  { document.getElementById('as-date-err').style.display='block'; ok=false; }
+    if(!startStr) { document.getElementById('as-start-time-err').style.display='block'; ok=false; }
+    if(!endStr)   { document.getElementById('as-end-time-err').style.display='block'; ok=false; }
     if(!ok) return;
+
+    const startMins = parseTime(startStr);
+    const endMins   = parseTime(endStr);
+    if(startMins===null) { document.getElementById('as-start-time-err').style.display='block'; ok=false; }
+    if(endMins===null)   { document.getElementById('as-end-time-err').style.display='block'; ok=false; }
+    if(ok && endMins<=startMins) {
+      document.getElementById('as-end-time-err').style.display='block';
+      document.getElementById('as-end-time-err').textContent='End time must be after start time.';
+      ok=false;
+    }
+    if(!ok) return;
+
+    const slotLabel = startStr + ' – ' + endStr;
+    // Use a unique slot key for this manual entry
+    const slotId = 'manual_'+startStr.replace(/[^a-zA-Z0-9]/g,'')+'_'+endStr.replace(/[^a-zA-Z0-9]/g,'');
+
+    // Work out which standard booking slots overlap → block those
+    const slotsToBlock = getOverlappingSlots(startMins, endMins);
 
     const d = new Date(dateVal+'T12:00:00');
     const dateFormatted = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-    const sessNum = classNum ? classNum : '1';
+    const sessNum = classNum || '1';
 
     const session = {
       session: sessNum,
@@ -1349,25 +1429,24 @@ window.confirmAddStudent = function() {
       bookedAt,
       depositPaid: asPayOpt==='deposit'||asPayOpt==='full',
       fullPaid: asPayOpt==='full',
-      amountOwed: asPayOpt==='unpaid' ? amountVal : (asPayOpt==='deposit' ? priceVal-amountVal : 0),
+      amountOwed: asPayOpt==='unpaid' ? amountVal : (asPayOpt==='deposit' ? Math.max(0,priceVal-amountVal) : 0),
       note: notes,
       manualEntry: true,
       preferredDate: ''
     };
 
-    // Save booking + block slot
+    // Save booking then block any overlapping standard slots
     db.collection('bookings').add(record).then(()=>{
-      // Block the slot so online booking can't take it
-      if(asDuration==='2hr'){
-        return resSlot(instId, dateVal, slotId);
-      }
-      // 1hr custom — store under custom key (won't conflict with standard slots)
-      return resSlot(instId, dateVal, slotId);
+      const blockPromises = slotsToBlock.map(s => resSlot(instId, dateVal, s));
+      return Promise.all(blockPromises);
     }).then(()=>{
       closeModal('modal-add-student');
-      toast('✓ '+name+' added to schedule');
+      const blockedMsg = slotsToBlock.length
+        ? ' · Blocked: '+slotsToBlock.map(s=>({am:'9–11 AM',pm:'12–2 PM',eve:'5–7 PM'}[s])).join(', ')
+        : ' · No standard slots blocked';
+      toast('✓ '+name+' added'+blockedMsg);
       loadDashboard();
-    }).catch(()=>{toast('Error saving — please try again');});
+    }).catch(()=>{ toast('Error saving — please try again'); });
 
   } else {
     // Road test
