@@ -851,43 +851,86 @@ function renderSchedule() {
   if(isFri){warn.style.display='block';wrap.innerHTML='';return;}
   warn.style.display='none';
 
-  // Build per-instructor per-slot lookup
-  const slots = ['am','pm','eve'];
-  const slotFull = {am:'9:00 AM – 11:00 AM', pm:'12:00 PM – 2:00 PM', eve:'5:00 PM – 7:00 PM'};
-  const lkp = {}; // lkp[instId][slotId] = [{b,s,si}]
-  // 'custom' key holds 1hr/custom-time manual entries
-  INST_LIST.forEach(i=>{lkp[i]={am:[],pm:[],eve:[],custom:[],rt:[]};});
+  // ── Build unified slot list: standard + custom, sorted by start time ─────────
+  // Standard slots
+  const STD_SLOTS = [
+    {id:'am',  startMins:9*60,   endMins:11*60, label:'9:00 AM – 11:00 AM', short:'9'},
+    {id:'pm',  startMins:12*60,  endMins:14*60, label:'12:00 PM – 2:00 PM', short:'12'},
+    {id:'eve', startMins:17*60,  endMins:19*60, label:'5:00 PM – 7:00 PM',  short:'5'},
+  ];
+
+  // Collect all sessions for this day — standard and custom
+  // allRows: [{slotId, startMins, endMins, label, short, entries:{kaisar:[],adib:[],kaifi:[]}}]
+  const stdEntries = {}; // stdEntries['am'] = {kaisar:[],adib:[],kaifi:[]}
+  STD_SLOTS.forEach(s=>{ stdEntries[s.id]={}; INST_LIST.forEach(i=>stdEntries[s.id][i]=[]); });
+
+  // customSlots: keyed by slotId, each has {startMins,endMins,label,entries:{inst:[]}}
+  const customSlots = {};
 
   allBookings.forEach(b=>{
     if(b.cancelled) return;
-    // Regular sessions
-    if(b.type!=='cert'&&b.type!=='signup'){
-      (b.sessions||[]).forEach((s,si)=>{
-        if(s.cancelled||s.date!==dateStr) return;
-        if(!lkp[s.instructorId]) return;
-        // Custom/1hr slot goes in 'custom' bucket, standard slots go in their bucket
-        const bucket = slots.includes(s.slot) ? s.slot : 'custom';
-        lkp[s.instructorId][bucket].push({b,s,si,type:'session'});
-      });
-    }
-    // Road tests / signups with assigned date (legacy single model)
-    if((b.type==='signup'||b.type==='cert') && b.assignedDate===dateStr && b.assignedInstructor){
-      if(lkp[b.assignedInstructor]) lkp[b.assignedInstructor]['rt'].push({b,type:'roadtest'});
-    }
+    if(b.type==='cert'||b.type==='signup') return;
+    (b.sessions||[]).forEach((s,si)=>{
+      if(s.cancelled||s.date!==dateStr) return;
+      if(!INST_LIST.includes(s.instructorId)) return;
+      const entry = {b,s,si};
+      if(s.slot==='am'||s.slot==='pm'||s.slot==='eve'){
+        stdEntries[s.slot][s.instructorId].push(entry);
+      } else {
+        // Custom slot — parse start/end from slotLabel e.g. "10:00 AM – 12:00 PM"
+        if(!customSlots[s.slot]){
+          const parts = (s.slotLabel||'').split('–').map(x=>x.trim());
+          const sMins = parseTime(parts[0]);
+          const eMins = parseTime(parts[1]);
+          customSlots[s.slot] = {
+            slotId: s.slot,
+            startMins: sMins!==null ? sMins : 999,
+            endMins:   eMins!==null ? eMins : 999,
+            label: s.slotLabel||s.slot,
+            short: parts[0]||s.slot,
+            entries: {}
+          };
+          INST_LIST.forEach(i=>customSlots[s.slot].entries[i]=[]);
+        }
+        customSlots[s.slot].entries[s.instructorId].push(entry);
+      }
+    });
   });
 
-  // Count per instructor for column header
+  // Build sorted row list
+  const allRows = [
+    ...STD_SLOTS.map(s=>({...s, entries:stdEntries[s.id], isStd:true})),
+    ...Object.values(customSlots).map(c=>({...c, isStd:false}))
+  ].sort((a,b)=>a.startMins-b.startMins);
+
+  // Counts for header (sessions only, not RT)
   const counts = {};
-  INST_LIST.forEach(i=>{counts[i]=slots.reduce((n,sl)=>n+lkp[i][sl].length,0)+lkp[i]['rt'].length;});
+  INST_LIST.forEach(i=>{
+    counts[i] = allRows.reduce((n,row)=>(row.entries[i]?n+row.entries[i].length:n), 0);
+  });
   const totalSessions = Object.values(counts).reduce((a,b)=>a+b,0);
 
-  // Build table HTML
+  // Collect road tests
+  const rtByInst = {};
+  INST_LIST.forEach(i=>{rtByInst[i]=[];});
+  allBookings.forEach(b=>{
+    if(b.cancelled) return;
+    if(b.type!=='signup'&&b.type!=='cert') return;
+    (b.roadTests||[]).forEach(rt=>{
+      if(rt.date===dateStr && rt.instructor && rtByInst[rt.instructor])
+        rtByInst[rt.instructor].push({b,rt});
+    });
+    if(!(b.roadTests||[]).length && b.assignedDate===dateStr && b.assignedInstructor && rtByInst[b.assignedInstructor])
+      rtByInst[b.assignedInstructor].push({b,rt:{date:b.assignedDate,time:b.assignedTime||'TBD',instructor:b.assignedInstructor}});
+  });
+  const rtCount = INST_LIST.reduce((n,i)=>n+rtByInst[i].length,0);
+
+  // ── Build HTML ──────────────────────────────────────────────────────────────
+  const instColors = {kaisar:'#065f46',adib:'#1e40af',kaifi:'#9d174d'};
+  const instBg     = {kaisar:'#d1fae5',adib:'#dbeafe',kaifi:'#fce7f3'};
+
   let html = `<table class="sched-grid"><thead><tr>`;
   html += `<th class="sched-th-time"><div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Time</div></th>`;
-
-  const instColors = {kaisar:'#065f46',adib:'#1e40af',kaifi:'#9d174d'};
-  const instBg = {kaisar:'#d1fae5',adib:'#dbeafe',kaifi:'#fce7f3'};
-
   INST_LIST.forEach(i=>{
     html+=`<th class="sched-th-inst" style="background:${instBg[i]}20">
       <div class="sched-inst-name" style="color:${instColors[i]}">${INSTS[i]}</div>
@@ -896,128 +939,77 @@ function renderSchedule() {
   });
   html += `</tr></thead><tbody>`;
 
-  slots.forEach(slot=>{
-    html += `<tr>`;
-    html += `<td class="sched-td-time">
-      <div class="sched-time-lbl">${SLS[slot].split('–')[0].trim()}</div>
-      <div class="sched-time-sub">${slotFull[slot]}</div>
-    </td>`;
-
-    INST_LIST.forEach(i=>{
-      const entries = lkp[i][slot];
-      html += `<td class="sched-td-cell${isToday?' is-today-col':''}">`;
-      if(!entries.length){
-        html += `<div class="cell-empty">·</div>`;
-      } else {
-        entries.forEach(({b,s,si})=>{
-          const total=(b.sessions||[]).length;
-          const sNum=s.session||si+1;
-          const lbl2=`${sNum}/${total}`;
-          const bal=(b.price||0)-(b.deposit||0);
-          let payTag='',blockCls=`class-block inst-${i}`;
-          if(b.fullPaid){payTag=`<div class="cb-pay pay-full">Fully paid ✓</div>`;}
-          else if(b.depositPaid){payTag=`<div class="cb-pay pay-dep">Deposit ✓ · $${bal} due</div>`;blockCls+='';}
-          else{payTag=`<div class="cb-pay pay-none">⚠ $${b.deposit||0} deposit unpaid</div>`;blockCls+=' unpaid';}
-          if(s.completed) blockCls+=' done';
-          // Next class for this student
-          const future=(b.sessions||[]).filter(x=>!x.cancelled&&x.date>dateStr).sort((a,z)=>a.date.localeCompare(z.date));
-          let nextLine='';
-          if(future.length){
-            const nx=future[0];
-            const nxd=new Date(nx.date+'T12:00:00');
-            nextLine=`<div class="cb-next">Next class: ${nxd.toLocaleDateString('en-US',{month:'numeric',day:'numeric'})} at ${SLS[nx.slot]||nx.slot}</div>`;
-          }
-          const cbId=`cb-${b._id}-${si}`;
-          const confirmed=s.studentConfirmed;
-          const addr=(b.address||'').split(',')[0]||'';
-          html+=`<div class="${blockCls}">
-            <div class="cb-session">Session ${lbl2}</div>
-            <div class="cb-name">${esc(b.name)}</div>
-            <div class="cb-addr" title="${esc(b.address)}">${esc(addr)}</div>
-            <div class="cb-phone"><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>
-            ${payTag}
-            <div class="cb-confirm">
-              <input type="checkbox" id="${cbId}" ${confirmed?'checked':''} onchange="toggleConfirm('${b._id}',${si},this.checked)"/>
-              <label for="${cbId}" class="${confirmed?'confirmed':''}">${confirmed?'✓ Student confirmed':'Student confirmed?'}</label>
-            </div>
-            ${nextLine}
-          </div>`;
-        });
-      }
-      html += `</td>`;
-    });
-    html += `</tr>`;
-  });
-
-  // ── Custom / 1hr row — for manually added classes with non-standard times ──
-  const anyCustom = INST_LIST.some(i=>lkp[i]['custom'].length>0);
-  if(anyCustom){
-    html += `<tr style="border-top:1.5px dashed var(--border)">`;
-    html += `<td class="sched-td-time" style="background:var(--blue-light,#eff6ff);border-right:1.5px solid var(--border)">
-      <div style="font-size:10px;font-weight:700;color:var(--blue,#2563eb);text-transform:uppercase;letter-spacing:.05em;line-height:1.3">🕐<br>Custom<br>Times</div>
-    </td>`;
-    INST_LIST.forEach(i=>{
-      const entries = lkp[i]['custom'];
-      html += `<td style="padding:6px;border-right:1px solid var(--border);vertical-align:top;background:#f0f7ff${isToday?';background:#e8f4ff':''}">`;
-      if(!entries.length){
-        html += `<div class="cell-empty" style="color:#bfdbfe">·</div>`;
-      } else {
-        entries.forEach(({b,s,si})=>{
-          const total=(b.sessions||[]).length;
-          const sNum=s.session||si+1;
-          const bal=(b.price||0)-(b.deposit||0);
-          let payTag='',blockCls=`class-block inst-${i}`;
-          if(b.fullPaid){payTag=`<div class="cb-pay pay-full">Fully paid ✓</div>`;}
-          else if(b.depositPaid){payTag=`<div class="cb-pay pay-dep">Deposit ✓ · $${bal} due</div>`;}
-          else{payTag=`<div class="cb-pay pay-none">⚠ $${b.amountOwed||0} owed</div>`;blockCls+=' unpaid';}
-          if(s.completed) blockCls+=' done';
-          const addr=(b.address||'').split(',')[0]||'';
-          html+=`<div class="${blockCls}">
-            <div class="cb-session">Class ${sNum} · ${esc(s.slotLabel)}</div>
-            <div class="cb-name">${esc(b.name)}</div>
-            <div class="cb-addr" title="${esc(b.address)}">${esc(addr)}</div>
-            <div class="cb-phone"><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>
-            ${payTag}
-            <div class="cb-confirm">
-              <input type="checkbox" id="cb-${b._id}-${si}" ${s.studentConfirmed?'checked':''} onchange="toggleConfirm('${b._id}',${si},this.checked)"/>
-              <label for="cb-${b._id}-${si}" class="${s.studentConfirmed?'confirmed':''}">${s.studentConfirmed?'✓ Confirmed':'Confirmed?'}</label>
-            </div>
-          </div>`;
-        });
-      }
-      html += `</td>`;
-    });
-    html += `</tr>`;
+  // Helper: render a session block
+  function sessionBlock(b, s, si, instId) {
+    const total=(b.sessions||[]).length;
+    const sNum=s.session||si+1;
+    const lbl2 = total>1 ? `${sNum}/${total}` : `Class ${sNum}`;
+    const bal=(b.price||0)-(b.deposit||0);
+    let payTag='', blockCls=`class-block inst-${instId}`;
+    if(b.fullPaid){payTag=`<div class="cb-pay pay-full">Fully paid ✓</div>`;}
+    else if(b.depositPaid){payTag=`<div class="cb-pay pay-dep">Deposit ✓ · $${bal} due</div>`;}
+    else{payTag=`<div class="cb-pay pay-none">⚠ $${b.amountOwed||b.deposit||0} owed</div>`;blockCls+=' unpaid';}
+    if(s.completed) blockCls+=' done';
+    const future=(b.sessions||[]).filter(x=>!x.cancelled&&x.date>dateStr).sort((a,z)=>a.date.localeCompare(z.date));
+    let nextLine='';
+    if(future.length){
+      const nx=future[0]; const nxd=new Date(nx.date+'T12:00:00');
+      nextLine=`<div class="cb-next">Next: ${nxd.toLocaleDateString('en-US',{month:'numeric',day:'numeric'})} at ${SLS[nx.slot]||nx.slotLabel||nx.slot}</div>`;
+    }
+    const cbId=`cb-${b._id}-${si}`;
+    const confirmed=s.studentConfirmed;
+    const addr=(b.address||'').split(',')[0]||'';
+    return `<div class="${blockCls}">
+      <div class="cb-session">${lbl2}</div>
+      <div class="cb-name">${esc(b.name)}</div>
+      <div class="cb-addr" title="${esc(b.address)}">${esc(addr)}</div>
+      <div class="cb-phone"><a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>
+      ${payTag}
+      <div class="cb-confirm">
+        <input type="checkbox" id="${cbId}" ${confirmed?'checked':''} onchange="toggleConfirm('${b._id}',${si},this.checked)"/>
+        <label for="${cbId}" class="${confirmed?'confirmed':''}">${confirmed?'✓ Confirmed':'Confirmed?'}</label>
+      </div>
+      ${nextLine}
+    </div>`;
   }
 
-  // ── Road Tests row inside the grid ──────────────────────────────────────────
-  // Collect all road tests for this day per instructor (supports multiple per instructor)
-  const rtByInst = {};
-  INST_LIST.forEach(i=>{rtByInst[i]=[];});
-  allBookings.forEach(b=>{
-    if(b.cancelled) return;
-    if(b.type!=='signup'&&b.type!=='cert') return;
-    // New model: roadTests array
-    const rts = b.roadTests||[];
-    rts.forEach(rt=>{
-      if(rt.date===dateStr && rt.instructor && rtByInst[rt.instructor]){
-        rtByInst[rt.instructor].push({b, rt});
-      }
-    });
-    // Backward compat: old single assignedDate model
-    if(!rts.length && b.assignedDate===dateStr && b.assignedInstructor && rtByInst[b.assignedInstructor]){
-      rtByInst[b.assignedInstructor].push({b, rt:{date:b.assignedDate, time:b.assignedTime||'Time TBD', instructor:b.assignedInstructor}});
-    }
-  });
-  const anyRT = INST_LIST.some(i=>rtByInst[i].length>0);
+  // Render each time row sorted by start time
+  allRows.forEach(row=>{
+    const hasAny = INST_LIST.some(i=>row.entries[i]&&row.entries[i].length>0);
+    // For standard slots always show the row. For custom rows only show if has content.
+    if(!row.isStd && !hasAny) return;
 
-  // Add Road Test row to table
+    const borderStyle = row.isStd ? '' : 'border-top:1.5px dashed var(--border)';
+    const timeBg = row.isStd ? 'background:var(--faint)' : 'background:#eff6ff';
+    const timeColor = row.isStd ? 'color:var(--muted)' : 'color:#1d4ed8';
+
+    html += `<tr style="${borderStyle}">`;
+    html += `<td class="sched-td-time" style="${timeBg};border-right:1.5px solid var(--border)">
+      <div style="font-size:13px;font-weight:700;${timeColor}">${row.short}</div>
+      <div style="font-size:10px;${timeColor};margin-top:2px;line-height:1.3">${row.label.replace('–','–<br>')}</div>
+    </td>`;
+
+    INST_LIST.forEach(i=>{
+      const entries = row.entries[i]||[];
+      const cellBg = !row.isStd ? (isToday?'background:#e8f4ff':'background:#f0f7ff') : (isToday?'background:#f9fffe':'');
+      html += `<td class="sched-td-cell" style="${cellBg}">`;
+      if(!entries.length){
+        html += `<div class="cell-empty" style="${!row.isStd?'color:#bfdbfe':''}">·</div>`;
+      } else {
+        entries.forEach(({b,s,si})=>{ html += sessionBlock(b,s,si,i); });
+      }
+      html += `</td>`;
+    });
+    html += `</tr>`;
+  });
+
+  // ── Road Tests row — always last ────────────────────────────────────────────
   html += `<tr style="border-top:2px solid #fcd34d">`;
   html += `<td class="sched-td-time" style="background:#fffbeb;border-right:1.5px solid #fcd34d">
-    <div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.05em;line-height:1.3">🏁<br>Road<br>Tests</div>
+    <div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.05em;line-height:1.4">🏁<br>Road<br>Tests</div>
   </td>`;
   INST_LIST.forEach(i=>{
-    const rts = rtByInst[i];
+    const rts=rtByInst[i];
     html += `<td style="padding:6px;border-right:1px solid var(--border);vertical-align:top;background:#fffbeb${isToday?';background:#fffde7':''}">`;
     if(!rts.length){
       html += `<div class="cell-empty" style="color:#fcd34d">·</div>`;
@@ -1030,7 +1022,7 @@ function renderSchedule() {
             ? `<span style="font-size:10px;font-weight:700;background:var(--green-light);color:var(--green-dark);padding:2px 6px;border-radius:8px">Deposit ✓</span>`
             : `<span style="font-size:10px;font-weight:700;background:#fff3cd;color:#92400e;padding:2px 6px;border-radius:8px">⚠ Unpaid</span>`;
         html+=`<div style="background:white;border:2px solid #fcd34d;border-radius:8px;padding:8px 10px;margin-bottom:5px">
-          <div style="font-size:10px;font-weight:800;color:#d97706;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">🏁 ${esc(rt.time||'Time TBD')}</div>
+          <div style="font-size:10px;font-weight:800;color:#d97706;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">🏁 ${esc(rt.time||'TBD')}</div>
           <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(b.name)}</div>
           <div style="font-size:11px;color:var(--muted);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(b.address)}">${esc(addr)}</div>
           <div style="font-size:11px;margin-bottom:4px"><a href="tel:${esc(b.phone)}" style="color:var(--green);font-weight:500;text-decoration:none">${esc(b.phone)}</a></div>
@@ -1046,8 +1038,6 @@ function renderSchedule() {
 
   html += `</tbody></table>`;
 
-  // Summary bar
-  const rtCount = INST_LIST.reduce((n,i)=>n+rtByInst[i].length,0);
   const sumBar = `<div style="padding:12px 16px;background:var(--faint);border-top:1px solid var(--border);font-size:13px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap">
     <span><strong style="color:var(--text)">${totalSessions}</strong> driving session${totalSessions!==1?'s':''} today</span>
     ${rtCount>0?`<span><strong style="color:#d97706">🏁 ${rtCount}</strong> road test${rtCount!==1?'s':''}</span>`:''}
